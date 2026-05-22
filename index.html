@@ -11,6 +11,16 @@
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,400&display=swap" rel="stylesheet">
     
     <style>
+    /* Container cố định, không bị cuộn theo trang */
+        .theme-toggle-container {
+            position: fixed;        /* Cố định vị trí trên màn hình */
+            top: 12px;              /* Khoảng cách từ mép trên */
+            right: 20px;            /* Khoảng cách từ mép phải */
+            z-index: 999;           /* Luôn nổi lên trên cùng các thành phần khác */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
         /* Cấu hình màu sắc cho cả 2 chế độ */
         :root[data-theme="light"] {
     --bg-color: #f8fafc;          /* Nền xám trắng rất dịu */
@@ -559,16 +569,18 @@
     </style>
 </head>
 <body>
-    
+    <div class="theme-toggle-container">
+        <button class="btn-theme-toggle" id="btnThemeToggle" title="Thay đổi giao diện">
+            <span id="themeIcon">☀️</span>
+        </button>
+    </div>
 
     <div class="top-bar">
         <div class="sub-links-container">
             <a href="https://docs.google.com/forms/d/e/1FAIpQLSdkkRZXJyeYno9vXrTD6vxso4agFl36-vzHoxl30Mod3_CPrQ/viewform" target="_blank" class="sub-link">đóng góp link bài viết</a>
             <a href="https://buymeacoffee.com/" target="_blank" class="sub-link">donation ♥️</a>
         </div>
-        <button class="btn-theme-toggle" id="btnThemeToggle" title="Thay đổi giao diện">
-            <span id="themeIcon">☀️</span>
-        </button>
+        
     </div>
 
     <div class="brand-container">
