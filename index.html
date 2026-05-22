@@ -231,21 +231,35 @@
         }
 
         .btn-tab {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            color: var(--text-color);
-            padding: 8px 16px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 13px;
-            font-weight: 500;
-            white-space: nowrap;
-            transition: all 0.2s ease;
-            box-shadow: var(--card-shadow);
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    
+    /* CHỈNH SỬA TẠI ĐÂY: Thu nhỏ padding và chữ */
+    padding: 5px 12px;          /* Giảm chiều cao rõ rệt (cũ là 8px 16px) */
+    font-size: 11.5px;          /* Hạ font chữ xuống một chút để phân biệt với nút lớn */
+    border-radius: 14px;        /* Giảm bo góc tương ứng với chiều cao mới */
+    
+    cursor: pointer;
+    font-weight: 500;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+    box-shadow: var(--card-shadow);
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;                   /* Thu hẹp khoảng cách giữa chữ và số lượng bài viết */
+}
+
+/* Hạ size của badge số lượng bên trong nút tương ứng */
+.tab-badge {
+    font-size: 9.5px;           /* Nhỏ hơn chữ tiêu đề một chút (cũ là 11px) */
+    padding: 1px 5px;           /* Thu nhỏ badge lại cho vừa vặn */
+    border-radius: 8px;
+    font-weight: 600;
+    background-color: var(--badge-bg);
+    color: var(--badge-text);
+}
+
 
         .btn-tab:hover {
             border-color: var(--accent-color);
