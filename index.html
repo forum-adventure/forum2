@@ -706,43 +706,6 @@
         }
 
 
-                masterData = { vn: {}, int: {} };
-                const suffix = `?t=${Date.now()}`;
-
-                let freshVnText = cachedVnText;
-                let freshIntText = cachedIntText;
-
-                // Chỉ thực hiện GET nội dung nếu lệnh kiểm tra HEAD báo hiệu có sự thay đổi
-                if (needFetchVn) {
-                    const resVn = await fetch(`data_vn.txt${suffix}`, { cache: 'no-cache' });
-                    freshVnText = resVn.ok ? await resVn.text() : '';
-                    if (freshVnText) await localforage.setItem('cached_data_vn_text', freshVnText);
-                }
-                if (needFetchInt) {
-                    const resInt = await fetch(`data_int.txt${suffix}`, { cache: 'no-cache' });
-                    freshIntText = resInt.ok ? await resInt.text() : '';
-                    if (freshIntText) await localforage.setItem('cached_data_int_text', freshIntText);
-                }
-
-                if (freshVnText) parseToSource(freshVnText.split('\n'), 'vn');
-                if (freshIntText) parseToSource(freshIntText.split('\n'), 'int');
-
-                updateCurrentForumsData();
-            } catch (error) {
-                console.error("Lỗi hệ thống:", error);
-                const cachedVnText = await localforage.getItem('cached_data_vn_text');
-                const cachedIntText = await localforage.getItem('cached_data_int_text');
-                if (cachedVnText || cachedIntText) {
-                    masterData = { vn: {}, int: {} };
-                    if (cachedVnText) parseToSource(cachedVnText.split('\n'), 'vn');
-                    if (cachedIntText) parseToSource(cachedIntText.split('\n'), 'int');
-                    updateCurrentForumsData();
-                } else {
-                    listContainer.innerHTML = `<div class="empty-message" style="color: #ef4444;">Không thể kết nối máy chủ dữ liệu.</div>`;
-                }
-            }
-        }
-
         function parseToSource(dataArray, sourceType) {
             dataArray.forEach(item => {
                 const parts = item.split('|');
