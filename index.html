@@ -607,7 +607,7 @@
             }
         }
 
-        async function loadExternalData() {
+                async function loadExternalData() {
             try {
                 if (!document.getElementById('spin-animation')) {
                     const style = document.createElement('style');
@@ -620,13 +620,16 @@
                 const cachedVnText = await localforage.getItem('cached_data_vn_text');
                 const cachedIntText = await localforage.getItem('cached_data_int_text');
 
+                // Kiểm tra xem đây có phải lần đầu tiên truy cập (chưa có dữ liệu cache) không
+                const isFirstTime = (cachedVnText === null && cachedIntText === null);
+
                 let needFetchVn = true;
                 let needFetchInt = true;
 
                 if (cachedVnText !== null) needFetchVn = await checkFileChanged('data_vn.txt');
                 if (cachedIntText !== null) needFetchInt = await checkFileChanged('data_int.txt');
 
-                // TRƯỜNG HỢP PHỔ BIẾN: F5 nhưng bạn chưa push bài mới lên server
+                // TRƯỜNG HỢP PHỔ BIẾN: F5 nhưng bạn chưa push bài mới lên server (Dùng luôn cache)
                 if (!needFetchVn && !needFetchInt) {
                     masterData = { vn: {}, int: {} };
                     if (cachedVnText) parseToSource(cachedVnText.split('\n'), 'vn');
@@ -635,7 +638,16 @@
                     return; // Ngắt hàm, tiết kiệm 10MB băng thông mạng!
                 }
 
-                // Nếu có cập nhật mới từ server, hiển thị trạng thái chờ tải đồng bộ
+                // Tạo nội dung thông báo động dựa trên việc tải lần đầu hay cập nhật bài viết mới
+                let loadingTitle = "Đang cập nhật bài viết mới...";
+                let loadingSubtitle = "Hệ thống đang đồng bộ những bài viết mới nhất từ máy chủ.";
+
+                if (isFirstTime) {
+                    loadingTitle = "Đang khởi tạo dữ liệu lần đầu...";
+                    loadingSubtitle = "Dữ liệu sau này sẽ được tải từ bộ nhớ cục bộ (siêu nhanh).";
+                }
+
+                // Hiển thị trạng thái chờ tải đồng bộ ra giao diện
                 listContainer.innerHTML = `
                     <div class="loading-wrapper" style="text-align: center; padding: 40px 20px;">
                         <div class="spinner" style="
@@ -647,11 +659,52 @@
                             margin: 0 auto 20px; 
                             animation: spin 1s linear infinite;
                         "></div>
-                        <div class="empty-message" style="font-weight: 500; color: var(--text-color);">
-                            Phát hiện bài viết mới trên máy chủ. Đang tự động đồng bộ...
+                        <div class="loading-title" style="font-weight: 600; font-size: 16px; color: var(--text-color); margin-bottom: 6px;">
+                            ${loadingTitle}
+                        </div>
+                        <div class="loading-subtitle" style="font-size: 13px; color: var(--sub-text); max-width: 400px; margin: 0 auto; line-height: 1.4;">
+                            ${loadingSubtitle}
                         </div>
                     </div>
                 `;
+
+                masterData = { vn: {}, int: {} };
+                const suffix = `?t=${Date.now()}`;
+
+                let freshVnText = cachedVnText;
+                let freshIntText = cachedIntText;
+
+                // Chỉ thực hiện GET nội dung nếu lệnh kiểm tra HEAD báo hiệu có sự thay đổi hoặc tải lần đầu
+                if (needFetchVn) {
+                    const resVn = await fetch(`data_vn.txt${suffix}`, { cache: 'no-cache' });
+                    freshVnText = resVn.ok ? await resVn.text() : '';
+                    if (freshVnText) await localforage.setItem('cached_data_vn_text', freshVnText);
+                }
+                if (needFetchInt) {
+                    const resInt = await fetch(`data_int.txt${suffix}`, { cache: 'no-cache' });
+                    freshIntText = resInt.ok ? await resInt.text() : '';
+                    if (freshIntText) await localforage.setItem('cached_data_int_text', freshIntText);
+                }
+
+                if (freshVnText) parseToSource(freshVnText.split('\n'), 'vn');
+                if (freshIntText) parseToSource(freshIntText.split('\n'), 'int');
+
+                updateCurrentForumsData();
+            } catch (error) {
+                console.error("Lỗi hệ thống:", error);
+                const cachedVnText = await localforage.getItem('cached_data_vn_text');
+                const cachedIntText = await localforage.getItem('cached_data_int_text');
+                if (cachedVnText || cachedIntText) {
+                    masterData = { vn: {}, int: {} };
+                    if (cachedVnText) parseToSource(cachedVnText.split('\n'), 'vn');
+                    if (cachedIntText) parseToSource(cachedIntText.split('\n'), 'int');
+                    updateCurrentForumsData();
+                } else {
+                    listContainer.innerHTML = `<div class="empty-message" style="color: #ef4444;">Không thể kết nối máy chủ dữ liệu.</div>`;
+                }
+            }
+        }
+
 
                 masterData = { vn: {}, int: {} };
                 const suffix = `?t=${Date.now()}`;
