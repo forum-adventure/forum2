@@ -114,6 +114,7 @@
             z-index: 100;
             background-color: var(--bg-color); /* Đổ nền để đè lên nội dung danh sách khi cuộn xuống */
             padding-top: 1px; /* Tránh lỗi lọt lề margin của các phần tử con */
+            padding-top: 10px;
             transition: background-color 0.3s; /* Mượt mà khi đổi Dark/Light mode */
             padding-bottom: 16px; /* Đây chính là khoảng trống cố định mong muốn (ví dụ 16px hoặc 20px) */
             box-sizing: border-box;
@@ -549,7 +550,7 @@
 </head>
 <body>
     
-<div class="sticky-header">
+
     <div class="top-bar">
         <div class="sub-links-container">
             <a href="https://docs.google.com/forms/d/e/1FAIpQLSdkkRZXJyeYno9vXrTD6vxso4agFl36-vzHoxl30Mod3_CPrQ/viewform" target="_blank" class="sub-link">đóng góp link bài viết</a>
@@ -569,6 +570,7 @@
         <p class="brand-tagline">Danh Sách Bài Viết Diễn Đàn Có Nhiều Lượt Tương Tác</p>
     </div>
 
+ <div class="sticky-header">
     <div class="source-toggle-container">
         <div class="source-toggle">
             <button class="btn-source active" data-source="all">Tất cả diễn đàn</button>
