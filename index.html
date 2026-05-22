@@ -114,7 +114,6 @@
             z-index: 100;
             background-color: var(--bg-color); /* Đổ nền để đè lên nội dung danh sách khi cuộn xuống */
             padding-top: 1px; /* Tránh lỗi lọt lề margin của các phần tử con */
-            padding-top: 10px;
             transition: background-color 0.3s; /* Mượt mà khi đổi Dark/Light mode */
             padding-bottom: 16px; /* Đây chính là khoảng trống cố định mong muốn (ví dụ 16px hoặc 20px) */
             box-sizing: border-box;
@@ -123,11 +122,8 @@
         /* Top Utilities Bar */
         .top-bar {
             display: flex;
-            justify-content: transform; /* Đổi từ space-between thành flex-start hoặc giữ nguyên đều được */
-            justify-content: flex-start;
+            justify-content: space-between;
             align-items: center;
-            min-height: 40px;            /* Ép khung luôn cao bằng lúc có nút bấm */
-            padding: 12px 0;             /* Giữ nguyên khoảng cách đệm trên dưới */
             padding: 12px 0;
             border-bottom: 1px solid var(--border-color);
             margin-bottom: 24px;
@@ -153,10 +149,6 @@
         }
 
         .btn-theme-toggle {
-            position: fixed;        /* Cố định nút, tách biệt hoàn toàn khỏi luồng cuộn của trang */
-            top: 12px;              /* Khoảng cách từ mép trên màn hình xuống */
-            right: 20px;            /* Khoảng cách từ mép phải màn hình vào */
-            z-index: 999;           /* Đảm bảo luôn nổi lên trên cùng, không bị các card bài viết đè lên */
             background: var(--card-bg);
             border: 1px solid var(--border-color);
             color: var(--text-color);
@@ -557,7 +549,7 @@
 </head>
 <body>
     
-
+<div class="sticky-header">
     <div class="top-bar">
         <div class="sub-links-container">
             <a href="https://docs.google.com/forms/d/e/1FAIpQLSdkkRZXJyeYno9vXrTD6vxso4agFl36-vzHoxl30Mod3_CPrQ/viewform" target="_blank" class="sub-link">đóng góp link bài viết</a>
@@ -577,7 +569,6 @@
         <p class="brand-tagline">Danh Sách Bài Viết Diễn Đàn Có Nhiều Lượt Tương Tác</p>
     </div>
 
- <div class="sticky-header">
     <div class="source-toggle-container">
         <div class="source-toggle">
             <button class="btn-source active" data-source="all">Tất cả diễn đàn</button>
