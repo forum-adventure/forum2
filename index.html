@@ -105,9 +105,18 @@
             padding: 0 20px;
             line-height: 1.6;
             transition: background-color 0.3s, color 0.3s;
-            touch-action: manipulation;
         }
 
+    .sticky-header {
+            position: -webkit-sticky; /* Hỗ trợ Safari cũ trên iOS */
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background-color: var(--bg-color); /* Đổ nền để đè lên nội dung danh sách khi cuộn xuống */
+            padding-top: 1px; /* Tránh lỗi lọt lề margin của các phần tử con */
+            transition: background-color 0.3s; /* Mượt mà khi đổi Dark/Light mode */
+        }
+    
         /* Top Utilities Bar */
         .top-bar {
             display: flex;
@@ -220,7 +229,6 @@
             display: flex;
             flex-wrap: nowrap;
             gap: 8px;
-            margin-top: 8px;
             margin-bottom: 24px;
             overflow-x: auto;
             scroll-behavior: smooth;
@@ -538,7 +546,8 @@
     </style>
 </head>
 <body>
-
+    
+<div class="sticky-header">
     <div class="top-bar">
         <div class="sub-links-container">
             <a href="https://docs.google.com/forms/d/e/1FAIpQLSdkkRZXJyeYno9vXrTD6vxso4agFl36-vzHoxl30Mod3_CPrQ/viewform" target="_blank" class="sub-link">đóng góp link bài viết</a>
@@ -575,9 +584,16 @@
                 <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
             </svg>
         </div>
+        
+        
+        
+      
+        
         <button class="btn-action-util btn-random" id="btnRandom" title="Xem ngẫu nhiên một bài viết từ danh mục hiện tại">Đọc ngẫu nhiên</button>
     </div>
 
+    
+    
     <div class="list-container" id="listContainer">
         <div class="empty-message">Đang tải dữ liệu bộ nhớ đệm...</div>
     </div>
