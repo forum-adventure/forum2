@@ -193,17 +193,23 @@
             background-color: var(--hover-bg);
         }
 
-        .btn-tab.active {
-            background-color: var(--accent-color);
-            color: #ffffff; /* Giữ chữ trắng tương phản tốt trên cả light và dark mode */
-            border-color: var(--accent-color);
-        }
+        /* Trạng thái active của Tab */
+.btn-tab.active {
+    background-color: var(--accent-color) !important;
+    border-color: var(--accent-color) !important;
+}
 
-        .btn-tab.active .tab-badge {
-            background-color: rgba(255, 255, 255, 0.25);
-            color: #ffffff; /* Giữ số thông báo trắng rõ ràng */
-            border-color: var(--accent-color);
-        }
+/* Ép chữ (span) bên trong tab active phải đổi màu ngược với nền */
+.btn-tab.active span {
+    color: var(--card-bg) !important;
+}
+
+/* Cấu hình lại Badge đi kèm bên trong tab active để không bị trùng màu */
+.btn-tab.active .tab-badge {
+    background-color: var(--bg-color) !important; /* Lấy màu nền đối lập làm nền badge */
+    color: var(--accent-color) !important;        /* Lấy màu chữ tương phản */
+}
+
 
         /* ACTION BAR - ĐƯA SELECT XUỐNG CHUNG HÀNG */
         .action-bar {
@@ -303,7 +309,8 @@
             background-color: var(--badge-bg);
             color: var(--text-color);
             font-weight: 600;
-        }
+           }
+        
 
         /* SEARCH CONTAINER - CO GIÃN THÔNG MINH */
         .search-container {
@@ -1025,12 +1032,6 @@
         // XỬ LÝ LOGIC CO GIÃN MƯỢT MÀ CHO Ô TÌM KIẾM
         searchInput.addEventListener('focus', () => {
             actionBar.classList.add('search-active');
-            // Khi ô search được active mở rộng, ép viết tắt text hiển thị của dropdown hiện tại
-            const activeLi = dropdownList.querySelector('li.active');
-            if (activeLi) {
-                const val = activeLi.getAttribute('data-value');
-                dropdownSelected.textContent = val === 'all' ? 'Tất cả' : (val === 'vn' ? 'VN' : 'Int');
-            }
         });
 
         searchInput.addEventListener('input', (e) => {
@@ -1056,11 +1057,6 @@
             // Thu nhỏ ô search lại nếu click ra ngoài và không có text search
             if (!isClickInsideSearch && searchInput.value.trim() === '') {
                 actionBar.classList.remove('search-active');
-                // Trả về text đầy đủ gốc của item đang active khi thanh search đóng lại
-                const activeLi = dropdownList.querySelector('li.active');
-                if (activeLi) {
-                    dropdownSelected.textContent = activeLi.textContent;
-                }
             }
         });
 
@@ -1091,7 +1087,7 @@
                 dropdownList.querySelectorAll('li').forEach(li => li.classList.remove('active'));
                 item.classList.add('active');
                 
-                // Hiển thị chữ ngắn gọn CHỈ khi thanh search đang active mở rộng (dropdown thu gọn)
+                // Hiển thị chữ ngắn gọn khi thanh search đang active mở rộng
                 if (actionBar.classList.contains('search-active')) {
                     const val = item.getAttribute('data-value');
                     dropdownSelected.textContent = val === 'all' ? 'Tất cả' : (val === 'vn' ? 'VN' : 'Int');
