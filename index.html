@@ -105,21 +105,9 @@
             padding: 0 20px;
             line-height: 1.6;
             transition: background-color 0.3s, color 0.3s;
+            touch-action: manipulation;
         }
 
-    .sticky-header {
-            position: -webkit-sticky; /* Hỗ trợ Safari cũ trên iOS */
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            background-color: var(--bg-color); /* Đổ nền để đè lên nội dung danh sách khi cuộn xuống */
-            padding-top: 1px; /* Tránh lỗi lọt lề margin của các phần tử con */
-            padding-top: 10px;
-            transition: background-color 0.3s; /* Mượt mà khi đổi Dark/Light mode */
-            padding-bottom: 16px; /* Đây chính là khoảng trống cố định mong muốn (ví dụ 16px hoặc 20px) */
-            box-sizing: border-box;
-        }
-    
         /* Top Utilities Bar */
         .top-bar {
             display: flex;
@@ -196,42 +184,49 @@
             transition: color 0.3s ease;
         }
 
-        .source-toggle-container {
+                .source-toggle-container {
             display: flex;
             justify-content: center;
             margin-bottom: 24px;
+            padding: 0 4px;
         }
 
-        .source-toggle {
-            display: inline-flex;
-            background-color: var(--toggle-bg);
-            padding: 4px;
-            border-radius: 30px;
-            border: 1px solid var(--border-color);
-        }
-
-        .btn-source {
-            background: transparent;
-            border: none;
+        .source-select {
+            background-color: var(--search-bg);
             color: var(--text-color);
-            padding: 8px 24px;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 10px 16px;
             font-size: 14px;
             font-weight: 600;
-            border-radius: 20px;
+            outline: none;
             cursor: pointer;
+            min-width: 200px;
+            box-shadow: var(--card-shadow);
             transition: all 0.2s ease;
+            
+            /* Thêm độ mượt cho việc hiển thị trên mobile */
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'></polyline></svg>");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 16px;
+            padding-right: 40px;
         }
 
-        .btn-source.active {
-            background-color: var(--card-bg);
-            color: var(--accent-color);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        .source-select:focus {
+            border-color: var(--search-focus);
+            box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.08);
         }
+
 
         .filter-container {
             display: flex;
             flex-wrap: nowrap;
             gap: 8px;
+            margin-top: 8px;
             margin-bottom: 24px;
             overflow-x: auto;
             scroll-behavior: smooth;
@@ -302,7 +297,7 @@
         .action-bar {
             display: flex;
             gap: 10px;
-            margin-bottom: 0px;
+            margin-bottom: 24px;
             align-items: center;
         }
 
@@ -549,7 +544,6 @@
     </style>
 </head>
 <body>
-    
 
     <div class="top-bar">
         <div class="sub-links-container">
@@ -570,13 +564,15 @@
         <p class="brand-tagline">Danh Sách Bài Viết Diễn Đàn Có Nhiều Lượt Tương Tác</p>
     </div>
 
- <div class="sticky-header">
     <div class="source-toggle-container">
-        <div class="source-toggle">
-            <button class="btn-source active" data-source="all">Tất cả diễn đàn</button>
-            <button class="btn-source" data-source="vn">Diễn đàn Việt Nam</button>
-            <button class="btn-source" data-source="int">Diễn đàn Quốc tế</button>
-        </div>
+            <div class="source-toggle-container">
+        <select class="source-select" id="sourceSelect">
+            <option value="all">Tất cả diễn đàn</option>
+            <option value="vn">Diễn đàn Việt Nam</option>
+            <option value="int">Diễn đàn Quốc tế</option>
+        </select>
+    </div>
+
     </div>
 
     <div class="filter-container" id="filterContainer"></div>
@@ -588,12 +584,9 @@
                 <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
             </svg>
         </div>
-        
         <button class="btn-action-util btn-random" id="btnRandom" title="Xem ngẫu nhiên một bài viết từ danh mục hiện tại">Đọc ngẫu nhiên</button>
     </div>
-</div>
-    
-    
+
     <div class="list-container" id="listContainer">
         <div class="empty-message">Đang tải dữ liệu bộ nhớ đệm...</div>
     </div>
@@ -819,7 +812,7 @@
             if (targetTab) targetTab.click();
         }
 
-        function createTabButton(label, domainKey, count) {
+                function createTabButton(label, domainKey, count) {
             const button = document.createElement('button');
             button.className = 'btn-tab';
             button.setAttribute('data-domain', domainKey);
@@ -831,6 +824,7 @@
             badge.textContent = count;
             button.appendChild(badge);
             if (domainKey === currentDomain) button.classList.add('active');
+            
             button.addEventListener('click', () => {
                 document.querySelectorAll('.btn-tab').forEach(btn => btn.classList.remove('active'));
                 button.classList.add('active');
@@ -838,9 +832,24 @@
                 currentPage = 1;
                 resetRandomHistory(); 
                 displayPosts();
+
+                // TỰ ĐỘNG TRƯỢT NÚT RA CHÍNH GIỮA KHUNG NHÌN
+                const containerWidth = filterContainer.offsetWidth;
+                const buttonWidth = button.offsetWidth;
+                const buttonLeft = button.offsetLeft;
+                
+                // Tính toán vị trí cuộn sao cho nút nằm chính giữa
+                const targetScrollLeft = buttonLeft - (containerWidth / 2) + (buttonWidth / 2);
+                
+                filterContainer.scrollTo({
+                    left: targetScrollLeft,
+                    behavior: 'smooth' // Cuộn mượt mà
+                });
             });
+            
             filterContainer.appendChild(button);
         }
+
 
         function getActivePosts() {
             let targetPosts = [];
@@ -1002,21 +1011,46 @@
             showRandomPostAtCurrentIndex();
         });
 
-        document.querySelectorAll('.btn-source').forEach(btn => { 
-            btn.addEventListener('click', (e) => { 
-                document.querySelectorAll('.btn-source').forEach(b => b.classList.remove('active')); 
-                e.target.classList.add('active'); 
-                activeSource = e.target.getAttribute('data-source'); 
-                currentPage = 1; currentDomain = 'all'; searchInput.value = ''; searchQuery = ''; resetRandomHistory(); updateCurrentForumsData(); 
-            }); 
+        const sourceSelect = document.getElementById('sourceSelect');
+
+        // Lắng nghe sự kiện thay đổi lựa chọn trên thanh Select
+        sourceSelect.addEventListener('change', (e) => { 
+            activeSource = e.target.value; 
+            currentPage = 1; 
+            currentDomain = 'all'; 
+            searchInput.value = ''; 
+            searchQuery = ''; 
+            resetRandomHistory(); 
+            updateCurrentForumsData(); 
         });
 
+        // Hàm xử lý khi người dùng nhấn vào Logo "Forum Adventure" để reset về ban đầu
         function resetToAllSource() {
-            document.querySelectorAll('.btn-source').forEach(b => b.classList.remove('active'));
-            const btnAll = document.querySelector('.btn-source[data-source="all"]');
-            if (btnAll) btnAll.classList.add('active');
-            activeSource = 'all'; currentPage = 1; currentDomain = 'all'; searchInput.value = ''; searchQuery = ''; resetRandomHistory(); updateCurrentForumsData();
+            if (sourceSelect) sourceSelect.value = 'all'; // Đưa select về vị trí Tất cả
+            activeSource = 'all'; 
+            currentPage = 1; 
+            currentDomain = 'all'; 
+            searchInput.value = ''; 
+            searchQuery = ''; 
+            resetRandomHistory(); 
+            updateCurrentForumsData();
         }
+
+    
+            // Chặn zoom khi nhấp đúp (Double tap) trên thiết bị di động
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', (event) => {
+            const now = (new Date()).getTime();
+            if (now - lastTouchEnd <= 300) {
+                event.preventDefault(); // Hủy bỏ hành vi zoom của trình duyệt
+            }
+            lastTouchEnd = now;
+        }, false);
+
+        // Chặn zoom bằng cách thu phóng 2 ngón tay (Pinch to zoom)
+        document.addEventListener('gesturestart', (event) => {
+            event.preventDefault();
+        });
 
         window.addEventListener('DOMContentLoaded', () => loadExternalData());
     </script>
