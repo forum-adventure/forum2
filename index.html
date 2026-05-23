@@ -13,87 +13,49 @@
     <style>
         /* Cấu hình màu sắc cho cả 2 chế độ */
         :root[data-theme="light"] {
-    --bg-color: #f8fafc;          /* Nền xám trắng rất dịu */
-    --text-color: #1e293b;        /* Chữ chính màu than đá */
-    --sub-text: #64748b;          /* Chữ phụ xám */
-    --border-color: #e2e8f0;      /* Đường viền mảnh */
-    --card-bg: #ffffff;
-    
-    /* Đồng bộ các nút hành động về một màu tối giản thanh lịch */
-    --accent-color: #0f172a;      /* Đen xám đậm (Deep Slate) thay cho xanh dương */
-    --accent-hover: #334155;
-    --random-color: #475569;      /* Đồng tone xám thay cho màu xanh lá */
-    
-    --hover-bg: #f1f5f9;
-    --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.02), 0 1px 2px rgba(0, 0, 0, 0.04);
-    --card-shadow-hover: 0 4px 12px rgba(15, 23, 42, 0.05);
-    
-    --star-color: #94a3b8;
-    --star-active: #dc2626;       /* Đổi thành đỏ nhẹ/hồng nhạt hoặc giữ vàng tinh tế */
-    --badge-bg: #f1f5f9;
-    --badge-text: #64748b;
-    
-    --logo-color: #0f172a;
-    --tagline-color: #64748b;
-    --search-bg: #ffffff;
-    --search-focus: #0f172a;
-    --toggle-bg: #e2e8f0;
-}
-
-:root[data-theme="dark"] {
-    --bg-color: #0b0f19;          /* Nền đêm sâu thanh lịch */
-    --text-color: #e2e8f0;        /* Chữ trắng xám không bị lóa */
-    --sub-text: #64748b;
-    --border-color: #1e293b;
-    --card-bg: #111827;           /* Card tối nhẹ */
-    
-    --accent-color: #f1f5f9;      /* Nút active màu sáng hẳn */
-    --accent-hover: #cbd5e1;
-    --random-color: #94a3b8;
-    
-    --hover-bg: #1f2937;
-    --card-shadow: none;          /* Giao diện tối không cần đổ bóng mạnh */
-    --card-shadow-hover: none;
-    
-    --star-color: #475569;
-    --star-active: #f59e0b;
-    --badge-bg: #1f2937;
-    --badge-text: #94a3b8;
-    
-    --logo-color: #ffffff;
-    --tagline-color: #64748b;
-    --search-bg: #111827;
-    --search-focus: #94a3b8;
-    --toggle-bg: #1f2937;
-}
-
+            --bg-color: #f8fafc;          
+            --text-color: #1e293b;        
+            --sub-text: #64748b;          
+            --border-color: #e2e8f0;      
+            --card-bg: #ffffff;
+            --accent-color: #0f172a;      
+            --accent-hover: #334155;
+            --random-color: #475569;      
+            --hover-bg: #f1f5f9;
+            --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.02), 0 1px 2px rgba(0, 0, 0, 0.04);
+            --card-shadow-hover: 0 4px 12px rgba(15, 23, 42, 0.05);
+            --star-color: #94a3b8;
+            --star-active: #dc2626;       
+            --badge-bg: #f1f5f9;
+            --badge-text: #64748b;
+            --logo-color: #0f172a;
+            --tagline-color: #64748b;
+            --search-bg: #ffffff;
+            --search-focus: #0f172a;
+            --toggle-bg: #e2e8f0;
+        }
 
         :root[data-theme="dark"] {
-            --bg-color: #0f172a;
-            --text-color: #f1f5f9;
-            --border-color: #334155;
-            --card-bg: #1e293b;
-            --accent-color: #60a5fa;
-            --accent-hover: #93c5fd;
-            --random-color: #34d399;
-            --random-hover: #6ee7b7;
-            --refresh-color: #22d3ee;
-            --refresh-hover: #67e8f9;
-            --hover-bg: #1e293b;
-            --item-border: #334155;
-            --sub-text: #94a3b8;
-            --search-bg: #1e293b;
-            --search-focus: #60a5fa;
-            --toggle-bg: #334155;
-            --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
-            --card-shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+            --bg-color: #0b0f19;          
+            --text-color: #e2e8f0;        
+            --sub-text: #64748b;
+            --border-color: #1e293b;
+            --card-bg: #111827;           
+            --accent-color: #f1f5f9;      
+            --accent-hover: #cbd5e1;
+            --random-color: #94a3b8;
+            --hover-bg: #1f2937;
+            --card-shadow: none;          
+            --card-shadow-hover: none;
             --star-color: #475569;
             --star-active: #f59e0b;
-            --badge-bg: #334155;
-            --badge-text: #cbd5e1;
-            
+            --badge-bg: #1f2937;
+            --badge-text: #94a3b8;
             --logo-color: #ffffff;
-            --tagline-color: #94a3b8;
+            --tagline-color: #64748b;
+            --search-bg: #111827;
+            --search-focus: #94a3b8;
+            --toggle-bg: #1f2937;
         }
 
         body {
@@ -184,106 +146,6 @@
             transition: color 0.3s ease;
         }
 
-                                .source-toggle-container {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 24px;
-            padding: 0 4px;
-            position: relative;
-            z-index: 100; /* Đảm bảo menu thả xuống không bị che mất */
-        }
-
-        .custom-dropdown {
-            position: relative;
-            min-width: 220px;
-            font-size: 14px;
-            font-weight: 600;
-            user-select: none;
-        }
-
-        .dropdown-selected {
-            background-color: var(--search-bg);
-            color: var(--text-color);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 10px 16px;
-            cursor: pointer;
-            box-shadow: var(--card-shadow);
-            transition: all 0.2s ease;
-            position: relative;
-            padding-right: 40px;
-        }
-
-        /* Tạo mũi tên dropdown custom */
-        .dropdown-selected::after {
-            content: "";
-            position: absolute;
-            right: 16px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 0;
-            height: 0;
-            border-left: 5px solid transparent;
-            border-right: 5px solid transparent;
-            border-top: 5px solid var(--sub-text);
-            transition: transform 0.2s ease;
-        }
-
-        .custom-dropdown.open .dropdown-selected::after {
-            transform: translateY(-50%) rotate(180deg); /* Xoay mũi tên khi mở menu */
-        }
-
-        .custom-dropdown.open .dropdown-selected {
-            border-color: var(--search-focus);
-        }
-
-        .dropdown-list {
-            position: absolute;
-            top: calc(100% + 6px);
-            left: 0;
-            right: 0;
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 6px 0;
-            margin: 0;
-            list-style: none;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
-            display: none; /* Mặc định ẩn */
-            animation: fadeInDropdown 0.2s ease;
-        }
-
-        .custom-dropdown.open .dropdown-list {
-            display: block; /* Hiện khi có class .open */
-        }
-
-        .dropdown-list li {
-            padding: 10px 16px;
-            color: var(--text-color);
-            cursor: pointer;
-            font-weight: 500;
-            transition: background-color 0.15s ease;
-        }
-
-        .dropdown-list li:hover {
-            background-color: var(--hover-bg);
-            color: var(--accent-color);
-        }
-
-        .dropdown-list li.active {
-            background-color: var(--badge-bg);
-            color: var(--text-color);
-            font-weight: 600;
-        }
-
-        @keyframes fadeInDropdown {
-            from { opacity: 0; transform: translateY(-4px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-
-
-
         .filter-container {
             display: flex;
             flex-wrap: nowrap;
@@ -301,35 +163,30 @@
         }
 
         .btn-tab {
-    background: var(--card-bg);
-    border: 1px solid var(--border-color);
-    color: var(--text-color);
-    
-    /* CHỈNH SỬA TẠI ĐÂY: Thu nhỏ padding và chữ */
-    padding: 5px 12px;          /* Giảm chiều cao rõ rệt (cũ là 8px 16px) */
-    font-size: 11.5px;          /* Hạ font chữ xuống một chút để phân biệt với nút lớn */
-    border-radius: 14px;        /* Giảm bo góc tương ứng với chiều cao mới */
-    
-    cursor: pointer;
-    font-weight: 500;
-    white-space: nowrap;
-    transition: all 0.2s ease;
-    box-shadow: var(--card-shadow);
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;                   /* Thu hẹp khoảng cách giữa chữ và số lượng bài viết */
-}
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            padding: 5px 12px;          
+            font-size: 11.5px;          
+            border-radius: 14px;        
+            cursor: pointer;
+            font-weight: 500;
+            white-space: nowrap;
+            transition: all 0.2s ease;
+            box-shadow: var(--card-shadow);
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;                   
+        }
 
-/* Hạ size của badge số lượng bên trong nút tương ứng */
-.tab-badge {
-    font-size: 9.5px;           /* Nhỏ hơn chữ tiêu đề một chút (cũ là 11px) */
-    padding: 1px 5px;           /* Thu nhỏ badge lại cho vừa vặn */
-    border-radius: 8px;
-    font-weight: 600;
-    background-color: var(--badge-bg);
-    color: var(--badge-text);
-}
-
+        .tab-badge {
+            font-size: 9.5px;           
+            padding: 1px 5px;           
+            border-radius: 8px;
+            font-weight: 600;
+            background-color: var(--badge-bg);
+            color: var(--badge-text);
+        }
 
         .btn-tab:hover {
             border-color: var(--accent-color);
@@ -342,34 +199,123 @@
             border-color: var(--accent-color);
         }
 
-        .tab-badge {
-            font-size: 11px;
-            background-color: var(--badge-bg);
-            color: var(--badge-text);
-            padding: 2px 6px;
-            border-radius: 10px;
-            font-weight: 600;
-        }
-
         .btn-tab.active .tab-badge {
             background-color: rgba(255, 255, 255, 0.25);
             color: #ffffff;
         }
 
+        /* ACTION BAR - ĐƯA SELECT XUỐNG CHUNG HÀNG */
         .action-bar {
             display: flex;
             gap: 10px;
             margin-bottom: 24px;
             align-items: center;
+            position: relative;
+            z-index: 100;
         }
 
+        /* Custom Dropdown bọc ngoài */
+        .custom-dropdown {
+            flex: 1; /* Chiếm diện tích chính */
+            min-width: 0; /* Cho phép co giãn mượt mà */
+            font-size: 14px;
+            font-weight: 600;
+            user-select: none;
+            transition: flex 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .dropdown-selected {
+            background-color: var(--search-bg);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 11px 16px;
+            cursor: pointer;
+            box-shadow: var(--card-shadow);
+            transition: all 0.2s ease;
+            position: relative;
+            padding-right: 36px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .dropdown-selected::after {
+            content: "";
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 0;
+            height: 0;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-top: 5px solid var(--sub-text);
+            transition: transform 0.2s ease;
+        }
+
+        .custom-dropdown.open .dropdown-selected::after {
+            transform: translateY(-50%) rotate(180deg); 
+        }
+
+        .custom-dropdown.open .dropdown-selected {
+            border-color: var(--search-focus);
+        }
+
+        .dropdown-list {
+            position: absolute;
+            top: calc(100% + 6px);
+            left: 0;
+            width: 100%;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 6px 0;
+            margin: 0;
+            list-style: none;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            display: none; 
+            box-sizing: border-box;
+        }
+
+        .custom-dropdown.open .dropdown-list {
+            display: block; 
+        }
+
+        .dropdown-list li {
+            padding: 10px 16px;
+            color: var(--text-color);
+            cursor: pointer;
+            font-weight: 500;
+            transition: background-color 0.15s ease;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .dropdown-list li:hover {
+            background-color: var(--hover-bg);
+            color: var(--accent-color);
+        }
+
+        .dropdown-list li.active {
+            background-color: var(--badge-bg);
+            color: var(--text-color);
+            font-weight: 600;
+        }
+
+        /* SEARCH CONTAINER - CO GIÃN THÔNG MINH */
         .search-container {
             position: relative;
-            flex: 1;
+            width: 45px; /* Mặc định thu gọn bằng kích thước 1 nút icon */
+            height: 45px;
+            transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            flex-shrink: 0;
         }
 
         .search-input {
             width: 100%;
+            height: 100%;
             padding: 12px 16px 12px 42px;
             font-size: 14px;
             border: 1px solid var(--border-color);
@@ -380,16 +326,17 @@
             outline: none;
             transition: all 0.2s ease;
             box-shadow: var(--card-shadow);
+            cursor: pointer;
         }
 
-        .search-input:focus {
-            border-color: var(--search-focus);
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+        /* Khi ô input rỗng và chưa active, ẩn chữ để tránh vỡ giao diện nhỏ */
+        .search-input:not(:focus):placeholder-shown {
+            color: transparent;
         }
 
         .search-icon {
             position: absolute;
-            left: 14px;
+            left: 13px;
             top: 50%;
             transform: translateY(-50%);
             width: 18px;
@@ -399,10 +346,39 @@
             transition: fill 0.2s ease;
         }
 
+        /* TRẠNG THÁI ACTIVE: Khi kích hoạt Tìm kiếm */
+        .action-bar.search-active .custom-dropdown {
+            flex: 0 0 50px; /* Thu hẹp dropdown tối đa */
+        }
+        
+        .action-bar.search-active .custom-dropdown .dropdown-selected {
+            padding-left: 10px;
+            padding-right: 22px;
+            font-size: 12px;
+        }
+        .action-bar.search-active .custom-dropdown .dropdown-selected::after {
+            right: 8px;
+        }
+
+        .action-bar.search-active .search-container {
+            flex: 1; /* Đẩy rộng thanh tìm kiếm ra */
+            width: auto;
+        }
+
+        .action-bar.search-active .search-input {
+            cursor: text;
+        }
+
+        .search-input:focus {
+            border-color: var(--search-focus);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+        }
+
         .search-input:focus + .search-icon {
             fill: var(--search-focus);
         }
 
+        /* Nút đọc ngẫu nhiên */
         .btn-action-util {
             height: 45px;
             padding: 0 16px;
@@ -418,22 +394,22 @@
             transition: all 0.2s ease;
             box-shadow: var(--card-shadow);
             white-space: nowrap;
+            flex-shrink: 0;
         }
 
         .btn-random {
-    background-color: var(--badge-bg);
-    color: var(--text-color);
-    border: 1px solid var(--border-color); /* Đồng bộ với ô search */
-    border-radius: 12px;
-}
-.btn-random:hover {
-    background-color: var(--hover-bg);
-}
-.btn-random:active {
-    background-color: var(--accent-color) !important;
-    color: var(--card-bg) !important;
-}
-
+            background-color: var(--badge-bg);
+            color: var(--text-color);
+            border: 1px solid var(--border-color); 
+            border-radius: 12px;
+        }
+        .btn-random:hover {
+            background-color: var(--hover-bg);
+        }
+        .btn-random:active {
+            background-color: var(--accent-color) !important;
+            color: var(--card-bg) !important;
+        }
 
         .list-container {
             display: flex;
@@ -458,7 +434,7 @@
             transform: translateY(-2px);
             box-shadow: var(--card-shadow-hover);
             border-color: var(--accent-color);
-            background-color: rgba(0, 0, 0, 0.01); /* Nhấn nhẹ khi hover */
+            background-color: rgba(0, 0, 0, 0.01); 
         }
 
         .post-avatar {
@@ -580,6 +556,11 @@
             box-shadow: none;
         }
 
+        @keyframes fadeInDropdown {
+            from { opacity: 0; transform: translateY(-4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(8px); }
             to { opacity: 1; transform: translateY(0); }
@@ -589,11 +570,8 @@
         }
             
         @media (max-width: 600px) {
-            .action-bar {
-                align-items: stretch;
-            }
             .btn-action-util {
-                height: 42px;
+                height: 45px;
             }
             .brand-logo {
                 font-size: 36px;
@@ -626,7 +604,7 @@
         <p class="brand-tagline">Danh Sách Bài Viết Diễn Đàn Có Nhiều Lượt Tương Tác</p>
     </div>
 
-        <div class="source-toggle-container">
+    <div class="action-bar" id="actionBar">
         <div class="custom-dropdown" id="customDropdown">
             <div class="dropdown-selected" id="dropdownSelected">Tất cả diễn đàn</div>
             <ul class="dropdown-list" id="dropdownList">
@@ -635,22 +613,18 @@
                 <li data-value="int">Diễn đàn Quốc tế</li>
             </ul>
         </div>
-    </div>
 
-
-    </div>
-
-    <div class="filter-container" id="filterContainer"></div>
-
-    <div class="action-bar">
-        <div class="search-container">
+        <div class="search-container" id="searchContainer">
             <input type="text" class="search-input" id="searchInput" placeholder="Tìm kiếm bài viết theo tiêu đề...">
             <svg class="search-icon" viewBox="0 0 24 24">
                 <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
             </svg>
         </div>
+        
         <button class="btn-action-util btn-random" id="btnRandom" title="Xem ngẫu nhiên một bài viết từ danh mục hiện tại">Đọc ngẫu nhiên</button>
     </div>
+
+    <div class="filter-container" id="filterContainer"></div>
 
     <div class="list-container" id="listContainer">
         <div class="empty-message">Đang tải dữ liệu bộ nhớ đệm...</div>
@@ -684,6 +658,7 @@
         const btnThemeToggle = document.getElementById('btnThemeToggle');
         const themeIcon = document.getElementById('themeIcon');
         const searchInput = document.getElementById('searchInput');
+        const actionBar = document.getElementById('actionBar');
 
         const savedTheme = localStorage.getItem('theme') || 'light';
         document.documentElement.setAttribute('data-theme', savedTheme);
@@ -704,7 +679,6 @@
         // ================= GIẢI PHÁP HEAD REQUEST TRÁNH TẢI FILE 10MB KHI F5 =================
         async function checkFileChanged(fileName) {
             try {
-                // Chỉ lấy phần đầu Metadata (vài byte), không GET nội dung file
                 const response = await fetch(fileName, { method: 'HEAD', cache: 'no-cache' });
                 if (!response.ok) return true; 
                 
@@ -713,7 +687,7 @@
 
                 const savedTag = localStorage.getItem(`tag_${fileName}`);
                 if (savedTag === currentTag) {
-                    return false; // File không đổi -> Tiếp tục dùng dữ liệu trong bộ nhớ IndexedDB
+                    return false; 
                 }
                 
                 localStorage.setItem(`tag_${fileName}`, currentTag);
@@ -724,7 +698,7 @@
             }
         }
 
-                async function loadExternalData() {
+        async function loadExternalData() {
             try {
                 if (!document.getElementById('spin-animation')) {
                     const style = document.createElement('style');
@@ -733,11 +707,8 @@
                     document.head.appendChild(style);
                 }
 
-                // Thử lấy dữ liệu cũ lên trước để hiển thị lập tức khi người dùng F5
                 const cachedVnText = await localforage.getItem('cached_data_vn_text');
                 const cachedIntText = await localforage.getItem('cached_data_int_text');
-
-                // Kiểm tra xem đây có phải lần đầu tiên truy cập (chưa có dữ liệu cache) không
                 const isFirstTime = (cachedVnText === null && cachedIntText === null);
 
                 let needFetchVn = true;
@@ -746,16 +717,14 @@
                 if (cachedVnText !== null) needFetchVn = await checkFileChanged('data_vn.txt');
                 if (cachedIntText !== null) needFetchInt = await checkFileChanged('data_int.txt');
 
-                // TRƯỜNG HỢP PHỔ BIẾN: F5 nhưng bạn chưa push bài mới lên server (Dùng luôn cache)
                 if (!needFetchVn && !needFetchInt) {
                     masterData = { vn: {}, int: {} };
                     if (cachedVnText) parseToSource(cachedVnText.split('\n'), 'vn');
                     if (cachedIntText) parseToSource(cachedIntText.split('\n'), 'int');
                     updateCurrentForumsData();
-                    return; // Ngắt hàm, tiết kiệm 10MB băng thông mạng!
+                    return; 
                 }
 
-                // Tạo nội dung thông báo động dựa trên việc tải lần đầu hay cập nhật bài viết mới
                 let loadingTitle = "Đang cập nhật bài viết mới...";
                 let loadingSubtitle = "Hệ thống đang đồng bộ những bài viết mới nhất từ máy chủ.";
 
@@ -764,7 +733,6 @@
                     loadingSubtitle = "Dữ liệu sau này sẽ được tải từ bộ nhớ cục bộ (siêu nhanh).";
                 }
 
-                // Hiển thị trạng thái chờ tải đồng bộ ra giao diện
                 listContainer.innerHTML = `
                     <div class="loading-wrapper" style="text-align: center; padding: 40px 20px;">
                         <div class="spinner" style="
@@ -791,7 +759,6 @@
                 let freshVnText = cachedVnText;
                 let freshIntText = cachedIntText;
 
-                // Chỉ thực hiện GET nội dung nếu lệnh kiểm tra HEAD báo hiệu có sự thay đổi hoặc tải lần đầu
                 if (needFetchVn) {
                     const resVn = await fetch(`data_vn.txt${suffix}`, { cache: 'no-cache' });
                     freshVnText = resVn.ok ? await resVn.text() : '';
@@ -822,7 +789,6 @@
             }
         }
 
-
         function parseToSource(dataArray, sourceType) {
             dataArray.forEach(item => {
                 const parts = item.split('|');
@@ -837,7 +803,6 @@
                 } catch (e) {}
             });
         }
-        // =====================================================================================
 
         function updateCurrentForumsData() {
             forumsData = {};
@@ -877,7 +842,7 @@
             if (targetTab) targetTab.click();
         }
 
-                function createTabButton(label, domainKey, count) {
+        function createTabButton(label, domainKey, count) {
             const button = document.createElement('button');
             button.className = 'btn-tab';
             button.setAttribute('data-domain', domainKey);
@@ -898,23 +863,19 @@
                 resetRandomHistory(); 
                 displayPosts();
 
-                // TỰ ĐỘNG TRƯỢT NÚT RA CHÍNH GIỮA KHUNG NHÌN
                 const containerWidth = filterContainer.offsetWidth;
                 const buttonWidth = button.offsetWidth;
                 const buttonLeft = button.offsetLeft;
-                
-                // Tính toán vị trí cuộn sao cho nút nằm chính giữa
                 const targetScrollLeft = buttonLeft - (containerWidth / 2) + (buttonWidth / 2);
                 
                 filterContainer.scrollTo({
                     left: targetScrollLeft,
-                    behavior: 'smooth' // Cuộn mượt mà
+                    behavior: 'smooth'
                 });
             });
             
             filterContainer.appendChild(button);
         }
-
 
         function getActivePosts() {
             let targetPosts = [];
@@ -1060,9 +1021,35 @@
             renderRandomNavigation();
         }
 
+        // XỬ LÝ LOGIC CO GIÃN MƯỢT MÀ CHO Ô TÌM KIẾM
+        searchInput.addEventListener('focus', () => {
+            actionBar.classList.add('search-active');
+        });
+
         searchInput.addEventListener('input', (e) => {
             clearTimeout(searchTimeout);
-            searchTimeout = setTimeout(() => { searchQuery = e.target.value.trim().toLowerCase(); currentPage = 1; resetRandomHistory(); displayPosts(); }, 300);
+            searchTimeout = setTimeout(() => { 
+                searchQuery = e.target.value.trim().toLowerCase(); 
+                currentPage = 1; 
+                resetRandomHistory(); 
+                displayPosts(); 
+            }, 300);
+        });
+
+        // HỦY ACTIVE TÌM KIẾM KHI CLICK RA NGOÀI (NẾU Ô TÌM KIẾM TRỐNG)
+        document.addEventListener('click', (e) => {
+            const isClickInsideSearch = document.getElementById('searchContainer').contains(e.target);
+            const isClickInsideDropdown = document.getElementById('customDropdown').contains(e.target);
+            
+            // Đóng mở dropdown select diễn đàn
+            if (!isClickInsideDropdown) {
+                customDropdown.classList.remove('open');
+            }
+
+            // Thu nhỏ ô search lại nếu click ra ngoài và không có text search
+            if (!isClickInsideSearch && searchInput.value.trim() === '') {
+                actionBar.classList.remove('search-active');
+            }
         });
 
         btnRandom.addEventListener('click', () => {
@@ -1076,51 +1063,47 @@
             showRandomPostAtCurrentIndex();
         });
 
-                const customDropdown = document.getElementById('customDropdown');
+        const customDropdown = document.getElementById('customDropdown');
         const dropdownSelected = document.getElementById('dropdownSelected');
         const dropdownList = document.getElementById('dropdownList');
 
-        // 1. Click vào ô hiển thị để Đóng/Mở dropdown
         dropdownSelected.addEventListener('click', (e) => {
             e.stopPropagation();
             customDropdown.classList.toggle('open');
         });
 
-        // 2. Xử lý khi chọn một Option (thẻ li) bên trong menu
         dropdownList.querySelectorAll('li').forEach(item => {
             item.addEventListener('click', (e) => {
                 e.stopPropagation();
                 
-                // Cập nhật trạng thái active trong giao diện menu
                 dropdownList.querySelectorAll('li').forEach(li => li.classList.remove('active'));
                 item.classList.add('active');
                 
-                // Cập nhật chữ hiển thị ra ngoài ô chính
-                dropdownSelected.textContent = item.textContent;
-                customDropdown.classList.remove('open'); // Đóng menu
+                // Hiển thị chữ ngắn gọn khi thanh search đang active mở rộng
+                if (actionBar.classList.contains('search-active')) {
+                    const val = item.getAttribute('data-value');
+                    dropdownSelected.textContent = val === 'all' ? 'Tất cả' : (val === 'vn' ? 'VN' : 'Int');
+                } else {
+                    dropdownSelected.textContent = item.textContent;
+                }
                 
-                // Chạy Logic lọc bài viết như cũ của bro
+                customDropdown.classList.remove('open'); 
+                
                 activeSource = item.getAttribute('data-value'); 
                 currentPage = 1; 
                 currentDomain = 'all'; 
                 searchInput.value = ''; 
                 searchQuery = ''; 
+                actionBar.classList.remove('search-active');
                 resetRandomHistory(); 
                 updateCurrentForumsData(); 
             });
         });
 
-        // 3. Click ra ngoài vùng dropdown thì tự động đóng menu lại
-        document.addEventListener('click', () => {
-            customDropdown.classList.remove('open');
-        });
-
-        // 4. Hàm xử lý khi nhấn vào Logo "Forum Adventure" để reset về "Tất cả diễn đàn"
+        // Hàm xử lý reset về "Tất cả diễn đàn"
         function resetToAllSource() {
-            // Đưa chữ hiển thị về mặc định
             if (dropdownSelected) dropdownSelected.textContent = 'Tất cả diễn đàn';
             
-            // Set lại class active cho option đầu tiên
             dropdownList.querySelectorAll('li').forEach(li => {
                 if(li.getAttribute('data-value') === 'all') li.classList.add('active');
                 else li.classList.remove('active');
@@ -1131,30 +1114,17 @@
             currentDomain = 'all'; 
             searchInput.value = ''; 
             searchQuery = ''; 
+            actionBar.classList.remove('search-active');
             resetRandomHistory(); 
             updateCurrentForumsData();
         }
 
-
-        // Hàm xử lý khi người dùng nhấn vào Logo "Forum Adventure" để reset về ban đầu
-        function resetToAllSource() {
-            if (sourceSelect) sourceSelect.value = 'all'; // Đưa select về vị trí Tất cả
-            activeSource = 'all'; 
-            currentPage = 1; 
-            currentDomain = 'all'; 
-            searchInput.value = ''; 
-            searchQuery = ''; 
-            resetRandomHistory(); 
-            updateCurrentForumsData();
-        }
-
-    
-            // Chặn zoom khi nhấp đúp (Double tap) trên thiết bị di động
+        // Chặn zoom khi nhấp đúp (Double tap) trên thiết bị di động
         let lastTouchEnd = 0;
         document.addEventListener('touchend', (event) => {
             const now = (new Date()).getTime();
             if (now - lastTouchEnd <= 300) {
-                event.preventDefault(); // Hủy bỏ hành vi zoom của trình duyệt
+                event.preventDefault(); 
             }
             lastTouchEnd = now;
         }, false);
