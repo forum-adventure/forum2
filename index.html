@@ -194,10 +194,11 @@
         }
 
         .btn-tab.active {
-            background-color: var(--accent-color);
-            color: #ffffff;
-            border-color: var(--accent-color);
-        }
+    background-color: var(--accent-color);
+    color: var(--card-bg); /* Tự động thành màu trắng ở light mode và màu tối ở dark mode */
+    border-color: var(--accent-color);
+}
+
 
         .btn-tab.active .tab-badge {
             background-color: rgba(255, 255, 255, 0.25);
