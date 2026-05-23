@@ -202,8 +202,9 @@
 
         .btn-tab.active .tab-badge {
             background-color: rgba(255, 255, 255, 0.25);
-            color: #ffffff;
-        }
+            color: var(--card-bg); /* Tự động thành màu trắng ở light mode và màu tối ở dark mode */
+    border-color: var(--accent-color);
+}
 
         /* ACTION BAR - ĐƯA SELECT XUỐNG CHUNG HÀNG */
         .action-bar {
