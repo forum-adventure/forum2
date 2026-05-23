@@ -1009,25 +1009,39 @@
             currentRandomIndex = -1;
         }
 
+        /* TỐI ƯU HÓA: CHỈ CẬP NHẬT TRẠNG THÁI NÚT, KHÔNG LÀM NGHẼN KHI DOM BỊ KHỞI TẠO LẠI LIÊN TỤC */
         function renderRandomNavigation() {
-            randomNavContainer.innerHTML = '';
-            const prevNavBtn = document.createElement('button');
-            prevNavBtn.className = 'btn-nav'; prevNavBtn.innerHTML = '&larr; Bài trước'; prevNavBtn.disabled = currentRandomIndex <= 0;
-            prevNavBtn.addEventListener('click', () => { if (currentRandomIndex > 0) { currentRandomIndex--; showRandomPostAtCurrentIndex(); } });
+            if (!randomNavContainer.querySelector('.btn-nav')) {
+                randomNavContainer.innerHTML = `
+                    <button class="btn-nav" id="btnNavPrev">&larr; Bài trước</button>
+                    <button class="btn-nav" id="btnNavNext">Bài sau &rarr;</button>
+                `;
+                
+                document.getElementById('btnNavPrev').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    if (currentRandomIndex > 0) { currentRandomIndex--; showRandomPostAtCurrentIndex(); }
+                });
+                document.getElementById('btnNavNext').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    if (currentRandomIndex < randomHistory.length - 1) { currentRandomIndex++; showRandomPostAtCurrentIndex(); }
+                });
+            }
 
-            const nextNavBtn = document.createElement('button');
-            nextNavBtn.className = 'btn-nav'; nextNavBtn.innerHTML = 'Bài sau &rarr;'; nextNavBtn.disabled = currentRandomIndex >= randomHistory.length - 1;
-            nextNavBtn.addEventListener('click', () => { if (currentRandomIndex < randomHistory.length - 1) { currentRandomIndex++; showRandomPostAtCurrentIndex(); } });
-
-            randomNavContainer.appendChild(prevNavBtn);
-            randomNavContainer.appendChild(nextNavBtn);
+            const prevBtn = document.getElementById('btnNavPrev');
+            const nextBtn = document.getElementById('btnNavNext');
+            if (prevBtn && nextBtn) {
+                prevBtn.disabled = currentRandomIndex <= 0;
+                nextBtn.disabled = currentRandomIndex >= randomHistory.length - 1;
+            }
         }
 
         function showRandomPostAtCurrentIndex() {
             listContainer.innerHTML = '';
             paginationContainer.innerHTML = '';
             const currentPost = randomHistory[currentRandomIndex];
-            renderPostCard(currentPost);
+            if (currentPost) {
+                renderPostCard(currentPost);
+            }
             renderRandomNavigation();
         }
 
@@ -1058,30 +1072,29 @@
             }
         });
 
-        btnRandom.addEventListener('click', () => {
-    const allCurrentPosts = getActivePosts();
-    if (allCurrentPosts.length === 0) { alert('Không có bài viết nào để lựa chọn!'); return; }
-    
-    if (currentRandomIndex < randomHistory.length - 1) { 
-        randomHistory = randomHistory.slice(0, currentRandomIndex + 1); 
-    }
+        /* TỐI ƯU HÓA SỰ KIỆN CLICK ĐỌC NGẪU NHIÊN: CHỐNG TRÙNG VÀ BẤM LIÊN THANH */
+        btnRandom.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
 
-    let randomPost;
-    // Vòng lặp đảm bảo bài viết ngẫu nhiên tiếp theo KHÔNG TRÙNG với bài hiện tại
-    if (allCurrentPosts.length > 1) {
-        const currentPostUrl = randomHistory[currentRandomIndex]?.url;
-        do {
-            randomPost = allCurrentPosts[Math.floor(Math.random() * allCurrentPosts.length)];
-        } while (randomPost.url === currentPostUrl);
-    } else {
-        randomPost = allCurrentPosts[0];
-    }
+            const allCurrentPosts = getActivePosts();
+            if (allCurrentPosts.length === 0) { alert('Không có bài viết nào để lựa chọn!'); return; }
+            if (currentRandomIndex < randomHistory.length - 1) { randomHistory = randomHistory.slice(0, currentRandomIndex + 1); }
 
-    randomHistory.push(randomPost);
-    currentRandomIndex = randomHistory.length - 1;
-    showRandomPostAtCurrentIndex();
-});
+            let randomPost;
+            if (allCurrentPosts.length > 1) {
+                const currentPostUrl = randomHistory[currentRandomIndex]?.url;
+                do {
+                    randomPost = allCurrentPosts[Math.floor(Math.random() * allCurrentPosts.length)];
+                } while (randomPost.url === currentPostUrl);
+            } else {
+                randomPost = allCurrentPosts[0];
+            }
 
+            randomHistory.push(randomPost);
+            currentRandomIndex = randomHistory.length - 1;
+            showRandomPostAtCurrentIndex();
+        });
 
         const customDropdown = document.getElementById('customDropdown');
         const dropdownSelected = document.getElementById('dropdownSelected');
@@ -1141,7 +1154,10 @@
         document.addEventListener('touchend', (event) => {
             const now = (new Date()).getTime();
             if (now - lastTouchEnd <= 300) {
-                event.preventDefault(); 
+                // Chỉ ngăn chặn hành vi mặc định nếu không phải click vào các phần tử tương tác chính như nút ngẫu nhiên
+                if (!event.target.closest('#btnRandom') && !event.target.closest('.btn-nav')) {
+                    event.preventDefault(); 
+                }
             }
             lastTouchEnd = now;
         }, false);
