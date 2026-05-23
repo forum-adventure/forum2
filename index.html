@@ -1059,15 +1059,29 @@
         });
 
         btnRandom.addEventListener('click', () => {
-            const allCurrentPosts = getActivePosts();
-            if (allCurrentPosts.length === 0) { alert('Không có bài viết nào để lựa chọn!'); return; }
-            if (currentRandomIndex < randomHistory.length - 1) { randomHistory = randomHistory.slice(0, currentRandomIndex + 1); }
+    const allCurrentPosts = getActivePosts();
+    if (allCurrentPosts.length === 0) { alert('Không có bài viết nào để lựa chọn!'); return; }
+    
+    if (currentRandomIndex < randomHistory.length - 1) { 
+        randomHistory = randomHistory.slice(0, currentRandomIndex + 1); 
+    }
 
-            const randomPost = allCurrentPosts[Math.floor(Math.random() * allCurrentPosts.length)];
-            randomHistory.push(randomPost);
-            currentRandomIndex = randomHistory.length - 1;
-            showRandomPostAtCurrentIndex();
-        });
+    let randomPost;
+    // Vòng lặp đảm bảo bài viết ngẫu nhiên tiếp theo KHÔNG TRÙNG với bài hiện tại
+    if (allCurrentPosts.length > 1) {
+        const currentPostUrl = randomHistory[currentRandomIndex]?.url;
+        do {
+            randomPost = allCurrentPosts[Math.floor(Math.random() * allCurrentPosts.length)];
+        } while (randomPost.url === currentPostUrl);
+    } else {
+        randomPost = allCurrentPosts[0];
+    }
+
+    randomHistory.push(randomPost);
+    currentRandomIndex = randomHistory.length - 1;
+    showRandomPostAtCurrentIndex();
+});
+
 
         const customDropdown = document.getElementById('customDropdown');
         const dropdownSelected = document.getElementById('dropdownSelected');
