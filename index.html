@@ -184,7 +184,7 @@
             transition: color 0.3s ease;
         }
 
-                .source-toggle-container {
+                        .source-toggle-container {
             display: flex;
             justify-content: center;
             margin-bottom: 24px;
@@ -220,6 +220,14 @@
             border-color: var(--search-focus);
             box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.08);
         }
+
+        /* ĐỒNG BỘ MÀU CHO CÁC NÚT OPTION BÊN TRONG (CẢ LIGHT VÀ DARK MODE) */
+        .source-select option {
+            background-color: var(--card-bg); /* Ép nền của option đi theo màu card của hệ thống */
+            color: var(--text-color);         /* Ép chữ đi theo màu chữ hệ thống */
+            font-weight: 500;
+        }
+
 
 
         .filter-container {
