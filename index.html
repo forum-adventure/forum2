@@ -194,20 +194,23 @@
         }
 
         /* Trạng thái active của Tab */
+/* Trạng thái Active của nút Tab */
 .btn-tab.active {
     background-color: var(--accent-color) !important;
     border-color: var(--accent-color) !important;
 }
 
-/* Ép chữ (span) bên trong tab active phải đổi màu ngược với nền */
+/* Ép chữ (bao gồm thẻ span) bên trong nút active đổi màu chuẩn */
+.btn-tab.active,
 .btn-tab.active span {
     color: var(--card-bg) !important;
 }
 
-/* Cấu hình lại Badge đi kèm bên trong tab active để không bị trùng màu */
+/* Cấu hình Badge đi kèm nằm trong nút active */
 .btn-tab.active .tab-badge {
-    background-color: var(--bg-color) !important; /* Lấy màu nền đối lập làm nền badge */
-    color: var(--accent-color) !important;        /* Lấy màu chữ tương phản */
+    background-color: rgba(255, 255, 255, 0.2) !important; /* Tạo độ mờ nhẹ màu trắng */
+    color: var(--card-bg) !important;                       /* Đồng bộ màu chữ giống nút cha */
+    border: none !important;
 }
 
 
