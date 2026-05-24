@@ -1004,7 +1004,7 @@
             });
         }
 
-                // HÀM ĐÃ SỬA: Xây dựng cấu trúc danh sách Checkbox cụ thể (Không đóng khi click)
+        // HÀM MỚI: Xây dựng cấu trúc danh sách Checkbox cụ thể
         function buildSubMenuCheckboxes() {
             subMenuContainer.innerHTML = '';
             // Gộp tất cả domain duy nhất từ cả vn và int
@@ -1020,18 +1020,13 @@
                 const li = document.createElement('li');
                 li.className = 'sub-menu-item';
                 
-                // NGĂN CHẶN ĐÓNG DROPDOWN KHI CLICK VÀO DIỆN TÍCH Ô LI
-                li.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                });
-                
                 const label = document.createElement('label');
                 
                 const checkbox = document.createElement('input');
                 checkbox.type = 'checkbox';
                 checkbox.value = domain;
                 
-                // Tránh đóng dropdown đột ngột khi click trực tiếp vào checkbox
+                // Tránh đóng dropdown đột ngột khi click vào checkbox
                 checkbox.addEventListener('click', (e) => {
                     e.stopPropagation();
                 });
@@ -1065,7 +1060,6 @@
                 subMenuContainer.appendChild(li);
             });
         }
-
 
         function updateCurrentForumsData() {
             forumsData = {};
@@ -1368,25 +1362,22 @@
             customDropdown.classList.toggle('open');
         });
 
-                // BƯỚC 2: CẬP NHẬT LOGIC CLICK LỰA CHỌN DROPDOWN (KHÔNG ĐÓNG KHI CHỌN SUB-MENU)
         dropdownList.querySelectorAll('li').forEach(item => {
             item.addEventListener('click', (e) => {
                 e.stopPropagation();
                 
                 const dataVal = item.getAttribute('data-value');
                 
-                // Nếu bấm vào dòng "Chọn lọc diễn đàn cụ thể" lớn
+                // Nếu bấm vào nút sub-menu chính, chỉ cần kích hoạt mở vùng chứa checkbox, không reset
                 if (dataVal === 'sub') {
                     dropdownList.querySelectorAll('li').forEach(li => li.classList.remove('active'));
                     item.classList.add('active');
                     activeSource = 'sub';
                     updateDropdownSelectedText();
                     updateCurrentForumsData();
-                    // Giữ nguyên dropdown mở để người dùng nhìn thấy danh sách grid checkbox bên dưới
-                    return; 
+                    return;
                 }
 
-                // Nếu bấm vào các mục khác (all, vn, int), tiến hành đặt lại và ĐÓNG dropdown
                 dropdownList.querySelectorAll('li').forEach(li => li.classList.remove('active'));
                 item.classList.add('active');
                 
@@ -1395,8 +1386,6 @@
                 selectedSpecificForums = [];
 
                 updateDropdownSelectedText();
-                
-                // Chỉ đóng dropdown khi chọn các danh mục cố định này
                 customDropdown.classList.remove('open'); 
                 
                 activeSource = dataVal; 
@@ -1409,7 +1398,6 @@
                 updateCurrentForumsData(); 
             });
         });
-
 
         function resetToAllSource() {
             dropdownList.querySelectorAll('li').forEach(li => {
