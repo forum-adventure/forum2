@@ -345,32 +345,50 @@
             font-weight: 600;
         }
 
-        /* CSS MỚI CHO PHẦN CHỌN NHIỀU DIỄN ĐÀN CỤ THỂ */
+                /* CSS MỚI CHO PHẦN CHỌN NHIỀU DIỄN ĐÀN CỤ THỂ DẠNG GRID */
         .sub-menu-container {
             border-top: 1px dashed var(--border-color);
             margin-top: 4px;
-            padding-top: 4px;
+            padding: 8px 12px;
             max-height: 220px;
             overflow-y: auto;
             display: none;
+            
+            /* Kích hoạt chế độ hiển thị Lưới */
+            display: none; /* Sẽ được điều khiển mở qua class .open bên dưới */
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 6px;
         }
 
+        /* Đảm bảo khi dropdown mở thì grid hiển thị đúng cấu trúc */
+        .custom-dropdown.open .subMenuContainer, /* ID fallback */
         .custom-dropdown.open .sub-menu-container {
-            display: block;
+            display: grid !important;
         }
 
         .sub-menu-item {
-            padding: 8px 24px !important;
-            font-size: 13px;
+            padding: 6px 8px !important;
+            font-size: 12px;
             font-weight: 400 !important;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            transition: all 0.15s ease;
+            box-sizing: border-box;
+        }
+
+        .sub-menu-item:hover {
+            border-color: var(--accent-color);
+            background-color: var(--hover-bg);
         }
 
         .sub-menu-item input[type="checkbox"] {
-            margin-right: 10px;
+            margin-right: 8px;
             accent-color: var(--accent-color);
             cursor: pointer;
-            width: 15px;
-            height: 15px;
+            width: 14px;
+            height: 14px;
+            flex-shrink: 0;
         }
 
         .sub-menu-item label {
@@ -378,7 +396,11 @@
             align-items: center;
             width: 100%;
             cursor: pointer;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
+
 
         /* SEARCH CONTAINER CO GIÃN THEO V1 MÀU */
         .search-container {
