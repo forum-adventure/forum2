@@ -1004,16 +1004,15 @@
             });
         }
 
-        // HÀM MỚI: Xây dựng cấu trúc danh sách Checkbox cụ thể
+       
+                // HÀM: Xây dựng cấu trúc danh sách Checkbox cụ thể
         function buildSubMenuCheckboxes() {
             subMenuContainer.innerHTML = '';
-            // Gộp tất cả domain duy nhất từ cả vn và int
             const allDomains = new Set([
                 ...Object.keys(masterData.vn),
                 ...Object.keys(masterData.int)
             ]);
 
-            // Sắp xếp Alphabet cho dễ tìm kiếm
             const sortedDomains = Array.from(allDomains).sort();
 
             sortedDomains.forEach(domain => {
@@ -1025,13 +1024,12 @@
                 const checkbox = document.createElement('input');
                 checkbox.type = 'checkbox';
                 checkbox.value = domain;
-                
-                // Tránh đóng dropdown đột ngột khi click vào checkbox
-                checkbox.addEventListener('click', (e) => {
+
+                // NGĂN CHẶN ĐÓNG MENU: Chặn từ cấp thẻ LI của item checkbox
+                li.addEventListener('click', (e) => {
                     e.stopPropagation();
                 });
 
-                // Xử lý logic khi check/uncheck
                 checkbox.addEventListener('change', (e) => {
                     if (checkbox.checked) {
                         if (!selectedSpecificForums.includes(domain)) {
@@ -1041,7 +1039,6 @@
                         selectedSpecificForums = selectedSpecificForums.filter(d => d !== domain);
                     }
 
-                    // Kích hoạt trạng thái active cho thẻ "Chọn lọc diễn đàn cụ thể" lớn bên ngoài
                     dropdownList.querySelectorAll('li').forEach(li => li.classList.remove('active'));
                     const subTargetLi = dropdownList.querySelector('li[data-value="sub"]');
                     if(subTargetLi) subTargetLi.classList.add('active');
@@ -1060,6 +1057,7 @@
                 subMenuContainer.appendChild(li);
             });
         }
+
 
         function updateCurrentForumsData() {
             forumsData = {};
@@ -1353,7 +1351,7 @@
             showRandomPostAtCurrentIndex();
         });
 
-        const customDropdown = document.getElementById('customDropdown');
+                const customDropdown = document.getElementById('customDropdown');
         const dropdownSelected = document.getElementById('dropdownSelected');
         const dropdownList = document.getElementById('dropdownList');
 
@@ -1364,11 +1362,13 @@
 
         dropdownList.querySelectorAll('li').forEach(item => {
             item.addEventListener('click', (e) => {
+                // KIỂM TRA: Nếu là click trong bộ checkbox grid thì dừng xử lý đóng menu tại đây
+                if (item.classList.contains('sub-menu-item')) return;
+
                 e.stopPropagation();
                 
                 const dataVal = item.getAttribute('data-value');
                 
-                // Nếu bấm vào nút sub-menu chính, chỉ cần kích hoạt mở vùng chứa checkbox, không reset
                 if (dataVal === 'sub') {
                     dropdownList.querySelectorAll('li').forEach(li => li.classList.remove('active'));
                     item.classList.add('active');
@@ -1381,7 +1381,6 @@
                 dropdownList.querySelectorAll('li').forEach(li => li.classList.remove('active'));
                 item.classList.add('active');
                 
-                // Bỏ check toàn bộ checkbox khi chuyển sang danh mục lớn tĩnh
                 subMenuContainer.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
                 selectedSpecificForums = [];
 
@@ -1398,6 +1397,7 @@
                 updateCurrentForumsData(); 
             });
         });
+
 
         function resetToAllSource() {
             dropdownList.querySelectorAll('li').forEach(li => {
