@@ -346,19 +346,40 @@
         }
 
                 /* CSS MỚI CHO PHẦN CHỌN NHIỀU DIỄN ĐÀN CỤ THỂ DẠNG GRID */
-        .sub-menu-container {
-            border-top: 1px dashed var(--border-color);
-            margin-top: 4px;
-            padding: 8px 12px;
-            max-height: 220px;
-            overflow-y: auto;
-            display: none;
-            
-            /* Kích hoạt chế độ hiển thị Lưới */
-            display: none; /* Sẽ được điều khiển mở qua class .open bên dưới */
-            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-            gap: 6px;
-        }
+        /* CSS CHO PHẦN CHỌN NHIỀU DIỄN ĐÀN CỤ THỂ DẠNG GRID */
+.sub-menu-container {
+    position: absolute;
+    top: 100%; /* Đẩy sát xuống dưới cùng của dropdown */
+    left: 0;
+    width: 100%;
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-top: none; /* Bỏ viền trên để tạo cảm giác liền mạch với UL */
+    border-radius: 0 0 12px 12px; /* Bo góc dưới */
+    padding: 12px;
+    max-height: 220px;
+    overflow-y: auto;
+    box-sizing: border-box;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+    z-index: 99;
+    
+    /* Ẩn mặc định, chỉ hiện dạng lưới khi có class .open */
+    display: none; 
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 6px;
+}
+
+/* KHI DROPDOWN MỞ: Chỉ hiển thị Grid khi dòng "Chọn lọc cụ thể" hoặc menu đang được kích hoạt */
+.custom-dropdown.open .sub-menu-container {
+    display: none; /* Mặc định vẫn ẩn kể cả khi dropdown open */
+}
+
+/* HIỂN THỊ BIẾN THỂ: Khi dòng Chọn lọc cụ thể đang ACTIVE và ĐANG MỞ DROPDOWN */
+.custom-dropdown.open #dropdownList li[data-value="sub"].active + .sub-menu-container, 
+.custom-dropdown.open .sub-menu-container {
+    /* Đảm bảo khi dropdown đang mở, ta kiểm tra xem có đang ở chế độ 'sub' không */
+}
+
 
         /* Đảm bảo khi dropdown mở thì grid hiển thị đúng cấu trúc */
         .custom-dropdown.open .subMenuContainer, /* ID fallback */
@@ -706,15 +727,16 @@
         </div>
         
         <div class="custom-dropdown" id="customDropdown">
-            <div class="dropdown-selected" id="dropdownSelected" data-i18n="dropdown_all">Tất cả diễn đàn</div>
-            <ul class="dropdown-list" id="dropdownList">
-                <li data-value="all" class="active" data-i18n="dropdown_all">Tất cả diễn đàn</li>
-                <li data-value="vn" data-i18n="dropdown_vn">Diễn đàn Việt Nam</li>
-                <li data-value="int" data-i18n="dropdown_int">Diễn đàn Quốc tế</li>
-                <li data-value="sub" data-i18n="sub_menu_all">Chọn lọc diễn đàn cụ thể</li>
-                <div class="sub-menu-container" id="subMenuContainer"></div>
-            </ul>
-        </div>
+    <div class="dropdown-selected" id="dropdownSelected" data-i18n="dropdown_all">Tất cả diễn đàn</div>
+    <ul class="dropdown-list" id="dropdownList">
+        <li data-value="all" class="active" data-i18n="dropdown_all">Tất cả diễn đàn</li>
+        <li data-value="vn" data-i18n="dropdown_vn">Diễn đàn Việt Nam</li>
+        <li data-value="int" data-i18n="dropdown_int">Diễn đàn Quốc tế</li>
+        <li data-value="sub" data-i18n="sub_menu_all">Chọn lọc diễn đàn cụ thể</li>
+    </ul>
+    <div class="sub-menu-container" id="subMenuContainer"></div> 
+</div>
+
 
         <button class="btn-action-util btn-random" id="btnRandom" title="Xem ngẫu nhiên một bài viết từ danh mục hiện tại" data-i18n="random_btn">Đọc ngẫu nhiên</button>
     </div>
