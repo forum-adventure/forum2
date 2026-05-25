@@ -69,6 +69,11 @@
             --tagline-color: #94a3b8;
         }
 
+        /* SỬA LỖI LAYOUT SHIFT: Ép luôn có thanh cuộn dọc để chống giật màn hình khi tải xong data */
+        html {
+            overflow-y: scroll;
+        }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background-color: var(--bg-color);
@@ -161,6 +166,10 @@
             transition: color 0.3s ease;
         }
 
+        .brand-logo a {
+            display: inline-block;
+        }
+
         .brand-tagline {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             font-size: 11px;
@@ -192,6 +201,12 @@
             display: none;
         }
 
+        /* SỬA LỖI ANDROID: Tạo khoảng đệm nhỏ ở cuối hàng để báo hiệu trực quan cho người dùng biết là cuộn ngang được */
+        .filter-container::after {
+            content: '';
+            padding-right: 20px;
+        }
+
         .btn-tab {
             background: var(--card-bg);
             border: 1px solid var(--border-color);
@@ -210,7 +225,6 @@
         }
 
         /* Nút icon cấu hình riêng */
-                /* Nút icon cấu hình riêng */
         .btn-tab-icon {
             padding: 5px 8px;
             border-radius: 14px;
@@ -222,7 +236,9 @@
             border-color: var(--border-color) !important;
             color: var(--text-color) !important;
         }
-        .btn-tab-icon svg {
+        
+        /* SỬA LỖI TRÌNH DUYỆT CŨ/SAFARI: Ép path của SVG nhận biến màu văn bản chuẩn xác */
+        .btn-tab-icon svg, .btn-tab-icon svg path {
             width: 14px;
             height: 14px;
             /* Điểm cốt lõi: fill luôn lấy theo biến chữ của hệ thống để tự đổi khi switch mode */
@@ -234,7 +250,8 @@
             background-color: var(--card-bg) !important;
             border-color: var(--border-color) !important;
         }
-        .btn-tab-icon:hover svg, .btn-tab-icon.active svg {
+        .btn-tab-icon:hover svg, .btn-tab-icon.active svg,
+        .btn-tab-icon:hover svg path, .btn-tab-icon.active svg path {
             fill: var(--text-color) !important;
         }
 
@@ -423,7 +440,7 @@
         .search-input {
             width: 100%;
             height: 100%;
-            padding: 12px;
+            padding: 12px 38px 12px 12px; /* SỬA LỖI ĐÈ CHỮ: Cố định sẵn khoảng đệm padding bên phải cho nút X ngay từ đầu */
             font-size: 14px;
             border: 1px solid var(--border-color);
             border-radius: 12px;
@@ -434,6 +451,10 @@
             transition: all 0.2s ease;
             box-shadow: var(--card-shadow);
             cursor: pointer;
+            
+            /* SỬA LỖI IPHONE: Chống lỗi vỡ border-radius và loại bỏ đổ bóng nội tuyến của iOS */
+            -webkit-appearance: none;
+            appearance: none;
         }
         .search-input::placeholder {
             color: transparent;
@@ -452,7 +473,7 @@
             transition: fill 0.2s ease;
         }
 
-        /* TRẠNG THÁI KHÍ ACTIVE Ô TÌM KIẾM */
+        /* TRẠNG THÁI KHI ACTIVE Ô TÌM KIẾM */
         .action-bar.search-active .custom-dropdown {
             flex: 0 0 50px; 
         }
@@ -477,7 +498,6 @@
         .action-bar.search-active .search-input {
             cursor: text;
             padding-left: 42px; /* Thêm padding đẩy chữ qua phải, nhường chỗ cho icon */
-            padding-right: 32px; /* Thêm dòng này để chữ không đè lên nút X */
         }
     
 
@@ -562,6 +582,7 @@
             flex-direction: column;
             gap: 4px;
             flex: 1;
+            min-width: 0; /* SỬA LỖI SAFARI/CHROME: Ngăn tiêu đề dài bẻ gãy layout card flexbox */
         }
 
         .post-title {
@@ -571,6 +592,9 @@
             font-size: 15px;
             transition: all 0.2s;
             line-height: 1.4;
+            /* Cải thiện hiển thị text dài */
+            display: block;
+            word-break: break-word; 
         }
 
         .post-title:hover {
@@ -681,6 +705,18 @@
             .brand-tagline {
                 font-size: 12px;
                 letter-spacing: 2px;
+            }
+            /* SỬA LỖI IPHONE MINI/MÀN HÌNH NHỎ: Ép co dropdown về mức vừa vặn mà không làm mất text hay lệch mũi tên */
+            .action-bar.search-active .custom-dropdown {
+                flex: 0 0 65px; 
+            }
+            .action-bar.search-active .custom-dropdown .dropdown-selected {
+                padding-left: 6px;
+                padding-right: 16px;
+                font-size: 11px;
+            }
+            .action-bar.search-active .custom-dropdown .dropdown-selected::after {
+                right: 4px;
             }
         }
     </style>
@@ -811,7 +847,7 @@
         let currentRandomIndex = -1;
 
         // Quản lý danh sách các diễn đàn bị ẩn tạm thời (Không lưu localStorage)
-let hiddenForums = [];
+        let hiddenForums = [];
 
 
         let readHistory = JSON.parse(localStorage.getItem('read_history')) || [];
@@ -1035,8 +1071,7 @@ let hiddenForums = [];
             renderCheckboxMenu();
         }
 
-        // TẠO DROPDOWN MENU CHỨA CHECKBOX BỘ LỌC
-                // TẠO DROPDOWN MENU CHỨA CHECKBOX BỘ LỌC ĐÃ ĐỒNG BỘ THEO NGUỒN (ALL / INT / VN)
+        // TẠO DROPDOWN MENU CHỨA CHECKBOX BỘ LỌC ĐÃ ĐỒNG BỘ THEO NGUỒN (ALL / INT / VN)
         function renderCheckboxMenu() {
             checkboxDropdownMenu.innerHTML = '';
             
@@ -1166,26 +1201,26 @@ let hiddenForums = [];
         }
 
         function getActivePosts() {
-    let targetPosts = [];
-    if (currentDomain === 'fav_bookmarks') {
-        targetPosts = [...bookmarks];
-    } else if (currentDomain === 'all') {
-        // Chỉ lấy bài viết từ các diễn đàn KHÔNG bị ẩn
-        Object.entries(forumsData).forEach(([domain, posts]) => {
-            if (!hiddenForums.includes(domain)) {
-                targetPosts = targetPosts.concat(posts);
+            let targetPosts = [];
+            if (currentDomain === 'fav_bookmarks') {
+                targetPosts = [...bookmarks];
+            } else if (currentDomain === 'all') {
+                // Chỉ lấy bài viết từ các diễn đàn KHÔNG bị ẩn
+                Object.entries(forumsData).forEach(([domain, posts]) => {
+                    if (!hiddenForums.includes(domain)) {
+                        targetPosts = targetPosts.concat(posts);
+                    }
+                });
+            } else {
+                // Nếu danh mục hiện tại bị ẩn thì không trả về bài viết nào
+                targetPosts = hiddenForums.includes(currentDomain) ? [] : (forumsData[currentDomain] || []);
             }
-        });
-    } else {
-        // Nếu danh mục hiện tại bị ẩn thì không trả về bài viết nào
-        targetPosts = hiddenForums.includes(currentDomain) ? [] : (forumsData[currentDomain] || []);
-    }
 
-    if (searchQuery !== '') {
-        targetPosts = targetPosts.filter(post => post.title.toLowerCase().includes(searchQuery));
-    }
-    return targetPosts;
-}
+            if (searchQuery !== '') {
+                targetPosts = targetPosts.filter(post => post.title.toLowerCase().includes(searchQuery));
+            }
+            return targetPosts;
+        }
 
 
         function displayPosts() {
@@ -1343,26 +1378,26 @@ let hiddenForums = [];
 
         const clearSearchBtn = document.getElementById('clearSearch');
 
-searchInput.addEventListener('input', (e) => {
-    // 1. Chỉ thêm dòng này để tự ẩn/hiện nút X dựa trên việc có chữ hay không
-    clearSearchBtn.style.display = e.target.value.length > 0 ? 'block' : 'none';
-    
-    clearTimeout(searchTimeout);
-    searchTimeout = setTimeout(() => { 
-        searchQuery = e.target.value.trim().toLowerCase(); 
-        currentPage = 1; 
-        resetRandomHistory(); 
-        displayPosts(); 
-    }, 300);
-});
+        searchInput.addEventListener('input', (e) => {
+            // Chỉ thêm dòng này để tự ẩn/hiện nút X dựa trên việc có chữ hay không
+            clearSearchBtn.style.display = e.target.value.length > 0 ? 'block' : 'none';
+            
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => { 
+                searchQuery = e.target.value.trim().toLowerCase(); 
+                currentPage = 1; 
+                resetRandomHistory(); 
+                displayPosts(); 
+            }, 300);
+        });
 
-// 2. Sự kiện click nút X: Xóa chữ và kích hoạt lại sự kiện 'input' có sẵn ở trên
-clearSearchBtn.addEventListener('click', () => {
-    searchInput.value = '';
-    clearSearchBtn.style.display = 'none';
-    searchInput.focus();
-    searchInput.dispatchEvent(new Event('input')); // Ép ô input chạy lại logic tự cập nhật danh sách của bạn
-});
+        // Sự kiện click nút X: Xóa chữ và kích hoạt lại sự kiện 'input' có sẵn ở trên
+        clearSearchBtn.addEventListener('click', () => {
+            searchInput.value = '';
+            clearSearchBtn.style.display = 'none';
+            searchInput.focus();
+            searchInput.dispatchEvent(new Event('input')); // Ép ô input chạy lại logic tự cập nhật danh sách của bạn
+        });
 
 
         document.addEventListener('click', (e) => {
@@ -1455,6 +1490,7 @@ clearSearchBtn.addEventListener('click', () => {
             updateCurrentForumsData();
         }
 
+        // --- ĐOẠN CODE CHẶN DOUBLE-ZOOM ĐƯỢC GIỮ NGUYÊN VẸN THEO YÊU CẦU CỦA BẠN ---
         let lastTouchEnd = 0;
         document.addEventListener('touchend', (event) => {
             const now = (new Date()).getTime();
