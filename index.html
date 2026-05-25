@@ -347,23 +347,24 @@
 
         /* CSS MỚI CHO PHẦN CHỌN NHIỀU DIỄN ĐÀN CỤ THỂ */
         .sub-menu-container {
-            border-top: 1px dashed var(--border-color);
-            margin-top: 4px;
-            padding-top: 4px;
-            max-height: 220px;
-            overflow-y: auto;
-            display: none;
-        }
+    border-top: 1px dashed var(--border-color);
+    padding: 6px 0;
+    max-height: 220px;
+    overflow-y: auto;
+    display: none;
+    background-color: var(--card-bg); /* Giúp tiệp màu nền đồng bộ */
+}
 
         .custom-dropdown.open .sub-menu-container {
-            display: block;
-        }
+    display: block;
+}
 
         .sub-menu-item {
-            padding: 8px 24px !important;
-            font-size: 13px;
-            font-weight: 400 !important;
-        }
+    padding: 8px 16px !important; /* Cân bằng lại padding thụt lề */
+    font-size: 13px;
+    font-weight: 400 !important;
+    list-style: none; /* Xóa dấu chấm tròn nếu có */
+}
 
         .sub-menu-item input[type="checkbox"] {
             margin-right: 10px;
@@ -684,15 +685,16 @@
         </div>
         
         <div class="custom-dropdown" id="customDropdown">
-            <div class="dropdown-selected" id="dropdownSelected" data-i18n="dropdown_all">Tất cả diễn đàn</div>
-            <ul class="dropdown-list" id="dropdownList">
-                <li data-value="all" class="active" data-i18n="dropdown_all">Tất cả diễn đàn</li>
-                <li data-value="vn" data-i18n="dropdown_vn">Diễn đàn Việt Nam</li>
-                <li data-value="int" data-i18n="dropdown_int">Diễn đàn Quốc tế</li>
-                <li data-value="sub" data-i18n="sub_menu_all">Chọn lọc diễn đàn cụ thể</li>
-                <div class="sub-menu-container" id="subMenuContainer"></div>
-            </ul>
-        </div>
+    <div class="dropdown-selected" id="dropdownSelected" data-i18n="dropdown_all">Tất cả diễn đàn</div>
+    <ul class="dropdown-list" id="dropdownList">
+        <li data-value="all" class="active" data-i18n="dropdown_all">Tất cả diễn đàn</li>
+        <li data-value="vn" data-i18n="dropdown_vn">Diễn đàn Việt Nam</li>
+        <li data-value="int" data-i18n="dropdown_int">Diễn đàn Quốc tế</li>
+        <li data-value="sub" data-i18n="sub_menu_all">Chọn lọc diễn đàn cụ thể</li>
+    </ul>
+    <div class="sub-menu-container" id="subMenuContainer"></div>
+</div>
+
 
         <button class="btn-action-util btn-random" id="btnRandom" title="Xem ngẫu nhiên một bài viết từ danh mục hiện tại" data-i18n="random_btn">Đọc ngẫu nhiên</button>
     </div>
