@@ -807,8 +807,9 @@
         let randomHistory = [];
         let currentRandomIndex = -1;
 
-        // Quản lý danh sách các diễn đàn bị ẩn (Lưu vào localStorage)
-        let hiddenForums = JSON.parse(localStorage.getItem('hidden_forums')) || [];
+        // Quản lý danh sách các diễn đàn bị ẩn tạm thời (Không lưu localStorage)
+let hiddenForums = [];
+
 
         let readHistory = JSON.parse(localStorage.getItem('read_history')) || [];
         let bookmarks = JSON.parse(localStorage.getItem('bookmarks')) || [];
@@ -1049,19 +1050,20 @@
                 `;
 
                 label.querySelector('input').addEventListener('change', (e) => {
-                    const val = e.target.value;
-                    if (e.target.checked) {
-                        hiddenForums = hiddenForums.filter(item => item !== val);
-                    } else {
-                        if (!hiddenForums.includes(val)) hiddenForums.push(val);
-                        // Nếu đang đứng ở tab vừa bị ẩn, quay về tab 'all'
-                        if (currentDomain === val) {
-                            currentDomain = 'all';
-                        }
-                    }
-                    localStorage.setItem('hidden_forums', JSON.stringify(hiddenForums));
-                    renderTabs();
-                });
+    const val = e.target.value;
+    if (e.target.checked) {
+        hiddenForums = hiddenForums.filter(item => item !== val);
+    } else {
+        if (!hiddenForums.includes(val)) hiddenForums.push(val);
+        // Nếu đang đứng ở tab vừa bị ẩn, quay về tab 'all'
+        if (currentDomain === val) {
+            currentDomain = 'all';
+        }
+    }
+    // Đã bỏ lưu trữ localStorage để bộ lọc trở thành tạm thời
+    renderTabs();
+});
+
 
                 checkboxDropdownMenu.appendChild(label);
             });
