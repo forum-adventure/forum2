@@ -69,9 +69,10 @@
             --tagline-color: #94a3b8;
         }
 
-        /* SỬA LỖI LAYOUT SHIFT: Ép luôn có thanh cuộn dọc để chống giật màn hình khi tải xong data */
+        /* SỬA LỖI LAYOUT SHIFT & SỬA LỖI 3: Kích hoạt hiệu ứng cuộn trang mượt mà toàn diện */
         html {
             overflow-y: scroll;
+            scroll-behavior: smooth;
         }
 
         body {
@@ -760,7 +761,6 @@
                 <li data-value="all" class="active" data-i18n="dropdown_all">Tất cả diễn đàn</li>
                 <li data-value="int" data-i18n="dropdown_int">Diễn đàn Quốc tế</li>
                 <li data-value="vn" data-i18n="dropdown_vn">Diễn đàn Việt Nam</li>
-                
             </ul>
         </div>
 
@@ -848,7 +848,6 @@
 
         // Quản lý danh sách các diễn đàn bị ẩn tạm thời (Không lưu localStorage)
         let hiddenForums = [];
-
 
         let readHistory = JSON.parse(localStorage.getItem('read_history')) || [];
         let bookmarks = JSON.parse(localStorage.getItem('bookmarks')) || [];
@@ -1067,15 +1066,14 @@
                 }
             }
             
-            renderTabs();
             renderCheckboxMenu();
+            renderTabs();
         }
 
-        // TẠO DROPDOWN MENU CHỨA CHECKBOX BỘ LỌC ĐÃ ĐỒNG BỘ THEO NGUỒN (ALL / INT / VN)
+        // SỬA LỖI 1: TỰ ĐỘNG ẨN CHECKBOX KHÔNG CÓ BÀI VIẾT (COUNT === 0)
         function renderCheckboxMenu() {
             checkboxDropdownMenu.innerHTML = '';
             
-            // Xác định danh sách các domain cần hiển thị dựa theo bộ lọc nguồn chính (activeSource)
             let filteredDomains = [];
             if (activeSource === 'all' || activeSource === 'int') {
                 filteredDomains = filteredDomains.concat(Object.keys(masterData.int));
@@ -1084,12 +1082,16 @@
                 filteredDomains = filteredDomains.concat(Object.keys(masterData.vn));
             }
             
-            // Loại bỏ các domain trùng lặp (nếu có)
             filteredDomains = [...new Set(filteredDomains)];
-            
             if (filteredDomains.length === 0) return;
 
             filteredDomains.forEach(domain => {
+                // Đếm số lượng bài viết thực tế của domain này trong forumsData hiện tại
+                const count = forumsData[domain] ? forumsData[domain].length : 0;
+
+                // KHÔI PHỤC LOGIC V1: Nếu không có bài viết nào, tự động ẩn (bỏ qua không render checkbox)
+                if (count === 0) return;
+
                 const label = document.createElement('label');
                 label.className = 'checkbox-item';
                 
@@ -1106,7 +1108,6 @@
                         hiddenForums = hiddenForums.filter(item => item !== val);
                     } else {
                         if (!hiddenForums.includes(val)) hiddenForums.push(val);
-                        // Nếu đang đứng ở tab vừa bị ẩn, quay về tab 'all'
                         if (currentDomain === val) {
                             currentDomain = 'all';
                         }
@@ -1118,7 +1119,6 @@
             });
         }
 
-
         function renderTabs() {
             filterContainer.innerHTML = ''; 
             if (Object.keys(forumsData).length === 0 && bookmarks.length === 0) {
@@ -1127,13 +1127,18 @@
                 randomNavContainer.innerHTML = '';
                 return;
             }
+            
             let totalAllPostsCount = 0;
-            Object.values(forumsData).forEach(posts => { totalAllPostsCount += posts.length; });
+            Object.entries(forumsData).forEach(([domain, posts]) => { 
+                if (!hiddenForums.includes(domain)) {
+                    totalAllPostsCount += posts.length; 
+                }
+            });
 
             // 1. Nút Yêu thích
             createTabButton(languages[currentLang].fav_title, 'fav_bookmarks', bookmarks.length);
             
-            // 2. CHÈN NÚT ICON FILTER Ở CHÍNH GIỮA
+            // 2. NÚT ICON FILTER Ở CHÍNH GIỮA
             const filterBtn = document.createElement('button');
             filterBtn.className = 'btn-tab btn-tab-icon';
             filterBtn.id = 'btnFilterToggle';
@@ -1152,17 +1157,27 @@
             // 3. Nút Tất cả bài viết
             createTabButton(languages[currentLang].all_title, 'all', totalAllPostsCount);
             
-            // 4. Danh sách các nút diễn đàn (chỉ hiển thị nếu không nằm trong danh sách hiddenForums)
+            // 4. Danh sách các nút diễn đàn
             Object.keys(forumsData).forEach(domain => { 
                 if (!hiddenForums.includes(domain)) {
                     createTabButton(domain.toUpperCase(), domain, forumsData[domain].length); 
                 }
             });
 
+            // Kiểm tra trạng thái Active Tab hiện tại bảo toàn dữ liệu
             const tabs = filterContainer.querySelectorAll('.btn-tab:not(.btn-tab-icon)');
-            let targetTab = tabs[1]; // Mặc định là 'Tất cả bài viết'
+            let targetTab = null;
             tabs.forEach(tab => { if (tab.getAttribute('data-domain') === currentDomain) targetTab = tab; });
-            if (targetTab) targetTab.click();
+            
+            if (targetTab) {
+                document.querySelectorAll('.btn-tab').forEach(btn => btn.classList.remove('active'));
+                targetTab.classList.add('active');
+                displayPosts();
+            } else {
+                currentDomain = 'all';
+                const allTab = filterContainer.querySelector('[data-domain="all"]');
+                if (allTab) allTab.click();
+            }
         }
 
         function createTabButton(label, domainKey, count) {
@@ -1205,23 +1220,21 @@
             if (currentDomain === 'fav_bookmarks') {
                 targetPosts = [...bookmarks];
             } else if (currentDomain === 'all') {
-                // Chỉ lấy bài viết từ các diễn đàn KHÔNG bị ẩn
                 Object.entries(forumsData).forEach(([domain, posts]) => {
                     if (!hiddenForums.includes(domain)) {
                         targetPosts = targetPosts.concat(posts);
                     }
                 });
             } else {
-                // Nếu danh mục hiện tại bị ẩn thì không trả về bài viết nào
                 targetPosts = hiddenForums.includes(currentDomain) ? [] : (forumsData[currentDomain] || []);
             }
 
+            // Đồng bộ bộ lọc tìm kiếm chuỗi Latin / Không phân biệt hoa thường
             if (searchQuery !== '') {
                 targetPosts = targetPosts.filter(post => post.title.toLowerCase().includes(searchQuery));
             }
             return targetPosts;
         }
-
 
         function displayPosts() {
             listContainer.innerHTML = ''; 
@@ -1379,7 +1392,6 @@
         const clearSearchBtn = document.getElementById('clearSearch');
 
         searchInput.addEventListener('input', (e) => {
-            // Chỉ thêm dòng này để tự ẩn/hiện nút X dựa trên việc có chữ hay không
             clearSearchBtn.style.display = e.target.value.length > 0 ? 'block' : 'none';
             
             clearTimeout(searchTimeout);
@@ -1391,14 +1403,12 @@
             }, 300);
         });
 
-        // Sự kiện click nút X: Xóa chữ và kích hoạt lại sự kiện 'input' có sẵn ở trên
         clearSearchBtn.addEventListener('click', () => {
             searchInput.value = '';
             clearSearchBtn.style.display = 'none';
             searchInput.focus();
-            searchInput.dispatchEvent(new Event('input')); // Ép ô input chạy lại logic tự cập nhật danh sách của bạn
+            searchInput.dispatchEvent(new Event('input')); 
         });
-
 
         document.addEventListener('click', (e) => {
             const isClickInsideSearch = document.getElementById('searchContainer').contains(e.target);
@@ -1458,15 +1468,13 @@
                 item.classList.add('active');
                 
                 updateDropdownSelectedText();
-                
                 customDropdown.classList.remove('open'); 
                 
                 activeSource = item.getAttribute('data-value'); 
                 currentPage = 1; 
                 currentDomain = 'all'; 
-                searchInput.value = ''; 
-                searchQuery = ''; 
-                actionBar.classList.remove('search-active');
+                
+                // SỬA LỖI 2: Giữ nguyên từ khóa tìm kiếm khi đổi nguồn bộ lọc chính (Không xóa trắng searchQuery)
                 resetRandomHistory(); 
                 updateCurrentForumsData(); 
             });
@@ -1485,6 +1493,7 @@
             currentDomain = 'all'; 
             searchInput.value = ''; 
             searchQuery = ''; 
+            clearSearchBtn.style.display = 'none';
             actionBar.classList.remove('search-active');
             resetRandomHistory(); 
             updateCurrentForumsData();
