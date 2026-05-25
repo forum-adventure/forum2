@@ -691,9 +691,10 @@
         <li data-value="vn" data-i18n="dropdown_vn">Diễn đàn Việt Nam</li>
         <li data-value="int" data-i18n="dropdown_int">Diễn đàn Quốc tế</li>
         <li data-value="sub" data-i18n="sub_menu_all">Chọn lọc diễn đàn cụ thể</li>
+        <div class="sub-menu-container" id="subMenuContainer"></div>
     </ul>
-    <div class="sub-menu-container" id="subMenuContainer"></div>
 </div>
+
 
 
         <button class="btn-action-util btn-random" id="btnRandom" title="Xem ngẫu nhiên một bài viết từ danh mục hiện tại" data-i18n="random_btn">Đọc ngẫu nhiên</button>
@@ -997,14 +998,19 @@
             const sortedDomains = Array.from(allDomains).sort();
 
             sortedDomains.forEach(domain => {
-                const li = document.createElement('li');
-                li.className = 'sub-menu-item';
-                
-                const label = document.createElement('label');
-                
-                const checkbox = document.createElement('input');
-                checkbox.type = 'checkbox';
-                checkbox.value = domain;
+            const li = document.createElement('li');
+            li.className = 'sub-menu-item';
+            
+            const label = document.createElement('label');
+            
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.value = domain;
+            
+            // Chặn đứng hoàn toàn hành vi nổi bọt trên dòng li này
+            li.addEventListener('click', (e) => {
+                e.stopPropagation();
+            });
                 
                 // Tránh đóng dropdown đột ngột khi click vào checkbox
                 checkbox.addEventListener('click', (e) => {
@@ -1022,24 +1028,47 @@
                     }
 
                     // Kích hoạt trạng thái active cho thẻ "Chọn lọc diễn đàn cụ thể" lớn bên ngoài
-                    dropdownList.querySelectorAll('li').forEach(li => li.classList.remove('active'));
-                    const subTargetLi = dropdownList.querySelector('li[data-value="sub"]');
-                    if(subTargetLi) subTargetLi.classList.add('active');
-
-                    activeSource = 'sub';
-                    currentPage = 1; 
-                    currentDomain = 'all';
-                    resetRandomHistory();
-                    updateCurrentForumsData();
-                    updateDropdownSelectedText();
-                });
-
-                label.appendChild(checkbox);
-                label.appendChild(document.createTextNode(domain.toUpperCase()));
-                li.appendChild(label);
-                subMenuContainer.appendChild(li);
-            });
+                    dropdownList.querySelectorAll('li').forEach(item => {
+    item.addEventListener('click', (e) => {
+        // [THÊM ĐOẠN NÀY]: Nếu người dùng click vào li con bên trong vùng đỏ, đóng băng xử lý tại đây luôn
+        if (item.closest('#subMenuContainer')) {
+            e.stopPropagation();
+            return;
         }
+
+        e.stopPropagation();
+        const dataVal = item.getAttribute('data-value');
+        
+        if (dataVal === 'sub') {
+            dropdownList.querySelectorAll('li').forEach(li => li.classList.remove('active'));
+            item.classList.add('active');
+            activeSource = 'sub';
+            updateDropdownSelectedText();
+            updateCurrentForumsData();
+            return;
+        }
+
+        dropdownList.querySelectorAll('li').forEach(li => li.classList.remove('active'));
+        item.classList.add('active');
+        
+        subMenuContainer.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+        selectedSpecificForums = [];
+
+        updateDropdownSelectedText();
+        customDropdown.classList.remove('open'); 
+        
+        activeSource = dataVal; 
+        currentPage = 1; 
+        currentDomain = 'all'; 
+        searchInput.value = ''; 
+        searchQuery = ''; 
+        actionBar.classList.remove('search-active');
+        resetRandomHistory(); 
+        updateCurrentForumsData(); 
+    });
+});
+
+
 
         function updateCurrentForumsData() {
             forumsData = {};
