@@ -1005,9 +1005,9 @@
                 checkbox.value = domain;
                 
                 // Tránh đóng dropdown đột ngột khi click vào checkbox
-                li.addEventListener('click', (e) => {
-    e.stopPropagation(); // Ngăn không cho click lọt ra ngoài vùng đỏ
-});
+                checkbox.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                });
 
                 // Xử lý logic khi check/uncheck
                 checkbox.addEventListener('change', (e) => {
