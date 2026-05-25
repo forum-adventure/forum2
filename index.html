@@ -210,22 +210,34 @@
         }
 
         /* Nút icon cấu hình riêng */
+                /* Nút icon cấu hình riêng */
         .btn-tab-icon {
             padding: 5px 8px;
             border-radius: 14px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
+            /* Giữ màu nền cố định theo theme, không đổi khi hover/active */
+            background: var(--card-bg) !important; 
+            border-color: var(--border-color) !important;
+            color: var(--text-color) !important;
         }
         .btn-tab-icon svg {
             width: 14px;
             height: 14px;
-            fill: var(--text-color);
-            transition: fill 0.2s;
+            /* Điểm cốt lõi: fill luôn lấy theo biến chữ của hệ thống để tự đổi khi switch mode */
+            fill: var(--text-color) !important; 
+            transition: none !important;
+        }
+        /* Triệt tiêu hoàn toàn hiệu ứng đổi màu khi hover hoặc active cho riêng nút này */
+        .btn-tab-icon:hover, .btn-tab-icon:active {
+            background-color: var(--card-bg) !important;
+            border-color: var(--border-color) !important;
         }
         .btn-tab-icon:hover svg, .btn-tab-icon.active svg {
-            fill: white;
+            fill: var(--text-color) !important;
         }
+
 
         .tab-badge {
             font-size: 9.5px;           
