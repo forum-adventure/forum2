@@ -1034,34 +1034,33 @@ let hiddenForums = [];
         }
 
         // TẠO DROPDOWN MENU CHỨA CHECKBOX BỘ LỌC
-                // TẠO DROPDOWN MENU CHỨA CHECKBOX BỘ LỌC
+                // TẠO DROPDOWN MENU CHỨA CHECKBOX BỘ LỌC ĐÃ ĐỒNG BỘ THEO NGUỒN (ALL / INT / VN)
         function renderCheckboxMenu() {
             checkboxDropdownMenu.innerHTML = '';
             
-            // 1. Lấy danh sách domains thuộc nhóm đang active
-            let activeDomains = [];
+            // Xác định danh sách các domain cần hiển thị dựa theo bộ lọc nguồn chính (activeSource)
+            let filteredDomains = [];
             if (activeSource === 'all' || activeSource === 'int') {
-                activeDomains = activeDomains.concat(Object.keys(masterData.int));
+                filteredDomains = filteredDomains.concat(Object.keys(masterData.int));
             }
             if (activeSource === 'all' || activeSource === 'vn') {
-                activeDomains = activeDomains.concat(Object.keys(masterData.vn));
+                filteredDomains = filteredDomains.concat(Object.keys(masterData.vn));
             }
+            
+            // Loại bỏ các domain trùng lặp (nếu có)
+            filteredDomains = [...new Set(filteredDomains)];
+            
+            if (filteredDomains.length === 0) return;
 
-            // Lấy tất cả domains tổng thể để kiểm soát
-            const allDomains = [...Object.keys(masterData.int), ...Object.keys(masterData.vn)];
-            if (allDomains.length === 0) return;
-
-            allDomains.forEach(domain => {
+            filteredDomains.forEach(domain => {
                 const label = document.createElement('label');
                 label.className = 'checkbox-item';
                 
-                // Trạng thái Check phụ thuộc vào việc domain đó có nằm trong activeDomains VÀ không bị ẩn
-                const isActiveGroup = activeDomains.includes(domain);
-                const isChecked = isActiveGroup && !hiddenForums.includes(domain);
+                const isChecked = !hiddenForums.includes(domain);
                 
                 label.innerHTML = `
                     <input type="checkbox" value="${domain}" ${isChecked ? 'checked' : ''}>
-                    <span style="${!isActiveGroup ? 'opacity: 0.5; font-style: italic;' : ''}">${domain.toUpperCase()}</span>
+                    <span>${domain.toUpperCase()}</span>
                 `;
 
                 label.querySelector('input').addEventListener('change', (e) => {
@@ -1070,6 +1069,7 @@ let hiddenForums = [];
                         hiddenForums = hiddenForums.filter(item => item !== val);
                     } else {
                         if (!hiddenForums.includes(val)) hiddenForums.push(val);
+                        // Nếu đang đứng ở tab vừa bị ẩn, quay về tab 'all'
                         if (currentDomain === val) {
                             currentDomain = 'all';
                         }
@@ -1399,7 +1399,7 @@ let hiddenForums = [];
             customDropdown.classList.toggle('open');
         });
 
-                dropdownList.querySelectorAll('li').forEach(item => {
+        dropdownList.querySelectorAll('li').forEach(item => {
             item.addEventListener('click', (e) => {
                 e.stopPropagation();
                 
@@ -1407,21 +1407,10 @@ let hiddenForums = [];
                 item.classList.add('active');
                 
                 updateDropdownSelectedText();
+                
                 customDropdown.classList.remove('open'); 
                 
                 activeSource = item.getAttribute('data-value'); 
-                
-                // TỰ ĐỘNG ĐỔI CHECKBOX: Reset lại danh sách ẩn dựa trên nguồn diễn đàn được chọn
-                if (activeSource === 'all') {
-                    hiddenForums = []; // Hiện lại tất cả
-                } else if (activeSource === 'int') {
-                    // Ẩn toàn bộ các diễn đàn Việt Nam, hiện Quốc Tế
-                    hiddenForums = Object.keys(masterData.vn);
-                } else if (activeSource === 'vn') {
-                    // Ẩn toàn bộ các diễn đàn Quốc Tế, hiện Việt Nam
-                    hiddenForums = Object.keys(masterData.int);
-                }
-
                 currentPage = 1; 
                 currentDomain = 'all'; 
                 searchInput.value = ''; 
@@ -1431,7 +1420,6 @@ let hiddenForums = [];
                 updateCurrentForumsData(); 
             });
         });
-
 
         function resetToAllSource() {
             dropdownList.querySelectorAll('li').forEach(li => {
