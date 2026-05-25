@@ -1034,7 +1034,7 @@ let hiddenForums = [];
         // TẠO DROPDOWN MENU CHỨA CHECKBOX BỘ LỌC
         function renderCheckboxMenu() {
             checkboxDropdownMenu.innerHTML = '';
-            const allDomains = Object.keys(forumsData).sort();
+            const allDomains = [...Object.keys(masterData.vn), ...Object.keys(masterData.int)];
             
             if (allDomains.length === 0) return;
 
