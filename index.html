@@ -477,6 +477,7 @@
         .action-bar.search-active .search-input {
             cursor: text;
             padding-left: 42px; /* Thêm padding đẩy chữ qua phải, nhường chỗ cho icon */
+            padding-right: 32px; /* Thêm dòng này để chữ không đè lên nút X */
         }
     
 
@@ -711,6 +712,7 @@
     <div class="action-bar" id="actionBar">
         <div class="search-container" id="searchContainer">
             <input type="text" class="search-input" id="searchInput" placeholder="Tìm kiếm bài viết theo tiêu đề..." data-i18n-placeholder="search_placeholder">
+            <button id="clearSearch" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: transparent; border: none; color: var(--sub-text); font-size: 20px; cursor: pointer; display: none; z-index: 10;">&times;</button>
             <svg class="search-icon" viewBox="0 0 24 24">
                 <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
             </svg>
@@ -1339,15 +1341,29 @@ let hiddenForums = [];
             actionBar.classList.add('search-active');
         });
 
-        searchInput.addEventListener('input', (e) => {
-            clearTimeout(searchTimeout);
-            searchTimeout = setTimeout(() => { 
-                searchQuery = e.target.value.trim().toLowerCase(); 
-                currentPage = 1; 
-                resetRandomHistory(); 
-                displayPosts(); 
-            }, 300);
-        });
+        const clearSearchBtn = document.getElementById('clearSearch');
+
+searchInput.addEventListener('input', (e) => {
+    // 1. Chỉ thêm dòng này để tự ẩn/hiện nút X dựa trên việc có chữ hay không
+    clearSearchBtn.style.display = e.target.value.length > 0 ? 'block' : 'none';
+    
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => { 
+        searchQuery = e.target.value.trim().toLowerCase(); 
+        currentPage = 1; 
+        resetRandomHistory(); 
+        displayPosts(); 
+    }, 300);
+});
+
+// 2. Sự kiện click nút X: Xóa chữ và kích hoạt lại sự kiện 'input' có sẵn ở trên
+clearSearchBtn.addEventListener('click', () => {
+    searchInput.value = '';
+    clearSearchBtn.style.display = 'none';
+    searchInput.focus();
+    searchInput.dispatchEvent(new Event('input')); // Ép ô input chạy lại logic tự cập nhật danh sách của bạn
+});
+
 
         document.addEventListener('click', (e) => {
             const isClickInsideSearch = document.getElementById('searchContainer').contains(e.target);
