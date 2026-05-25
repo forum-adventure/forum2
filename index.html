@@ -1153,13 +1153,27 @@ let hiddenForums = [];
         }
 
         function getActivePosts() {
-            let targetPosts = [];
-            if (currentDomain === 'fav_bookmarks') { targetPosts = [...bookmarks]; }
-            else if (currentDomain === 'all') { Object.values(forumsData).forEach(posts => { targetPosts = targetPosts.concat(posts); }); }
-            else { targetPosts = forumsData[currentDomain] || []; }
-            if (searchQuery !== '') { targetPosts = targetPosts.filter(post => post.title.toLowerCase().includes(searchQuery)); }
-            return targetPosts;
-        }
+    let targetPosts = [];
+    if (currentDomain === 'fav_bookmarks') {
+        targetPosts = [...bookmarks];
+    } else if (currentDomain === 'all') {
+        // Chỉ lấy bài viết từ các diễn đàn KHÔNG bị ẩn
+        Object.entries(forumsData).forEach(([domain, posts]) => {
+            if (!hiddenForums.includes(domain)) {
+                targetPosts = targetPosts.concat(posts);
+            }
+        });
+    } else {
+        // Nếu danh mục hiện tại bị ẩn thì không trả về bài viết nào
+        targetPosts = hiddenForums.includes(currentDomain) ? [] : (forumsData[currentDomain] || []);
+    }
+
+    if (searchQuery !== '') {
+        targetPosts = targetPosts.filter(post => post.title.toLowerCase().includes(searchQuery));
+    }
+    return targetPosts;
+}
+
 
         function displayPosts() {
             listContainer.innerHTML = ''; 
