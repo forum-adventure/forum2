@@ -346,44 +346,24 @@
         }
 
         /* CSS MỚI CHO PHẦN CHỌN NHIỀU DIỄN ĐÀN CỤ THỂ */
-        /* CSS MỚI CHO PHẦN CHỌN NHIỀU DIỄN ĐÀN CỤ THỂ */
-.custom-dropdown.open .sub-menu-container {
-    display: block; /* Hiển thị khi dropdown có class .open */
-}
-
-.sub-menu-container {
-    position: absolute;       /* Giúp cố định vị trí theo hộp dropdown chính */
-    top: calc(100% + 6px);    /* Đẩy xuống bằng góc với dropdown-list cũ */
-    left: 0;
-    width: 100%;
-    background-color: var(--card-bg);
-    border: 1px solid var(--border-color);
-    border-radius: 12px;
-    margin: 0;
-    box-sizing: border-box;
-    max-height: 220px;
-    overflow-y: auto;
-    display: none;
-    z-index: 101;             /* Nằm trên một chút hoặc bằng dropdown-list */
-    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
-    
-    /* Tạo khoảng đệm lề */
-    padding: 6px 0;
-}
-
-/* Sửa lại item bên trong vì bây giờ nó không nằm trong UL nữa, đổi list-style thành none */
-.sub-menu-item {
-    padding: 8px 16px !important;
-    font-size: 13px;
-    list-style: none; /* Đảm bảo không bị hiện dấu chấm tròn của danh sách */
-}
-
+        .sub-menu-container {
+            border-top: 1px dashed var(--border-color);
+            margin-top: 4px;
+            padding-top: 4px;
+            max-height: 220px;
+            overflow-y: auto;
+            display: none;
+        }
 
         .custom-dropdown.open .sub-menu-container {
             display: block;
         }
 
-       
+        .sub-menu-item {
+            padding: 8px 24px !important;
+            font-size: 13px;
+            font-weight: 400 !important;
+        }
 
         .sub-menu-item input[type="checkbox"] {
             margin-right: 10px;
@@ -704,16 +684,15 @@
         </div>
         
         <div class="custom-dropdown" id="customDropdown">
-    <div class="dropdown-selected" id="dropdownSelected" data-i18n="dropdown_all">Tất cả diễn đàn</div>
-    <ul class="dropdown-list" id="dropdownList">
-        <li data-value="all" class="active" data-i18n="dropdown_all">Tất cả diễn đàn</li>
-        <li data-value="vn" data-i18n="dropdown_vn">Diễn đàn Việt Nam</li>
-        <li data-value="int" data-i18n="dropdown_int">Diễn đàn Quốc tế</li>
-        <li data-value="sub" data-i18n="sub_menu_all">Chọn lọc diễn đàn cụ thể</li>
-    </ul>
-    <div class="sub-menu-container" id="subMenuContainer"></div>
-</div>
-
+            <div class="dropdown-selected" id="dropdownSelected" data-i18n="dropdown_all">Tất cả diễn đàn</div>
+            <ul class="dropdown-list" id="dropdownList">
+                <li data-value="all" class="active" data-i18n="dropdown_all">Tất cả diễn đàn</li>
+                <li data-value="vn" data-i18n="dropdown_vn">Diễn đàn Việt Nam</li>
+                <li data-value="int" data-i18n="dropdown_int">Diễn đàn Quốc tế</li>
+                <li data-value="sub" data-i18n="sub_menu_all">Chọn lọc diễn đàn cụ thể</li>
+                <div class="sub-menu-container" id="subMenuContainer"></div>
+            </ul>
+        </div>
 
         <button class="btn-action-util btn-random" id="btnRandom" title="Xem ngẫu nhiên một bài viết từ danh mục hiện tại" data-i18n="random_btn">Đọc ngẫu nhiên</button>
     </div>
@@ -1016,8 +995,8 @@
             const sortedDomains = Array.from(allDomains).sort();
 
             sortedDomains.forEach(domain => {
-                const itemDiv = document.createElement('div');
-itemDiv.className = 'sub-menu-item';
+                const li = document.createElement('li');
+                li.className = 'sub-menu-item';
                 
                 const label = document.createElement('label');
                 
@@ -1054,9 +1033,9 @@ itemDiv.className = 'sub-menu-item';
                 });
 
                 label.appendChild(checkbox);
-label.appendChild(document.createTextNode(domain.toUpperCase()));
-itemDiv.appendChild(label);
-subMenuContainer.appendChild(itemDiv);
+                label.appendChild(document.createTextNode(domain.toUpperCase()));
+                li.appendChild(label);
+                subMenuContainer.appendChild(li);
             });
         }
 
