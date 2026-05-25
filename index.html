@@ -258,6 +258,7 @@
             font-weight: 600;
             user-select: none;
             transition: flex 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
         }
 
         .dropdown-selected {
@@ -345,36 +346,35 @@
             font-weight: 600;
         }
 
-        /* CẤU HÌNH MỚI CHO VÙNG CHỌN RIÊNG BIỆT BÊN NGOÀI */
+        /* ĐỊNH DẠNG VÙNG CHỨA CHECKBOX BÊN TRONG DROPDOWN KHÔNG BỊ LỖI HIỂN THỊ */
         .sub-menu-container {
-            background: var(--card-bg);
-            border: 1px dashed var(--border-color);
-            border-radius: 12px;
-            margin-top: -12px;
-            margin-bottom: 24px;
-            padding: 16px;
-            display: none; /* Mặc định ẩn, chỉ hiện khi chọn lọc cụ thể */
-            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-            gap: 10px;
-            box-shadow: var(--card-shadow);
-            animation: fadeIn 0.25s ease-in-out;
-            max-height: 250px;
+            border-top: 1px dashed var(--border-color);
+            margin-top: 6px;
+            padding: 6px 0 0 0;
+            display: none; 
+            flex-direction: column;
+            max-height: 220px;
             overflow-y: auto;
+            width: 100%;
         }
 
-        /* Hiện dạng lưới (Grid) khi được kích hoạt class show-external */
+        /* Hiển thị vùng con khi danh mục 'sub' được kích hoạt active */
+        .dropdown-list li[data-value="sub"].active #subMenuContainer,
+        #dropdownList li[data-value="sub"].active + #subMenuContainer,
         .sub-menu-container.show-external {
-            display: grid;
+            display: flex;
         }
 
         .sub-menu-item {
             list-style: none;
-            padding: 4px 0 !important;
+            padding: 8px 24px !important;
             font-size: 13px;
+            display: flex;
+            align-items: center;
         }
 
         .sub-menu-item input[type="checkbox"] {
-            margin-right: 8px;
+            margin-right: 12px;
             accent-color: var(--accent-color);
             cursor: pointer;
             width: 16px;
@@ -707,14 +707,14 @@
                 <li data-value="all" class="active" data-i18n="dropdown_all">Tất cả diễn đàn</li>
                 <li data-value="vn" data-i18n="dropdown_vn">Diễn đàn Việt Nam</li>
                 <li data-value="int" data-i18n="dropdown_int">Diễn đàn Quốc tế</li>
-                <li data-value="sub" data-i18n="sub_menu_all">Chọn lọc diễn đàn cụ thể</li>
+                <li data-value="sub" data-i18n="sub_menu_all">Chọn lọc diễn đàn cụ thể
+                    <div class="sub-menu-container" id="subMenuContainer"></div>
+                </li>
             </ul>
         </div>
 
         <button class="btn-action-util btn-random" id="btnRandom" title="Xem ngẫu nhiên một bài viết từ danh mục hiện tại" data-i18n="random_btn">Đọc ngẫu nhiên</button>
     </div>
-
-    <div class="sub-menu-container" id="subMenuContainer"></div>
 
     <div class="filter-container" id="filterContainer"></div>
 
@@ -726,7 +726,7 @@
     <div class="random-nav-container" id="randomNavContainer"></div>
 
     <script>
-        // CẤU HÌNH NGÔN NGỮ ĐA QUỐC GIA (Mở rộng tùy ý)
+        // CẤU HÌNH NGÔN NGỮ ĐA QUỐC GIA
         const languages = {
             vi: {
                 contribute: "đóng góp link bài viết",
@@ -793,7 +793,7 @@
 
         let randomHistory = [];
         let currentRandomIndex = -1;
-        let selectedSpecificForums = []; // Lưu trữ mảng các domain được check chọn riêng lẻ
+        let selectedSpecificForums = []; 
 
         let readHistory = JSON.parse(localStorage.getItem('read_history')) || [];
         let bookmarks = JSON.parse(localStorage.getItem('bookmarks')) || [];
@@ -816,7 +816,6 @@
         document.documentElement.setAttribute('data-theme', savedTheme);
         updateThemeUI(savedTheme);
 
-        // Khởi động ngôn ngữ ban đầu
         applyLanguage(currentLang);
 
         btnThemeToggle.addEventListener('click', () => {
@@ -1001,21 +1000,24 @@
             });
         }
 
-        // HÀM MỚI: Xây dựng cấu trúc danh sách Checkbox cụ thể dạng Grid bên ngoài
+        // SỬA LỖI: Xây dựng cấu trúc danh sách Checkbox an toàn, không bị xung đột sự kiện đóng menu
         function buildSubMenuCheckboxes() {
             subMenuContainer.innerHTML = '';
-            // Gộp tất cả domain duy nhất từ cả vn và int
             const allDomains = new Set([
                 ...Object.keys(masterData.vn),
                 ...Object.keys(masterData.int)
             ]);
 
-            // Sắp xếp Alphabet cho dễ tìm kiếm
             const sortedDomains = Array.from(allDomains).sort();
 
             sortedDomains.forEach(domain => {
-                const li = document.createElement('li');
+                const li = document.createElement('div');
                 li.className = 'sub-menu-item';
+                
+                // Ngăn sự kiện click vào phần tử con truyền lên làm đóng dropdown cha
+                li.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                });
                 
                 const label = document.createElement('label');
                 
@@ -1023,7 +1025,15 @@
                 checkbox.type = 'checkbox';
                 checkbox.value = domain;
 
-                // Xử lý logic khi check/uncheck bài viết
+                // Đồng bộ nếu domain này đã từng được tick chọn trước đó
+                if (selectedSpecificForums.includes(domain)) {
+                    checkbox.checked = true;
+                }
+
+                checkbox.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                });
+
                 checkbox.addEventListener('change', (e) => {
                     if (checkbox.checked) {
                         if (!selectedSpecificForums.includes(domain)) {
@@ -1033,7 +1043,6 @@
                         selectedSpecificForums = selectedSpecificForums.filter(d => d !== domain);
                     }
 
-                    // Đồng bộ trạng thái Active cho dòng "Chọn lọc diễn đàn cụ thể" trong list ẩn
                     dropdownList.querySelectorAll('li').forEach(li => li.classList.remove('active'));
                     const subTargetLi = dropdownList.querySelector('li[data-value="sub"]');
                     if(subTargetLi) subTargetLi.classList.add('active');
@@ -1056,7 +1065,6 @@
         function updateCurrentForumsData() {
             forumsData = {};
             
-            // Nếu lọc theo cấu hình check chọn cụ thể
             if (activeSource === 'sub') {
                 const allSources = { ...masterData.vn, ...masterData.int };
                 selectedSpecificForums.forEach(domain => {
@@ -1354,27 +1362,27 @@
             customDropdown.classList.toggle('open');
         });
 
+        // SỬA LỖI: Logic chuyển đổi cấu trúc thông minh
         dropdownList.querySelectorAll('li').forEach(item => {
             item.addEventListener('click', (e) => {
                 e.stopPropagation();
                 
                 const dataVal = item.getAttribute('data-value');
                 
-                dropdownList.querySelectorAll('li').forEach(li => li.classList.remove('active'));
-                item.classList.add('active');
-
-                // Nếu bấm vào nút chọn lọc cụ thể, kích hoạt hiển thị vùng Grid ngoài và đóng dropdown
+                // NẾU CHỌN LỌC CỤ THỂ: Không đóng menu, chỉ kích hoạt class để danh sách checkbox hiển thị mượt mà
                 if (dataVal === 'sub') {
+                    dropdownList.querySelectorAll('li').forEach(li => li.classList.remove('active'));
+                    item.classList.add('active');
                     activeSource = 'sub';
-                    subMenuContainer.classList.add('show-external'); 
                     updateDropdownSelectedText();
                     updateCurrentForumsData();
-                    customDropdown.classList.remove('open'); 
-                    return;
+                    return; 
                 }
 
-                // Nếu chọn các danh mục lớn tĩnh (Tất cả, VN, Quốc tế), ẩn vùng chọn và xóa trạng thái checkbox
-                subMenuContainer.classList.remove('show-external');
+                // NẾU CHỌN CÁC MỤC LỚN: Xóa hết checkbox đã chọn và đóng menu lại
+                dropdownList.querySelectorAll('li').forEach(li => li.classList.remove('active'));
+                item.classList.add('active');
+                
                 subMenuContainer.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
                 selectedSpecificForums = [];
 
@@ -1398,7 +1406,6 @@
                 else li.classList.remove('active');
             });
 
-            subMenuContainer.classList.remove('show-external');
             subMenuContainer.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
             selectedSpecificForums = [];
 
