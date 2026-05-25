@@ -720,8 +720,9 @@
             <div class="dropdown-selected" id="dropdownSelected" data-i18n="dropdown_all">Tất cả diễn đàn</div>
             <ul class="dropdown-list" id="dropdownList">
                 <li data-value="all" class="active" data-i18n="dropdown_all">Tất cả diễn đàn</li>
-                <li data-value="vn" data-i18n="dropdown_vn">Diễn đàn Việt Nam</li>
                 <li data-value="int" data-i18n="dropdown_int">Diễn đàn Quốc tế</li>
+                <li data-value="vn" data-i18n="dropdown_vn">Diễn đàn Việt Nam</li>
+                
             </ul>
         </div>
 
@@ -1015,18 +1016,19 @@ let hiddenForums = [];
 
         function updateCurrentForumsData() {
             forumsData = {};
-            if (activeSource === 'all' || activeSource === 'vn') {
-                for (const [domain, posts] of Object.entries(masterData.vn)) {
-                    if (!forumsData[domain]) forumsData[domain] = [];
-                    forumsData[domain] = forumsData[domain].concat(posts);
-                }
-            }
             if (activeSource === 'all' || activeSource === 'int') {
                 for (const [domain, posts] of Object.entries(masterData.int)) {
                     if (!forumsData[domain]) forumsData[domain] = [];
                     forumsData[domain] = forumsData[domain].concat(posts);
                 }
             }
+            if (activeSource === 'all' || activeSource === 'vn') {
+                for (const [domain, posts] of Object.entries(masterData.vn)) {
+                    if (!forumsData[domain]) forumsData[domain] = [];
+                    forumsData[domain] = forumsData[domain].concat(posts);
+                }
+            }
+            
             renderTabs();
             renderCheckboxMenu();
         }
@@ -1034,7 +1036,7 @@ let hiddenForums = [];
         // TẠO DROPDOWN MENU CHỨA CHECKBOX BỘ LỌC
         function renderCheckboxMenu() {
             checkboxDropdownMenu.innerHTML = '';
-            const allDomains = [...Object.keys(masterData.vn), ...Object.keys(masterData.int)];
+            const allDomains = [...Object.keys(masterData.int), ...Object.keys(masterData.vn)];
             
             if (allDomains.length === 0) return;
 
