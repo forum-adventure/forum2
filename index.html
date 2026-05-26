@@ -1287,6 +1287,7 @@ label.querySelector('input').addEventListener('change', (e) => {
 
 
         // Hàm hỗ trợ lấy toàn bộ bài viết từ các diễn đàn không bị ẩn (Dạng mảng phẳng)
+// Hàm hỗ trợ lấy toàn bộ bài viết từ các diễn đàn không bị ẩn (Dạng mảng phẳng)
 function getAllFlattenedPosts() {
     const availableDomains = Object.keys(forumsData).filter(domain => !hiddenForums.includes(domain));
     let flattened = [];
@@ -1298,7 +1299,8 @@ function getAllFlattenedPosts() {
     if (searchQuery !== '') {
         try {
             const escapedQuery = searchQuery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-            const searchRegex = new RegExp('\\b' + escapedQuery, 'i');
+            // ĐÃ SỬA: Loại bỏ \\b để tìm kiếm khớp chính xác với tiếng Việt có dấu
+            const searchRegex = new RegExp(escapedQuery, 'i');
             flattened = flattened.filter(post => searchRegex.test(post.title));
         } catch (e) {
             console.error("Lỗi Regex Search:", e);
@@ -1313,7 +1315,8 @@ function getActivePosts() {
         if (searchQuery !== '') {
             try {
                 const escapedQuery = searchQuery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-                const searchRegex = new RegExp('\\b' + escapedQuery, 'i');
+                // ĐÃ SỬA: Loại bỏ \\b
+                const searchRegex = new RegExp(escapedQuery, 'i');
                 targetPosts = targetPosts.filter(post => searchRegex.test(post.title));
             } catch (e) {}
         }
@@ -1330,12 +1333,14 @@ function getActivePosts() {
     if (searchQuery !== '') {
         try {
             const escapedQuery = searchQuery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-            const searchRegex = new RegExp('\\b' + escapedQuery, 'i');
+            // ĐÃ SỬA: Loại bỏ \\b
+            const searchRegex = new RegExp(escapedQuery, 'i');
             targetPosts = targetPosts.filter(post => searchRegex.test(post.title));
         } catch (e) {}
     }
     return targetPosts;
 }
+
 
 
 
