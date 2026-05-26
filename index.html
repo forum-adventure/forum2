@@ -858,7 +858,7 @@
         // Quản lý danh sách các diễn đàn bị ẩn tạm thời (Không lưu localStorage)
         let hiddenForums = [];
 
-        let readHistory = JSON.parse(localStorage.getItem('read_history')) || [];
+        
         let bookmarks = JSON.parse(localStorage.getItem('bookmarks')) || [];
         const defaultAvatar = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2394a3b8'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.53c-.26-.81-1-1.4-1.9-1.4h-1v-3c0-.55-.45-1-1-1h-6v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z'/></svg>";
         const localFaviconFolder = "favicons"; 
@@ -1277,7 +1277,7 @@
         }
 
                 function renderPostCard(post) {
-            const isRead = readHistory.includes(post.url);
+            
             const isBookmarked = bookmarks.some(b => b.url === post.url);
 
             const faviconUrl = `${localFaviconFolder}/${post.domain}.png`; 
@@ -1301,7 +1301,8 @@ if (searchQuery && searchQuery.trim() !== '') {
             
 
             const postItem = document.createElement('div');
-            postItem.className = `post-item ${isRead ? 'is-read' : ''}`;
+            postItem.className = `post-item`;
+
             postItem.innerHTML = `
                 <img class="post-avatar" src="${faviconUrl}" alt="${post.domain}" onerror="this.onerror=null; this.src='${defaultAvatar}';">
                 <div class="post-content-block">
@@ -1311,13 +1312,7 @@ if (searchQuery && searchQuery.trim() !== '') {
                 <button class="btn-bookmark ${isBookmarked ? 'active' : ''}" title="Đánh dấu yêu thích">${isBookmarked ? '★' : '☆'}</button>
             `;
 
-            postItem.querySelector('.post-title').addEventListener('click', () => {
-                if (!readHistory.includes(post.url)) {
-                    readHistory.push(post.url);
-                    localStorage.setItem('read_history', JSON.stringify(readHistory));
-                    postItem.classList.add('is-read');
-                }
-            });
+            
 
             postItem.querySelector('.btn-bookmark').addEventListener('click', (e) => {
                 e.stopPropagation();
