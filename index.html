@@ -1610,7 +1610,7 @@ document.addEventListener('pointerdown', (e) => {
     
     // ================= PHẦN XỬ LÝ XUẤT/NHẬP DỮ LIỆU YÊU THÍCH =================
 
-// 1. Hàm xuất dữ liệu ra file TXT
+// 1. Hàm xuất dữ liệu ra file TXT theo cấu trúc: Tiêu đề | URL
 function exportBookmarks() {
     const currentBookmarks = JSON.parse(localStorage.getItem('bookmarks')) || [];
     if (currentBookmarks.length === 0) {
@@ -1618,11 +1618,12 @@ function exportBookmarks() {
         return;
     }
     
-    // Chuyển mảng object thành chuỗi JSON text ngắn gọn
-    const dataStr = JSON.stringify(currentBookmarks);
-    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+    // Chuyển mảng object thành chuỗi văn bản thuần dạng: Tiêu đề | URL
+    const lines = currentBookmarks.map(item => `${item.title} | ${item.url}`);
+    const dataStr = lines.join('\n');
+    const dataUri = 'data:text/plain;charset=utf-8,' + encodeURIComponent(dataStr);
     
-    // Tạo tên file chứa ngày xuất cho người dùng dễ quản lý
+    // Tạo tên file chứa ngày xuất
     const dateStr = new Date().toISOString().slice(0,10);
     const exportFileDefaultName = `forum_favorites_${dateStr}.txt`;
     
@@ -1637,14 +1638,14 @@ function importBookmarks() {
     document.getElementById('importFileInput').click();
 }
 
-// 3. Xử lý đọc file text tải lên và kiểm tra lỗi logic dữ liệu
+// 3. Xử lý đọc file text dạng "Tiêu đề | URL" và nạp vào hệ thống
 function handleFileSelect(event) {
     const input = event.target;
     if (!input.files || input.files.length === 0) return;
     
     // Cảnh báo người dùng hành động này sẽ ghi đè dữ liệu cũ
     if (!confirm(languages[currentLang].confirm_import)) {
-        input.value = ''; // Reset input để có thể chọn lại lần sau
+        input.value = ''; 
         return;
     }
 
@@ -1660,15 +1661,32 @@ function handleFileSelect(event) {
         }
         
         try {
-            // Thử parse dữ liệu text xem đúng cấu trúc mảng JSON bài viết không
-            const parsedData = JSON.parse(text);
+            // Tách file thành từng dòng
+            const lines = text.split('\n');
+            const parsedData = [];
             
-            if (Array.isArray(parsedData)) {
-                // Kiểm tra sơ bộ tính đúng đắn cấu trúc của phần tử đầu tiên (phải có url và title)
-                if (parsedData.length > 0 && (!parsedData[0].url || !parsedData[0].title)) {
-                    throw new Error("Sai cấu trúc object bài viết");
-                }
+            lines.forEach(line => {
+                if (!line.trim()) return; // Bỏ qua dòng trống
                 
+                const parts = line.split('|');
+                if (parts.length >= 2) {
+                    const title = parts[0].trim();
+                    const url = parts[1].trim();
+                    
+                    try {
+                        // Tự động bóc tách domain từ URL để cấp Favicon chính xác
+                        const urlObj = new URL(url);
+                        const domain = urlObj.hostname.replace('www.', '');
+                        
+                        parsedData.push({ title, url, domain });
+                    } catch (urlErr) {
+                        // Nếu URL không hợp lệ thì bỏ qua dòng đó
+                        console.warn("URL không hợp lệ:", url);
+                    }
+                }
+            });
+            
+            if (parsedData.length > 0) {
                 // Ghi đè vào bộ nhớ tạm toàn cục và LocalStorage
                 bookmarks = parsedData;
                 localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
