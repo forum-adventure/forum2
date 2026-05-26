@@ -814,6 +814,13 @@
                 source_label: "Nguồn: ",
                 error_server: "Không thể kết nối máy chủ dữ liệu.",
                 filter_tooltip: "Ẩn/hiện diễn đàn"
+                empty_bookmarks: "Bạn chưa có bài viết yêu thích nào. Hãy bấm nút ★ ở các bài viết để lưu lại nhé!",
+        btn_export: "📤 Xuất dữ liệu",
+        btn_import: "📥 Nhập dữ liệu",
+        import_success: "Nhập danh sách yêu thích thành công!",
+        import_invalid: "File dữ liệu không hợp lệ hoặc bị lỗi!",
+        import_empty: "File dữ liệu trống!",
+        confirm_import: "Hành động này sẽ ghi đè lên danh sách yêu thích hiện tại. Bạn có chắc chắn muốn tiếp tục?"
             },
             en: {
                 contribute: "contribute post links",
@@ -838,6 +845,13 @@
                 source_label: "Source: ",
                 error_server: "Failed to connect to data server.",
                 filter_tooltip: "Show/hide forums"
+                  empty_bookmarks: "You don't have any favorite posts yet. Click the ★ button on any post to save it!",
+        btn_export: "📤 Export Data",
+        btn_import: "📥 Import Data",
+        import_success: "Favorites imported successfully!",
+        import_invalid: "Invalid data file or corrupted!",
+        import_empty: "Data file is empty!",
+        confirm_import: "This will overwrite your current favorites. Do you want to proceed?" 
             }
         };
 
@@ -1257,24 +1271,62 @@
 
 
         function displayPosts() {
-            listContainer.innerHTML = ''; 
-            randomNavContainer.innerHTML = ''; 
-            const targetPosts = getActivePosts();
-            if (targetPosts.length === 0) {
-                listContainer.innerHTML = `<div class="empty-message">${languages[currentLang].not_found}</div>`;
-                paginationContainer.innerHTML = '';
-                return;
-            }
-            const totalPages = Math.ceil(targetPosts.length / postsPerPage);
-            if (currentPage > totalPages) currentPage = totalPages || 1;
-            const startIndex = (currentPage - 1) * postsPerPage;
-            const paginatedPosts = targetPosts.slice(startIndex, startIndex + postsPerPage);
+    listContainer.innerHTML = ''; 
+    randomNavContainer.innerHTML = ''; 
+    const targetPosts = getActivePosts();
 
-            paginatedPosts.forEach(post => {
-                renderPostCard(post);
-            });
-            renderPagination(totalPages);
-        }
+    // TRƯỜNG HỢP: Tab Yêu thích trống
+    if (currentDomain === 'fav_bookmarks' && targetPosts.length === 0) {
+        listContainer.innerHTML = `
+            <div class="empty-bookmarks-wrapper" style="text-align: center; padding: 40px 20px; background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border-color); animation: fadeIn 0.3s ease;">
+                <svg width="120" height="120" viewBox="0 0 24 24" fill="none" style="margin: 0 auto 16px; display: block; opacity: 0.7;">
+                    <path d="M19 1H5C3.9 1 3 1.9 3 3V21C3 22.1 3.9 23 5 23H19C20.1 23 21 22.1 21 21V3C21 1.9 20.1 1 19 1ZM19 21H5V3H19V21Z" fill="var(--sub-text)"/>
+                    <path d="M12 18.05L11.05 17.18C7.67 14.12 5.45 12.11 5.45 9.65C5.45 7.62 7.04 6.03 9.05 6.03C10.19 6.03 11.28 6.56 12 7.4C12.72 6.56 13.81 6.03 14.95 6.03C16.96 6.03 18.55 7.62 18.55 9.65C18.55 12.11 16.33 14.12 12.95 17.19L12 18.05Z" fill="var(--star-active)" style="opacity: 0.65;"/>
+                </svg>
+                <div style="font-weight: 500; font-size: 14.5px; color: var(--text-color); max-width: 450px; margin: 0 auto 20px; line-height: 1.5;">
+                    ${languages[currentLang].empty_bookmarks}
+                </div>
+                
+                <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                    <button class="btn-tab" onclick="importBookmarks()" style="padding: 8px 16px; font-size: 12px;">${languages[currentLang].btn_import}</button>
+                    <input type="file" id="importFileInput" accept=".txt" style="display: none;" onchange="handleFileSelect(event)">
+                </div>
+            </div>
+        `;
+        paginationContainer.innerHTML = '';
+        return;
+    }
+
+    // TRƯỜNG HỢP: Các bộ lọc khác hoặc Tìm kiếm không ra kết quả
+    if (targetPosts.length === 0) {
+        listContainer.innerHTML = `<div class="empty-message">${languages[currentLang].not_found}</div>`;
+        paginationContainer.innerHTML = '';
+        return;
+    }
+
+    // Nếu là tab Yêu thích và CÓ bài viết, chèn thêm thanh công cụ Xuất dữ liệu lên đầu danh sách bài viết
+    if (currentDomain === 'fav_bookmarks') {
+        const backupBar = document.createElement('div');
+        backupBar.style = "display: flex; gap: 10px; justify-content: flex-end; margin-bottom: 12px; padding: 0 4px;";
+        backupBar.innerHTML = `
+            <button class="btn-tab" onclick="exportBookmarks()" style="padding: 6px 12px; font-size: 11px; opacity: 0.8;">${languages[currentLang].btn_export}</button>
+            <button class="btn-tab" onclick="importBookmarks()" style="padding: 6px 12px; font-size: 11px; opacity: 0.8;">${languages[currentLang].btn_import}</button>
+            <input type="file" id="importFileInput" accept=".txt" style="display: none;" onchange="handleFileSelect(event)">
+        `;
+        listContainer.appendChild(backupBar);
+    }
+
+    const totalPages = Math.ceil(targetPosts.length / postsPerPage);
+    if (currentPage > totalPages) currentPage = totalPages || 1;
+    const startIndex = (currentPage - 1) * postsPerPage;
+    const paginatedPosts = targetPosts.slice(startIndex, startIndex + postsPerPage);
+
+    paginatedPosts.forEach(post => {
+        renderPostCard(post);
+    });
+    renderPagination(totalPages);
+}
+
 
                 function renderPostCard(post) {
             
@@ -1555,6 +1607,94 @@ document.addEventListener('pointerdown', (e) => {
         });
 
         window.addEventListener('DOMContentLoaded', () => loadExternalData());
+    
+    // ================= PHẦN XỬ LÝ XUẤT/NHẬP DỮ LIỆU YÊU THÍCH =================
+
+// 1. Hàm xuất dữ liệu ra file TXT
+function exportBookmarks() {
+    const currentBookmarks = JSON.parse(localStorage.getItem('bookmarks')) || [];
+    if (currentBookmarks.length === 0) {
+        alert(languages[currentLang].alert_no_post);
+        return;
+    }
+    
+    // Chuyển mảng object thành chuỗi JSON text ngắn gọn
+    const dataStr = JSON.stringify(currentBookmarks);
+    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+    
+    // Tạo tên file chứa ngày xuất cho người dùng dễ quản lý
+    const dateStr = new Date().toISOString().slice(0,10);
+    const exportFileDefaultName = `forum_favorites_${dateStr}.txt`;
+    
+    const linkElement = document.createElement('a');
+    linkElement.setAttribute('href', dataUri);
+    linkElement.setAttribute('download', exportFileDefaultName);
+    linkElement.click();
+}
+
+// 2. Hàm kích hoạt mở cửa sổ chọn file
+function importBookmarks() {
+    document.getElementById('importFileInput').click();
+}
+
+// 3. Xử lý đọc file text tải lên và kiểm tra lỗi logic dữ liệu
+function handleFileSelect(event) {
+    const input = event.target;
+    if (!input.files || input.files.length === 0) return;
+    
+    // Cảnh báo người dùng hành động này sẽ ghi đè dữ liệu cũ
+    if (!confirm(languages[currentLang].confirm_import)) {
+        input.value = ''; // Reset input để có thể chọn lại lần sau
+        return;
+    }
+
+    const file = input.files[0];
+    const reader = new FileReader();
+    
+    reader.onload = function(e) {
+        const text = e.target.result.trim();
+        if (!text) {
+            alert(languages[currentLang].import_empty);
+            input.value = '';
+            return;
+        }
+        
+        try {
+            // Thử parse dữ liệu text xem đúng cấu trúc mảng JSON bài viết không
+            const parsedData = JSON.parse(text);
+            
+            if (Array.isArray(parsedData)) {
+                // Kiểm tra sơ bộ tính đúng đắn cấu trúc của phần tử đầu tiên (phải có url và title)
+                if (parsedData.length > 0 && (!parsedData[0].url || !parsedData[0].title)) {
+                    throw new Error("Sai cấu trúc object bài viết");
+                }
+                
+                // Ghi đè vào bộ nhớ tạm toàn cục và LocalStorage
+                bookmarks = parsedData;
+                localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
+                
+                // Thông báo và tự động vẽ lại giao diện tức thì
+                alert(languages[currentLang].import_success);
+                
+                // Cập nhật lại số lượng huy hiệu (badge) trên tab Yêu thích
+                const favTab = filterContainer.querySelector('[data-domain="fav_bookmarks"] .tab-badge');
+                if (favTab) favTab.textContent = bookmarks.length;
+                
+                // Reload tab hiện tại
+                displayPosts();
+            } else {
+                alert(languages[currentLang].import_invalid);
+            }
+        } catch (err) {
+            console.error("Lỗi import file:", err);
+            alert(languages[currentLang].import_invalid);
+        }
+        input.value = ''; // Làm sạch input file
+    };
+    
+    reader.readAsText(file);
+}
+
     </script>
 </body>
 </html>
