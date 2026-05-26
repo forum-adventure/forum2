@@ -1228,26 +1228,34 @@
         }
 
         function getActivePosts() {
-            let targetPosts = [];
-            if (currentDomain === 'fav_bookmarks') {
-                targetPosts = [...bookmarks];
-            } else if (currentDomain === 'all') {
-                Object.entries(forumsData).forEach(([domain, posts]) => {
-                    if (!hiddenForums.includes(domain)) {
-                        targetPosts = targetPosts.concat(posts);
-                    }
-                });
-            } else {
-                targetPosts = hiddenForums.includes(currentDomain) ? [] : (forumsData[currentDomain] || []);
+    let targetPosts = [];
+    if (currentDomain === 'fav_bookmarks') {
+        targetPosts = [...bookmarks];
+    } else if (currentDomain === 'all') {
+        Object.entries(forumsData).forEach(([domain, posts]) => {
+            if (!hiddenForums.includes(domain)) {
+                targetPosts = targetPosts.concat(posts);
             }
+        });
+    } else {
+        targetPosts = hiddenForums.includes(currentDomain) ? [] : (forumsData[currentDomain] || []);
+    }
 
-            // Tìm kiếm theo ký tự đầu của từ (Starts With Word)
-if (searchQuery !== '') {
-    // Ép chữ về chuỗi an toàn để không bị lỗi Regex nếu gõ ký tự đặc biệt
-    const escapedQuery = searchQuery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    // \b ở đầu nghĩa là bắt buộc phải là bắt đầu của một từ mới
-    const regex = new RegExp('\\b' + escapedQuery, 'i');
-    targetPosts = targetPosts.filter(post => regex.test(post.title));
+    // --- NÂNG CẤP LOGIC TÌM KIẾM CHÍNH XÁC TỪ ĐẦU TỪ ---
+    if (searchQuery !== '') {
+        try {
+            // Escape các ký tự đặc biệt để tránh lỗi Regex vỡ hệ thống
+            const escapedQuery = searchQuery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            
+            // \b giúp định vị ranh giới từ (chữ cái đầu tiên của một từ)
+            const searchRegex = new RegExp('\\b' + escapedQuery, 'i');
+            
+            targetPosts = targetPosts.filter(post => searchRegex.test(post.title));
+        } catch (e) {
+            console.error("Lỗi Regex Search:", e);
+        }
+    }
+    return targetPosts;
 }
 
 
