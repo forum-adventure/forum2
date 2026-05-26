@@ -843,7 +843,6 @@
                 error_server: "Không thể kết nối máy chủ dữ liệu.",
                 filter_tooltip: "Ẩn/hiện diễn đàn",
                 empty_bookmarks: "Bạn chưa có bài viết yêu thích nào. Hãy bấm nút ★ ở các bài viết để lưu lại nhé!",
-                new_feed_title: "New Feed ✨", // <-- Thêm dòng này
         btn_export: "📤 Xuất dữ liệu",
         btn_import: "📥 Nhập dữ liệu",
         import_success: "Nhập danh sách yêu thích thành công!",
@@ -875,7 +874,6 @@
                 error_server: "Failed to connect to data server.",
                 filter_tooltip: "Show/hide forums",
                   empty_bookmarks: "You don't have any favorite posts yet. Click the ★ button on any post to save it!",
-                new_feed_title: "New Feed ✨", // <-- Thêm dòng này
         btn_export: "📤 Export Data",
         btn_import: "📥 Import Data",
         import_success: "Favorites imported successfully!",
@@ -901,8 +899,6 @@
 
         // Quản lý danh sách các diễn đàn bị ẩn tạm thời (Không lưu localStorage)
         let hiddenForums = [];
-    // Biến lưu trữ danh sách bài viết tạm thời cho tab New Feed
-let newFeedPosts = []; 
 
         
         let bookmarks = JSON.parse(localStorage.getItem('bookmarks')) || [];
@@ -1208,10 +1204,6 @@ let newFeedPosts = [];
     checkboxDropdownMenu.classList.toggle('open');
 });
             filterContainer.appendChild(filterBtn);
-            
-            // ✅ ĐÃ SỬA LỖI: Lúc này biến allValidPosts đã tồn tại hợp lệ
-            const newFeedCount = Math.min(totalAllPostsCount, 50);
-            createTabButton(languages[currentLang].new_feed_title, 'new_feed', newFeedCount);
 
             // 3. Nút Tất cả bài viết
             createTabButton(languages[currentLang].all_title, 'all', totalAllPostsCount);
@@ -1258,25 +1250,6 @@ let newFeedPosts = [];
                 currentDomain = domainKey;
                 currentPage = 1;
                 resetRandomHistory(); 
-                
-                // [MỚI] Nếu người dùng bấm vào tab New Feed, tiến hành lấy 50 bài viết ngẫu nhiên mới
-        if (domainKey === 'new_feed') {
-            let allValidPosts = [];
-            Object.entries(forumsData).forEach(([domain, posts]) => {
-                if (!hiddenForums.includes(domain)) {
-                    allValidPosts = allValidPosts.concat(posts);
-                }
-            });
-            
-            // Thuật toán xáo trộn Fisher-Yates nhanh & mượt mà
-            for (let i = allValidPosts.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [allValidPosts[i], allValidPosts[j]] = [allValidPosts[j], allValidPosts[i]];
-            }
-            
-            // Lấy tối đa 50 bài viết sau khi trộn
-            newFeedPosts = allValidPosts.slice(0, 50);
-        }
                 displayPosts();
 
                 const containerWidth = filterContainer.offsetWidth;
@@ -1293,12 +1266,21 @@ let newFeedPosts = [];
             filterContainer.appendChild(button);
         }
 
+    // Hàm trộn ngẫu nhiên mảng (Fisher-Yates Shuffle) không làm thay đổi mảng gốc
+function shuffleArray(array) {
+    let shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+}
+
+    
         function getActivePosts() {
     let targetPosts = [];
     if (currentDomain === 'fav_bookmarks') {
         targetPosts = [...bookmarks];
-    } else if (currentDomain === 'new_feed') {
-        targetPosts = [...newFeedPosts]; // <-- Thêm điều kiện này
     } else if (currentDomain === 'all') {
         Object.entries(forumsData).forEach(([domain, posts]) => {
             if (!hiddenForums.includes(domain)) {
@@ -1309,15 +1291,23 @@ let newFeedPosts = [];
         targetPosts = hiddenForums.includes(currentDomain) ? [] : (forumsData[currentDomain] || []);
     }
 
+    // --- NÂNG CẤP: Xử lý hiển thị 50 bài ngẫu nhiên tại Trang 1 của Tab Tất cả diễn đàn ---
+    if (currentDomain === 'all' && searchQuery === '') {
+        if (currentPage === 1) {
+            // Trộn ngẫu nhiên toàn bộ bài viết và chỉ lấy đúng 50 bài cho trang 1
+            return shuffleArray(targetPosts).slice(0, postsPerPage);
+        } else {
+            // Từ trang 2 trở đi, loại bỏ 50 bài xuất hiện ở trang 1 (nếu cần thiết) 
+            // Tuy nhiên để phân trang liền mạch không bị hụt data, ta giữ nguyên gốc chia từ item thứ 51 trở đi.
+            // Biến paginatedPosts ở hàm displayPosts() sẽ tự động slice() chuẩn xác.
+        }
+    }
+
     // --- NÂNG CẤP LOGIC TÌM KIẾM CHÍNH XÁC TỪ ĐẦU TỪ ---
     if (searchQuery !== '') {
         try {
-            // Escape các ký tự đặc biệt để tránh lỗi Regex vỡ hệ thống
             const escapedQuery = searchQuery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-            
-            // \b giúp định vị ranh giới từ (chữ cái đầu tiên của một từ)
             const searchRegex = new RegExp('\\b' + escapedQuery, 'i');
-            
             targetPosts = targetPosts.filter(post => searchRegex.test(post.title));
         } catch (e) {
             console.error("Lỗi Regex Search:", e);
@@ -1325,6 +1315,7 @@ let newFeedPosts = [];
     }
     return targetPosts;
 }
+
 
 
         function displayPosts() {
@@ -1373,16 +1364,36 @@ let newFeedPosts = [];
         listContainer.appendChild(backupBar);
     }
 
-    const totalPages = Math.ceil(targetPosts.length / postsPerPage);
+        const totalPages = Math.ceil(targetPosts.length / postsPerPage);
     if (currentPage > totalPages) currentPage = totalPages || 1;
-    const startIndex = (currentPage - 1) * postsPerPage;
-    const paginatedPosts = targetPosts.slice(startIndex, startIndex + postsPerPage);
+    
+    // Nếu đang ở Trang 1 của Tất cả diễn đàn, data trả về từ getActivePosts() ĐÃ LÀ 50 bài ngẫu nhiên
+    // Do đó startIndex sẽ bằng 0 và lấy trọn vẹn mảng. Các trang sau sẽ tính toán bình thường.
+    const startIndex = (currentDomain === 'all' && searchQuery === '' && currentPage === 1) ? 0 : (currentPage - 1) * postsPerPage;
+    const paginatedPosts = (currentDomain === 'all' && searchQuery === '' && currentPage === 1) ? targetPosts : targetPosts.slice(startIndex, startIndex + postsPerPage);
 
-    paginatedPosts.forEach(post => {
-        renderPostCard(post);
-    });
+    // KIỂM TRA ĐỂ TẠO CONTAINER RIÊNG CHO TRANG 1 TAB TẤT CẢ
+    if (currentDomain === 'all' && searchQuery === '' && currentPage === 1) {
+        const randomContainer = document.createElement('div');
+        randomContainer.className = 'random-posts-container';
+        randomContainer.id = 'randomPostsContainer';
+        randomContainer.style = "display: flex; flex-direction: column; gap: 12px; width: 100%;";
+        
+        listContainer.appendChild(randomContainer);
+        
+        paginatedPosts.forEach(post => {
+            renderPostCard(post, randomContainer); // Truyền container riêng vào để render
+        });
+    } else {
+        // Hiển thị bình thường đúng với cấu trúc data của các trang khác hoặc tab khác
+        paginatedPosts.forEach(post => {
+            renderPostCard(post, listContainer);
+        });
+    }
+    
     renderPagination(totalPages);
 }
+
 
 
                 function renderPostCard(post) {
@@ -1460,7 +1471,7 @@ if (searchQuery && searchQuery.trim() !== '') {
                 }
             });
 
-            listContainer.appendChild(postItem);
+            targetContainer.appendChild(postItem);
         }
 
 
