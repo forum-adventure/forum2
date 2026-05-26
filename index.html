@@ -1308,34 +1308,43 @@ function getAllFlattenedPosts() {
 }
 
 function getActivePosts() {
+    // Nếu tab hiện tại là tab Yêu thích
     if (currentDomain === 'fav_bookmarks') {
         let targetPosts = [...bookmarks];
         if (searchQuery !== '') {
             try {
                 const escapedQuery = searchQuery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-                const searchRegex = new RegExp('\\b' + escapedQuery, 'i');
+                const searchRegex = new RegExp(escapedQuery, 'i'); // Bỏ \\b để chạy mượt tiếng Việt
                 targetPosts = targetPosts.filter(post => searchRegex.test(post.title));
             } catch (e) {}
         }
         return targetPosts;
-    } 
-    
+    }
+
+    // Nếu chọn đích danh 1 diễn đàn cụ thể hoặc 'all'
+    let targetPosts = [];
     if (currentDomain === 'all') {
-        // Trả về toàn bộ danh sách phẳng (để hàm displayPosts tính đúng tổng số trang)
-        return getAllFlattenedPosts();
-    } 
-    
-    // Trường hợp chọn đích danh 1 diễn đàn cụ thể
-    let targetPosts = hiddenForums.includes(currentDomain) ? [] : (forumsData[currentDomain] || []);
+        // Lấy toàn bộ bài viết từ các diễn đàn không bị ẩn (Mảng phẳng gốc trên thanh slide)
+        const availableDomains = Object.keys(forumsData).filter(domain => !hiddenForums.includes(domain));
+        for (const domain of availableDomains) {
+            targetPosts = targetPosts.concat(forumsData[domain] || []);
+        }
+    } else {
+        targetPosts = hiddenForums.includes(currentDomain) ? [] : (forumsData[currentDomain] || []);
+    }
+
+    // Tiến hành lọc tìm kiếm trên danh sách gốc vừa lấy được
     if (searchQuery !== '') {
         try {
             const escapedQuery = searchQuery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-            const searchRegex = new RegExp('\\b' + escapedQuery, 'i');
+            const searchRegex = new RegExp(escapedQuery, 'i'); // Bỏ \\b để chạy mượt tiếng Việt
             targetPosts = targetPosts.filter(post => searchRegex.test(post.title));
         } catch (e) {}
     }
+
     return targetPosts;
 }
+
 
 
 
