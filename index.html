@@ -190,7 +190,8 @@
         }
 
         .filter-container {
-            display: flex;
+            position: relative;
+            display: flex;            
             flex-wrap: nowrap;
             gap: 8px;
             overflow-x: auto;
@@ -1779,6 +1780,41 @@ function handleFileSelect(event) {
     
     reader.readAsText(file);
 }
+    
+    // CHỨC NĂNG KÉO CHUỘT ĐỂ CUỘN THANH FILTER TRÊN MÁY TÍNH
+const slider = document.getElementById('filterContainer');
+let isDown = false;
+let startX;
+let scrollLeft;
+
+slider.addEventListener('mousedown', (e) => {
+    // Chỉ kích hoạt khi click chuột trái và không bấm vào các nút bên trong để tránh lỗi click nhầm
+    if (e.pointerType === 'mouse' || e.button === 0) {
+        isDown = true;
+        slider.style.cursor = 'grabbing';
+        startX = e.pageX - slider.offsetLeft;
+        scrollLeft = slider.scrollLeft;
+    }
+});
+
+slider.addEventListener('mouseleave', () => {
+    isDown = false;
+    slider.style.cursor = 'pointer';
+});
+
+slider.addEventListener('mouseup', () => {
+    isDown = false;
+    slider.style.cursor = 'pointer';
+});
+
+slider.addEventListener('mousemove', (e) => {
+    if (!isDown) return;
+    e.preventDefault();
+    const x = e.pageX - slider.offsetLeft;
+    const walk = (x - startX) * 1.5; // Nhân với 1.5 để tốc độ lướt nhanh và mượt hơn
+    slider.scrollLeft = scrollLeft - walk;
+});
+
 
     </script>
 </body>
