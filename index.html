@@ -899,8 +899,6 @@
 
         // Quản lý danh sách các diễn đàn bị ẩn tạm thời (Không lưu localStorage)
         let hiddenForums = [];
-    // THÊM BIẾN NÀY: Lưu trữ 50 bài viết ngẫu nhiên cho tab All Posts
-let randomAllPosts = [];
 
         
         let bookmarks = JSON.parse(localStorage.getItem('bookmarks')) || [];
@@ -1155,24 +1153,18 @@ let randomAllPosts = [];
                     <span>${domain.toUpperCase()}</span>
                 `;
 
-                // MÃ MỚI ĐÃ SỬA:
-label.querySelector('input').addEventListener('change', (e) => {
-    const val = e.target.value;
-    if (e.target.checked) {
-        hiddenForums = hiddenForums.filter(item => item !== val);
-    } else {
-        if (!hiddenForums.includes(val)) hiddenForums.push(val);
-        if (currentDomain === val) {
-            currentDomain = 'all';
-        }
-    }
-    
-    // Xóa bộ nhớ tạm để bốc lại 50 bài ngẫu nhiên mới khi cấu trúc diễn đàn thay đổi
-    randomAllPosts = []; 
-    
-    renderTabs();
-});
-
+                label.querySelector('input').addEventListener('change', (e) => {
+                    const val = e.target.value;
+                    if (e.target.checked) {
+                        hiddenForums = hiddenForums.filter(item => item !== val);
+                    } else {
+                        if (!hiddenForums.includes(val)) hiddenForums.push(val);
+                        if (currentDomain === val) {
+                            currentDomain = 'all';
+                        }
+                    }
+                    renderTabs();
+                });
 
                 checkboxDropdownMenu.appendChild(label);
             });
@@ -1240,115 +1232,73 @@ label.querySelector('input').addEventListener('change', (e) => {
         }
 
         function createTabButton(label, domainKey, count) {
-    const button = document.createElement('button');
-    button.className = 'btn-tab';
-    button.setAttribute('data-domain', domainKey);
-    const labelSpan = document.createElement('span');
-    labelSpan.textContent = label;
-    button.appendChild(labelSpan);
-    const badge = document.createElement('span');
-    badge.className = 'tab-badge';
-    // Nếu là tab 'all', hiển thị số lượng là 50 (hoặc nhỏ hơn nếu tổng số bài ít hơn 50)
-    badge.textContent = count;
-    button.appendChild(badge);
-    if (domainKey === currentDomain) button.classList.add('active');
-    
-    button.addEventListener('click', () => {
-        document.querySelectorAll('.btn-tab').forEach(btn => btn.classList.remove('active'));
-        button.classList.add('active');
-        currentDomain = domainKey;
-        currentPage = 1;
-        resetRandomHistory(); 
+            const button = document.createElement('button');
+            button.className = 'btn-tab';
+            button.setAttribute('data-domain', domainKey);
+            const labelSpan = document.createElement('span');
+            labelSpan.textContent = label;
+            button.appendChild(labelSpan);
+            const badge = document.createElement('span');
+            badge.className = 'tab-badge';
+            badge.textContent = count;
+            button.appendChild(badge);
+            if (domainKey === currentDomain) button.classList.add('active');
+            
+            button.addEventListener('click', () => {
+                document.querySelectorAll('.btn-tab').forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                currentDomain = domainKey;
+                currentPage = 1;
+                resetRandomHistory(); 
+                displayPosts();
 
-                // --- XỬ LÝ NGẪU NHIÊN CHO TAB ALL POSTS ---
-        if (domainKey === 'all') {
-            randomAllPosts = []; // Xóa danh sách cũ để bốc ngẫu nhiên lại từ đầu cho trang 1
-        } else {
-            randomAllPosts = [];
+                const containerWidth = filterContainer.offsetWidth;
+                const buttonWidth = button.offsetWidth;
+                const buttonLeft = button.offsetLeft;
+                const targetScrollLeft = buttonLeft - (containerWidth / 2) + (buttonWidth / 2);
+                
+                filterContainer.scrollTo({
+                    left: targetScrollLeft,
+                    behavior: 'smooth'
+                });
+            });
+            
+            filterContainer.appendChild(button);
         }
-        // -------------------------------------------------
 
-
-        displayPosts();
-
-        const containerWidth = filterContainer.offsetWidth;
-        const buttonWidth = button.offsetWidth;
-        const buttonLeft = button.offsetLeft;
-        const targetScrollLeft = buttonLeft - (containerWidth / 2) + (buttonWidth / 2);
-        
-        filterContainer.scrollTo({
-            left: targetScrollLeft,
-            behavior: 'smooth'
+        function getActivePosts() {
+    let targetPosts = [];
+    if (currentDomain === 'fav_bookmarks') {
+        targetPosts = [...bookmarks];
+    } else if (currentDomain === 'all') {
+        Object.entries(forumsData).forEach(([domain, posts]) => {
+            if (!hiddenForums.includes(domain)) {
+                targetPosts = targetPosts.concat(posts);
+            }
         });
-    });
-    
-    filterContainer.appendChild(button);
-}
-
-
-        // Hàm hỗ trợ lấy toàn bộ bài viết từ các diễn đàn không bị ẩn (Dạng mảng phẳng)
-// Hàm hỗ trợ lấy toàn bộ bài viết từ các diễn đàn không bị ẩn (Dạng mảng phẳng)
-function getAllFlattenedPosts() {
-    const availableDomains = Object.keys(forumsData).filter(domain => !hiddenForums.includes(domain));
-    let flattened = [];
-    for (const domain of availableDomains) {
-        flattened = flattened.concat(forumsData[domain] || []);
+    } else {
+        targetPosts = hiddenForums.includes(currentDomain) ? [] : (forumsData[currentDomain] || []);
     }
-    
-    // Nếu đang có từ khóa tìm kiếm, lọc ngay từ đây
+
+    // --- NÂNG CẤP LOGIC TÌM KIẾM CHÍNH XÁC TỪ ĐẦU TỪ ---
     if (searchQuery !== '') {
         try {
+            // Escape các ký tự đặc biệt để tránh lỗi Regex vỡ hệ thống
             const escapedQuery = searchQuery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-            // ĐÃ SỬA: Loại bỏ \\b để tìm kiếm khớp chính xác với tiếng Việt có dấu
-            const searchRegex = new RegExp(escapedQuery, 'i');
-            flattened = flattened.filter(post => searchRegex.test(post.title));
+            
+            // \b giúp định vị ranh giới từ (chữ cái đầu tiên của một từ)
+            const searchRegex = new RegExp('\\b' + escapedQuery, 'i');
+            
+            targetPosts = targetPosts.filter(post => searchRegex.test(post.title));
         } catch (e) {
             console.error("Lỗi Regex Search:", e);
         }
-    }
-    return flattened;
-}
-
-function getActivePosts() {
-    if (currentDomain === 'fav_bookmarks') {
-        let targetPosts = [...bookmarks];
-        if (searchQuery !== '') {
-            try {
-                const escapedQuery = searchQuery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-                // ĐÃ SỬA: Loại bỏ \\b
-                const searchRegex = new RegExp(escapedQuery, 'i');
-                targetPosts = targetPosts.filter(post => searchRegex.test(post.title));
-            } catch (e) {}
-        }
-        return targetPosts;
-    } 
-    
-    if (currentDomain === 'all') {
-        // Trả về toàn bộ danh sách phẳng (để hàm displayPosts tính đúng tổng số trang)
-        return getAllFlattenedPosts();
-    } 
-    
-    // Trường hợp chọn đích danh 1 diễn đàn cụ thể
-    let targetPosts = hiddenForums.includes(currentDomain) ? [] : (forumsData[currentDomain] || []);
-    if (searchQuery !== '') {
-        try {
-            const escapedQuery = searchQuery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-            // ĐÃ SỬA: Loại bỏ \\b
-            const searchRegex = new RegExp(escapedQuery, 'i');
-            targetPosts = targetPosts.filter(post => searchRegex.test(post.title));
-        } catch (e) {}
     }
     return targetPosts;
 }
 
 
-
-
-
-        
-        
-
-    function displayPosts() {
+        function displayPosts() {
     listContainer.innerHTML = ''; 
     randomNavContainer.innerHTML = ''; 
     const targetPosts = getActivePosts();
@@ -1396,44 +1346,14 @@ function getActivePosts() {
 
     const totalPages = Math.ceil(targetPosts.length / postsPerPage);
     if (currentPage > totalPages) currentPage = totalPages || 1;
-    
-    // --- BIẾN CHỨA DỮ LIỆU HIỂN THỊ CỦA TRANG HIỆN TẠI ---
-        // --- THAY THẾ ĐOẠN LOGIC CŨ BẰNG ĐOẠN NÀY ---
-    let paginatedPosts = [];
-
-    // Chỉ khi ở tab 'all', trang 1 VÀ thanh search hoàn toàn trống thì mới bốc/ghim 50 bài ngẫu nhiên
-    if (currentDomain === 'all' && currentPage === 1 && searchQuery === '') {
-        if (randomAllPosts.length === 0) {
-            const totalCount = targetPosts.length;
-            const selectedIndices = new Set();
-            const selectedPosts = [];
-            
-            const limit = Math.min(postsPerPage, totalCount);
-            while (selectedPosts.length < limit && selectedIndices.size < totalCount) {
-                const randomIndex = Math.floor(Math.random() * totalCount);
-                if (!selectedIndices.has(randomIndex)) {
-                    selectedIndices.add(randomIndex);
-                    selectedPosts.push(targetPosts[randomIndex]);
-                }
-            }
-            randomAllPosts = selectedPosts;
-        }
-        paginatedPosts = randomAllPosts;
-    } else {
-        // Nếu ĐANG SEARCH hoặc ở trang 2, 3... hoặc tab khác: 
-        // Tuyệt đối không dùng randomAllPosts, cắt mảng tuần tự từ danh sách gốc targetPosts
-        const startIndex = (currentPage - 1) * postsPerPage;
-        paginatedPosts = targetPosts.slice(startIndex, startIndex + postsPerPage);
-    }
-    // -----------------------------------------------------
-
+    const startIndex = (currentPage - 1) * postsPerPage;
+    const paginatedPosts = targetPosts.slice(startIndex, startIndex + postsPerPage);
 
     paginatedPosts.forEach(post => {
         renderPostCard(post);
     });
     renderPagination(totalPages);
 }
-
 
 
                 function renderPostCard(post) {
@@ -1448,11 +1368,10 @@ if (searchQuery && searchQuery.trim() !== '') {
     try {
         const escapedQuery = searchQuery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
         
+        // Thêm \\b vào trước để chỉ highlight phần đầu của từ khớp với tìm kiếm
+        const regex = new RegExp(`\\b(${escapedQuery})`, 'gi');
         
-        // Loại bỏ \\b để hoạt động hoàn hảo với cả tiếng Việt có dấu
-const regex = new RegExp(`(${escapedQuery})`, 'gi');
-displayedTitle = post.title.replace(regex, '<mark class="search-highlight">$1</mark>');
-
+        displayedTitle = post.title.replace(regex, '<mark class="search-highlight">$1</mark>');
     } catch (e) {
         console.error("Lỗi highlight:", e);
     }
@@ -1588,33 +1507,17 @@ displayedTitle = post.title.replace(regex, '<mark class="search-highlight">$1</m
 
         const clearSearchBtn = document.getElementById('clearSearch');
 
-                searchInput.addEventListener('input', (e) => {
+        searchInput.addEventListener('input', (e) => {
+            clearSearchBtn.style.display = e.target.value.length > 0 ? 'block' : 'none';
+            
             clearTimeout(searchTimeout);
-            searchTimeout = setTimeout(() => {
-                searchQuery = e.target.value.trim().toLowerCase();
-                currentPage = 1;
-                resetRandomHistory();
-                
-                // --- ĐOẠN MÃ THÊM MỚI THEO YÊU CẦU CỦA BẠN ---
-                // Nếu đang ở tab "Tất cả bài viết" và người dùng bắt đầu nhập từ khóa
-                if (currentDomain === 'all' && searchQuery !== '') {
-                    // Xóa mảng ngẫu nhiên tĩnh để ép hệ thống cắt mảng tuần tự theo từ khóa
-                    randomAllPosts = []; 
-                    
-                    // Tìm nút tab "Tất cả bài viết" trên giao diện và kích hoạt lại class active của nó
-                    const allTabButton = filterContainer.querySelector('[data-domain="all"]');
-                    if (allTabButton) {
-                        document.querySelectorAll('.btn-tab').forEach(btn => btn.classList.remove('active'));
-                        allTabButton.classList.add('active');
-                    }
-                }
-                // -------------------------------------------------
-
-                displayPosts();
+            searchTimeout = setTimeout(() => { 
+                searchQuery = e.target.value.trim().toLowerCase(); 
+                currentPage = 1; 
+                resetRandomHistory(); 
+                displayPosts(); 
             }, 300);
         });
-
-
 
         clearSearchBtn.addEventListener('click', () => {
             searchInput.value = '';
@@ -1679,31 +1582,26 @@ document.addEventListener('pointerdown', (e) => {
         });
 
         dropdownList.querySelectorAll('li').forEach(item => {
-    item.addEventListener('click', (e) => {
-        e.stopPropagation();
-        
-        dropdownList.querySelectorAll('li').forEach(li => li.classList.remove('active'));
-        item.classList.add('active');
-        
-        updateDropdownSelectedText();
-        customDropdown.classList.remove('open'); 
-        
-        activeSource = item.getAttribute('data-value'); 
-        currentPage = 1; 
-        currentDomain = 'all'; 
-        
-        // Xóa danh sách cũ để tạo lại 50 bài ngẫu nhiên mới tương ứng với danh mục vừa chọn
-        randomAllPosts = []; 
-        
-        // SỬA LỖI 2: Giữ nguyên từ khóa tìm kiếm khi đổi nguồn bộ lọc chính (Không xóa trắng searchQuery)
-        resetRandomHistory(); 
-        updateCurrentForumsData(); 
-    });
-});
-
+            item.addEventListener('click', (e) => {
+                e.stopPropagation();
+                
+                dropdownList.querySelectorAll('li').forEach(li => li.classList.remove('active'));
+                item.classList.add('active');
+                
+                updateDropdownSelectedText();
+                customDropdown.classList.remove('open'); 
+                
+                activeSource = item.getAttribute('data-value'); 
+                currentPage = 1; 
+                currentDomain = 'all'; 
+                
+                // SỬA LỖI 2: Giữ nguyên từ khóa tìm kiếm khi đổi nguồn bộ lọc chính (Không xóa trắng searchQuery)
+                resetRandomHistory(); 
+                updateCurrentForumsData(); 
+            });
+        });
 
         function resetToAllSource() {
-            randomAllPosts = []; // THÊM DÒNG NÀY để xóa danh sách cũ, hệ thống tự tạo 50 bài ngẫu nhiên mới
             dropdownList.querySelectorAll('li').forEach(li => {
                 if(li.getAttribute('data-value') === 'all') li.classList.add('active');
                 else li.classList.remove('active');
