@@ -272,22 +272,31 @@
             background-color: var(--hover-bg);
         }
 
-        /* Khôi phục trạng thái Active của Tab theo cấu hình màu chuẩn V1 */
-        .btn-tab.active {
-            background-color: var(--accent-color) !important;
-            color: #ffffff !important;
-            border-color: var(--accent-color) !important;
-        }
+        /* Trạng thái Active của Tab - Nhạt và tự động thích ứng Light/Dark Mode */
+.btn-tab.active {
+    /* Tạo nền nhạt bằng cách lấy chính màu chữ chính làm mờ đi 12% */
+    background-color: rgba(30, 41, 59, 0.12) !important; 
+    color: var(--text-color) !important;
+    border-color: transparent !important; /* Ẩn viền để nút nhìn thanh thoát hơn */
+}
 
-        .btn-tab.active span {
-            color: #ffffff !important;
-        }
+/* Đảm bảo chữ bên trong chuyển theo màu text-color */
+.btn-tab.active span {
+    color: var(--text-color) !important;
+}
 
-        .btn-tab.active .tab-badge {
-            background-color: rgba(255, 255, 255, 0.25) !important;
-            color: #ffffff !important;
-            border: none !important;
-        }
+/* Badge (số lượng) đi kèm cũng tự tương thích */
+.btn-tab.active .tab-badge {
+    background-color: var(--text-color) !important;
+    color: var(--card-bg) !important;
+    border: none !important;
+}
+
+/* ĐỐI VỚI DARK MODE: Tự động đổi màu nền nhạt sang tone tối */
+[data-theme="dark"] .btn-tab.active {
+    background-color: rgba(241, 245, 249, 0.15) !important; /* Nền sáng mờ trên nền đen */
+}
+
 
         /* MENU CHECKBOX DROPDOWN CHO BỘ LỌC ẨN/HIỆN */
         .checkbox-dropdown-menu {
