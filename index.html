@@ -528,41 +528,53 @@
             flex-shrink: 0;
         }
 
-        .btn-random {
-    /* Đảo ngược màu: Lấy màu chủ đạo làm nền, chữ chuyển thành màu trắng */
-    background-color: var(--accent-color);
-    color: #ffffff;
-    border: 1px solid var(--accent-color);
-    border-radius: 12px;
-    outline: none; /* Loại bỏ đường viền focus mặc định của trình duyệt */
+                .btn-random {
+            /* Đảo ngược màu: Lấy màu chủ đạo làm nền, chữ chuyển thành màu trắng */
+            background-color: var(--accent-color);
+            color: #ffffff;
+            border: 1px solid var(--accent-color);
+            border-radius: 12px;
+            outline: none; /* Loại bỏ đường viền focus mặc định của trình duyệt */
+            
             /* CHỐNG TÔ ĐẬM VÀ BÔI ĐEN TUYỆT ĐỐI (KỂ CẢ KHI BẤM GIỮ LÂU) */
-    -webkit-touch-callout: none; /* Khóa menu ngữ cảnh/copy trên iOS Safari khi nhấn giữ */
-    -webkit-user-select: none;   /* Safari */
-    -khtml-user-select: none;    /* Konqueror HTML */
-    -moz-user-select: none;      /* Firefox */
-    -ms-user-select: none;       /* Internet Explorer/Edge */
-    user-select: none;           /* Bản chuẩn: Chrome, Opera, Edge mới */
-}
+            -webkit-touch-callout: none; /* Khóa menu ngữ cảnh/copy trên iOS Safari khi nhấn giữ */
+            -webkit-user-select: none;   /* Safari */
+            -khtml-user-select: none;    /* Konqueror HTML */
+            -moz-user-select: none;      /* Firefox */
+            -ms-user-select: none;       /* Internet Explorer/Edge */
+            user-select: none;           /* Bản chuẩn: Chrome, Opera, Edge mới */
+            
+            transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+        }
 
-.btn-random:hover {
-    /* Khi hover: Dùng màu biến thể hover đậm hơn một chút để tạo hiệu ứng nhấn */
-    background-color: var(--accent-hover);
-    border-color: var(--accent-hover);
-}
+        .btn-random:hover {
+            /* Khi hover: Dùng màu biến thể hover đậm hơn một chút để tạo hiệu ứng nhấn */
+            background-color: var(--accent-hover);
+            border-color: var(--accent-hover);
+            color: #ffffff;
+        }
 
-.btn-random:active {
-    /* Khi nhấn giữ: Chuyển sang màu nền sáng, chữ và viền tối */
-    background-color: var(--hover-bg);
-    border-color: var(--accent-color);
-    color: var(--accent-color);
-}
+        .btn-random:active {
+            /* Khi nhấn giữ: Chuyển sang màu nền sáng, chữ và viền tối */
+            background-color: var(--hover-bg);
+            border-color: var(--accent-color);
+            color: var(--accent-color);
+        }
 
-/* Đảm bảo khi thả chuột/thả tay ra (hết active) nút sẽ về lại trạng thái chuẩn */
-.btn-random:focus:not(:active) {
-    background-color: var(--accent-color);
-    color: #ffffff;
-    border-color: var(--accent-color);
-}
+        /* GIẢI PHÁP SỬA LỖI: Ép nút quay về trạng thái ban đầu ngay khi hết active, bất kể có đang focus hay không */
+        .btn-random:focus, .btn-random:focus-visible {
+            background-color: var(--accent-color);
+            color: #ffffff;
+            border-color: var(--accent-color);
+        }
+
+        /* Đảm bảo khi vẫn đang focus mà chuột reo qua (hover) thì vẫn có hiệu ứng hover mượt mà */
+        .btn-random:focus:hover {
+            background-color: var(--accent-hover);
+            border-color: var(--accent-hover);
+            color: #ffffff;
+        }
+
     
 
 
