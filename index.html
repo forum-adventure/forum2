@@ -1395,7 +1395,8 @@ function getActivePosts() {
     // --- BIẾN CHỨA DỮ LIỆU HIỂN THỊ CỦA TRANG HIỆN TẠI ---
     let paginatedPosts = [];
 
-    if (currentDomain === 'all' && currentPage === 1) {
+    // CHỈ ghim bài ngẫu nhiên khi người dùng KHÔNG gõ tìm kiếm (searchQuery trống)
+if (currentDomain === 'all' && currentPage === 1 && searchQuery === '') {
         // Nếu ở trang 1 của tab All, bốc ngẫu nhiên 50 bài và ghim lại (nếu chưa có bộ nhớ tạm)
         if (randomAllPosts.length === 0) {
             const totalCount = targetPosts.length;
@@ -1441,10 +1442,11 @@ if (searchQuery && searchQuery.trim() !== '') {
     try {
         const escapedQuery = searchQuery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
         
-        // Thêm \\b vào trước để chỉ highlight phần đầu của từ khớp với tìm kiếm
-        const regex = new RegExp(`\\b(${escapedQuery})`, 'gi');
         
-        displayedTitle = post.title.replace(regex, '<mark class="search-highlight">$1</mark>');
+        // Loại bỏ \\b để hoạt động hoàn hảo với cả tiếng Việt có dấu
+const regex = new RegExp(`(${escapedQuery})`, 'gi');
+displayedTitle = post.title.replace(regex, '<mark class="search-highlight">$1</mark>');
+
     } catch (e) {
         console.error("Lỗi highlight:", e);
     }
@@ -1581,16 +1583,16 @@ if (searchQuery && searchQuery.trim() !== '') {
         const clearSearchBtn = document.getElementById('clearSearch');
 
         searchInput.addEventListener('input', (e) => {
-            clearSearchBtn.style.display = e.target.value.length > 0 ? 'block' : 'none';
-            
-            clearTimeout(searchTimeout);
-            searchTimeout = setTimeout(() => { 
-                searchQuery = e.target.value.trim().toLowerCase(); 
-                currentPage = 1; 
-                resetRandomHistory(); 
-                displayPosts(); 
-            }, 300);
-        });
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => {
+        searchQuery = e.target.value.trim().toLowerCase();
+        currentPage = 1;
+        resetRandomHistory();
+        randomAllPosts = []; // THÊM DÒNG NÀY: Xóa cache ngẫu nhiên để kết quả tìm kiếm hiển thị chuẩn xác
+        displayPosts();
+    }, 300);
+});
+
 
         clearSearchBtn.addEventListener('click', () => {
             searchInput.value = '';
