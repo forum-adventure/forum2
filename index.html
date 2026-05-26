@@ -1155,18 +1155,24 @@ let randomAllPosts = [];
                     <span>${domain.toUpperCase()}</span>
                 `;
 
-                label.querySelector('input').addEventListener('change', (e) => {
-                    const val = e.target.value;
-                    if (e.target.checked) {
-                        hiddenForums = hiddenForums.filter(item => item !== val);
-                    } else {
-                        if (!hiddenForums.includes(val)) hiddenForums.push(val);
-                        if (currentDomain === val) {
-                            currentDomain = 'all';
-                        }
-                    }
-                    renderTabs();
-                });
+                // MÃ MỚI ĐÃ SỬA:
+label.querySelector('input').addEventListener('change', (e) => {
+    const val = e.target.value;
+    if (e.target.checked) {
+        hiddenForums = hiddenForums.filter(item => item !== val);
+    } else {
+        if (!hiddenForums.includes(val)) hiddenForums.push(val);
+        if (currentDomain === val) {
+            currentDomain = 'all';
+        }
+    }
+    
+    // Xóa bộ nhớ tạm để bốc lại 50 bài ngẫu nhiên mới khi cấu trúc diễn đàn thay đổi
+    randomAllPosts = []; 
+    
+    renderTabs();
+});
+
 
                 checkboxDropdownMenu.appendChild(label);
             });
