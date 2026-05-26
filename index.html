@@ -899,6 +899,8 @@
 
         // Quản lý danh sách các diễn đàn bị ẩn tạm thời (Không lưu localStorage)
         let hiddenForums = [];
+    // THÊM BIẾN NÀY: Lưu trữ 50 bài viết ngẫu nhiên cho tab All Posts
+let randomAllPosts = [];
 
         
         let bookmarks = JSON.parse(localStorage.getItem('bookmarks')) || [];
@@ -1232,50 +1234,85 @@
         }
 
         function createTabButton(label, domainKey, count) {
-            const button = document.createElement('button');
-            button.className = 'btn-tab';
-            button.setAttribute('data-domain', domainKey);
-            const labelSpan = document.createElement('span');
-            labelSpan.textContent = label;
-            button.appendChild(labelSpan);
-            const badge = document.createElement('span');
-            badge.className = 'tab-badge';
-            badge.textContent = count;
-            button.appendChild(badge);
-            if (domainKey === currentDomain) button.classList.add('active');
-            
-            button.addEventListener('click', () => {
-                document.querySelectorAll('.btn-tab').forEach(btn => btn.classList.remove('active'));
-                button.classList.add('active');
-                currentDomain = domainKey;
-                currentPage = 1;
-                resetRandomHistory(); 
-                displayPosts();
+    const button = document.createElement('button');
+    button.className = 'btn-tab';
+    button.setAttribute('data-domain', domainKey);
+    const labelSpan = document.createElement('span');
+    labelSpan.textContent = label;
+    button.appendChild(labelSpan);
+    const badge = document.createElement('span');
+    badge.className = 'tab-badge';
+    // Nếu là tab 'all', hiển thị số lượng là 50 (hoặc nhỏ hơn nếu tổng số bài ít hơn 50)
+    badge.textContent = domainKey === 'all' ? Math.min(50, count) : count;
+    button.appendChild(badge);
+    if (domainKey === currentDomain) button.classList.add('active');
+    
+    button.addEventListener('click', () => {
+        document.querySelectorAll('.btn-tab').forEach(btn => btn.classList.remove('active'));
+        button.classList.add('active');
+        currentDomain = domainKey;
+        currentPage = 1;
+        resetRandomHistory(); 
 
-                const containerWidth = filterContainer.offsetWidth;
-                const buttonWidth = button.offsetWidth;
-                const buttonLeft = button.offsetLeft;
-                const targetScrollLeft = buttonLeft - (containerWidth / 2) + (buttonWidth / 2);
-                
-                filterContainer.scrollTo({
-                    left: targetScrollLeft,
-                    behavior: 'smooth'
-                });
+        // --- XỬ LÝ NGẪU NHIÊN 50 BÀI CHO TAB ALL POSTS ---
+        if (domainKey === 'all') {
+            let totalPosts = [];
+            Object.entries(forumsData).forEach(([domain, posts]) => {
+                if (!hiddenForums.includes(domain)) {
+                    totalPosts = totalPosts.concat(posts);
+                }
             });
-            
-            filterContainer.appendChild(button);
+            // Xáo trộn mảng bài viết (Fisher-Yates Shuffle)
+            for (let i = totalPosts.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [totalPosts[i], totalPosts[j]] = [totalPosts[j], totalPosts[i]];
+            }
+            // Lấy tối đa 50 bài viết đầu tiên sau khi xáo trộn
+            randomAllPosts = totalPosts.slice(0, 50);
+        } else {
+            // Xóa bộ nhớ tạm nếu chuyển sang tab khác
+            randomAllPosts = [];
         }
+        // -------------------------------------------------
+
+        displayPosts();
+
+        const containerWidth = filterContainer.offsetWidth;
+        const buttonWidth = button.offsetWidth;
+        const buttonLeft = button.offsetLeft;
+        const targetScrollLeft = buttonLeft - (containerWidth / 2) + (buttonWidth / 2);
+        
+        filterContainer.scrollTo({
+            left: targetScrollLeft,
+            behavior: 'smooth'
+        });
+    });
+    
+    filterContainer.appendChild(button);
+}
+
 
         function getActivePosts() {
     let targetPosts = [];
     if (currentDomain === 'fav_bookmarks') {
         targetPosts = [...bookmarks];
     } else if (currentDomain === 'all') {
-        Object.entries(forumsData).forEach(([domain, posts]) => {
-            if (!hiddenForums.includes(domain)) {
-                targetPosts = targetPosts.concat(posts);
+        // Thay vì lấy toàn bộ, ta lấy mảng 50 bài ngẫu nhiên đã xử lý ở click event
+        // Trường hợp render lần đầu tiên chưa kịp click, ta tự khởi tạo nếu mảng đang trống
+        if (randomAllPosts.length === 0) {
+            let totalPosts = [];
+            Object.entries(forumsData).forEach(([domain, posts]) => {
+                if (!hiddenForums.includes(domain)) {
+                    totalPosts = totalPosts.concat(posts);
+                }
+            });
+            for (let i = totalPosts.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [totalPosts[i], totalPosts[j]] = [totalPosts[j], totalPosts[i]];
             }
-        });
+            randomAllPosts = totalPosts.slice(0, 50);
+        }
+        targetPosts = [...randomAllPosts];
     } else {
         targetPosts = hiddenForums.includes(currentDomain) ? [] : (forumsData[currentDomain] || []);
     }
@@ -1283,12 +1320,8 @@
     // --- NÂNG CẤP LOGIC TÌM KIẾM CHÍNH XÁC TỪ ĐẦU TỪ ---
     if (searchQuery !== '') {
         try {
-            // Escape các ký tự đặc biệt để tránh lỗi Regex vỡ hệ thống
             const escapedQuery = searchQuery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-            
-            // \b giúp định vị ranh giới từ (chữ cái đầu tiên của một từ)
             const searchRegex = new RegExp('\\b' + escapedQuery, 'i');
-            
             targetPosts = targetPosts.filter(post => searchRegex.test(post.title));
         } catch (e) {
             console.error("Lỗi Regex Search:", e);
@@ -1296,6 +1329,7 @@
     }
     return targetPosts;
 }
+
 
 
         function displayPosts() {
@@ -1602,6 +1636,7 @@ document.addEventListener('pointerdown', (e) => {
         });
 
         function resetToAllSource() {
+            randomAllPosts = []; // THÊM DÒNG NÀY để xóa danh sách cũ, hệ thống tự tạo 50 bài ngẫu nhiên mới
             dropdownList.querySelectorAll('li').forEach(li => {
                 if(li.getAttribute('data-value') === 'all') li.classList.add('active');
                 else li.classList.remove('active');
