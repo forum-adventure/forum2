@@ -1396,83 +1396,79 @@ function shuffleArray(array) {
 
 
 
-                function renderPostCard(post) {
+                function renderPostCard(post, targetContainer) {
+    
+    const isBookmarked = bookmarks.some(b => b.url === post.url);
+    const faviconUrl = `${localFaviconFolder}/${post.domain}.png`; 
+
+    // --- XỬ LÝ HIGHLIGHT CHỮ CHUẨN XÁC THEO RANH GIỚI TỪ ---
+    let displayedTitle = post.title;
+    if (searchQuery && searchQuery.trim() !== '') {
+        try {
+            const escapedQuery = searchQuery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
             
-            const isBookmarked = bookmarks.some(b => b.url === post.url);
-
-            const faviconUrl = `${localFaviconFolder}/${post.domain}.png`; 
-
-            // --- XỬ LÝ HIGHLIGHT CHỮ CHUẨN XÁC THEO RANH GIỚI TỪ ---
-let displayedTitle = post.title;
-if (searchQuery && searchQuery.trim() !== '') {
-    try {
-        const escapedQuery = searchQuery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-        
-        // Thêm \\b vào trước để chỉ highlight phần đầu của từ khớp với tìm kiếm
-        const regex = new RegExp(`\\b(${escapedQuery})`, 'gi');
-        
-        displayedTitle = post.title.replace(regex, '<mark class="search-highlight">$1</mark>');
-    } catch (e) {
-        console.error("Lỗi highlight:", e);
+            // Thêm \\b vào trước để chỉ highlight phần đầu của từ khớp với tìm kiếm
+            const regex = new RegExp(`\\b(${escapedQuery})`, 'gi');
+            
+            displayedTitle = post.title.replace(regex, '<mark class="search-highlight">$1</mark>');
+        } catch (e) {
+            console.error("Lỗi highlight:", e);
+        }
     }
-}
-// -----------------------------------------------------
+    // -----------------------------------------------------
 
             
 
             const postItem = document.createElement('div');
-            postItem.className = `post-item`;
+    postItem.className = `post-item`;
 
-            postItem.innerHTML = `
-                <img class="post-avatar" src="${faviconUrl}" alt="${post.domain}" onerror="this.onerror=null; this.src='${defaultAvatar}';">
-                <div class="post-content-block">
-                    <a href="${post.url}" target="_blank" class="post-title">${displayedTitle}</a>
-                    <span class="post-source">${languages[currentLang].source_label}${post.domain}</span>
-                </div>
-                <button class="btn-bookmark ${isBookmarked ? 'active' : ''}" title="Đánh dấu yêu thích">${isBookmarked ? '★' : '☆'}</button>
-            `;
+    postItem.innerHTML = `
+        <img class="post-avatar" src="${faviconUrl}" alt="${post.domain}" onerror="this.onerror=null; this.src='${defaultAvatar}';">
+        <div class="post-content-block">
+            <a href="${post.url}" target="_blank" class="post-title">${displayedTitle}</a>
+            <span class="post-source">${languages[currentLang].source_label}${post.domain}</span>
+        </div>
+        <button class="btn-bookmark ${isBookmarked ? 'active' : ''}" title="Đánh dấu yêu thích">${isBookmarked ? '★' : '☆'}</button>
+    `;
 
-            
+    postItem.querySelector('.btn-bookmark').addEventListener('click', (e) => {
+        e.stopPropagation();
+        let currentBookmarks = JSON.parse(localStorage.getItem('bookmarks')) || [];
+        const foundIndex = currentBookmarks.findIndex(b => b.url === post.url);
+        let isNowBookmarked = false;
 
-            postItem.querySelector('.btn-bookmark').addEventListener('click', (e) => {
-                e.stopPropagation();
-                let currentBookmarks = JSON.parse(localStorage.getItem('bookmarks')) || [];
-                const foundIndex = currentBookmarks.findIndex(b => b.url === post.url);
-                let isNowBookmarked = false;
-
-                if (foundIndex > -1) { 
-                    currentBookmarks.splice(foundIndex, 1); 
-                } else { 
-                    currentBookmarks.push({ title: post.title, url: post.url, domain: post.domain }); 
-                    isNowBookmarked = true;
-                }
-                
-                bookmarks = currentBookmarks;
-                localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
-                
-                const favTab = filterContainer.querySelector('[data-domain="fav_bookmarks"] .tab-badge');
-                if (favTab) favTab.textContent = bookmarks.length;
-                
-                const btnTarget = e.currentTarget;
-                if (isNowBookmarked) {
-                    btnTarget.classList.add('active');
-                    btnTarget.textContent = '★';
-                } else {
-                    btnTarget.classList.remove('active');
-                    btnTarget.textContent = '☆';
-                    if (currentDomain === 'fav_bookmarks') {
-    postItem.remove();
-    // Nếu mảng bookmarks đã trống, gọi lại displayPosts để vẽ lại giao diện thông báo chuẩn
-    if (bookmarks.length === 0) {
-        displayPosts();
-    }
-}
-
-                }
-            });
-
-            targetContainer.appendChild(postItem);
+        if (foundIndex > -1) { 
+            currentBookmarks.splice(foundIndex, 1); 
+        } else { 
+            currentBookmarks.push({ title: post.title, url: post.url, domain: post.domain }); 
+            isNowBookmarked = true;
         }
+        
+        bookmarks = currentBookmarks;
+        localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
+        
+        const favTab = filterContainer.querySelector('[data-domain="fav_bookmarks"] .tab-badge');
+        if (favTab) favTab.textContent = bookmarks.length;
+        
+        const btnTarget = e.currentTarget;
+        if (isNowBookmarked) {
+            btnTarget.classList.add('active');
+            btnTarget.textContent = '★';
+        } else {
+            btnTarget.classList.remove('active');
+            btnTarget.textContent = '☆';
+            if (currentDomain === 'fav_bookmarks') {
+                postItem.remove();
+                // Nếu mảng bookmarks đã trống, gọi lại displayPosts để vẽ lại giao diện thông báo chuẩn
+                if (bookmarks.length === 0) {
+                    displayPosts();
+                }
+            }
+        }
+    });
+
+    targetContainer.appendChild(postItem);
+}
 
 
         function renderPagination(totalPages) {
@@ -1536,7 +1532,7 @@ if (searchQuery && searchQuery.trim() !== '') {
             paginationContainer.innerHTML = '';
             const currentPost = randomHistory[currentRandomIndex];
             if (currentPost) {
-                renderPostCard(currentPost);
+                renderPostCard(currentPost, listContainer); // Truyền thêm listContainer vào đây
             }
             renderRandomNavigation();
         }
