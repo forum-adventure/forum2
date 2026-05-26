@@ -529,6 +529,13 @@
     border: 1px solid var(--accent-color);
     border-radius: 12px;
     outline: none; /* Loại bỏ đường viền focus mặc định của trình duyệt */
+            /* CHỐNG TÔ ĐẬM VÀ BÔI ĐEN TUYỆT ĐỐI (KỂ CẢ KHI BẤM GIỮ LÂU) */
+    -webkit-touch-callout: none; /* Khóa menu ngữ cảnh/copy trên iOS Safari khi nhấn giữ */
+    -webkit-user-select: none;   /* Safari */
+    -khtml-user-select: none;    /* Konqueror HTML */
+    -moz-user-select: none;      /* Firefox */
+    -ms-user-select: none;       /* Internet Explorer/Edge */
+    user-select: none;           /* Bản chuẩn: Chrome, Opera, Edge mới */
 }
 
 .btn-random:hover {
@@ -550,6 +557,7 @@
     color: #ffffff;
     border-color: var(--accent-color);
 }
+    
 
 
 
