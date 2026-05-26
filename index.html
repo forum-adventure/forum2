@@ -523,20 +523,24 @@
         }
 
         .btn-random {
-            background-color: var(--search-bg);
-            color: var(--text-color);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-        }
-        .btn-random:hover {
-            border-color: var(--accent-color);
-            background-color: var(--hover-bg);
-        }
-        .btn-random:active {
-            background-color: var(--accent-color) !important;
-            color: #ffffff !important;
-            border-color: var(--accent-color) !important;
-        }
+    /* Đảo ngược màu: Lấy màu chủ đạo làm nền, chữ chuyển thành màu trắng */
+    background-color: var(--accent-color);
+    color: #ffffff;
+    border: 1px solid var(--accent-color);
+    border-radius: 12px;
+}
+.btn-random:hover {
+    /* Khi hover: Dùng màu biến thể hover đậm hơn một chút để tạo hiệu ứng nhấn */
+    background-color: var(--accent-hover);
+    border-color: var(--accent-hover);
+}
+.btn-random:active {
+    /* Giữ nguyên logic active ban đầu của bạn */
+    background-color: var(--accent-color) !important;
+    color: #ffffff !important;
+    border-color: var(--accent-color) !important;
+}
+
 
 
         /* DANH SÁCH BÀI VIẾT */
