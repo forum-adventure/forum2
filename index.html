@@ -272,41 +272,22 @@
             background-color: var(--hover-bg);
         }
 
-        /* Trạng thái Active của Tab - Nhạt nhẹ thanh lịch */
-.btn-tab.active {
-    background-color: #cbd5e1 !important; /* Màu xám Slate nhạt nhẹ */
-    color: #0f172a !important;            /* Chữ màu xanh đen đậm để tương phản tốt */
-    border-color: #cbd5e1 !important;
-}
+        /* Khôi phục trạng thái Active của Tab theo cấu hình màu chuẩn V1 */
+        .btn-tab.active {
+            background-color: var(--accent-color) !important;
+            color: #ffffff !important;
+            border-color: var(--accent-color) !important;
+        }
 
-.btn-tab.active span {
-    color: #0f172a !important;
-}
+        .btn-tab.active span {
+            color: #ffffff !important;
+        }
 
-/* Badge (số lượng) đi kèm */
-.btn-tab.active .tab-badge {
-    background-color: #0f172a !important; /* Badge nền tối */
-    color: #ffffff !important;            /* Số màu trắng */
-    border: none !important;
-}
-
-/* ĐỐI VỚI DARK MODE: Tự động đảo màu để không bị chói mắt */
-[data-theme="dark"] .btn-tab.active {
-    background-color: #334155 !important; /* Xám xanh tối nhẹ hài hòa với nền đen */
-    color: #f1f5f9 !important;            /* Chữ trắng sáng */
-    border-color: #334155 !important;
-}
-
-[data-theme="dark"] .btn-tab.active span {
-    color: #f1f5f9 !important;
-}
-
-[data-theme="dark"] .btn-tab.active .tab-badge {
-    background-color: #f1f5f9 !important; /* Badge chuyển sang nền sáng */
-    color: #0f172a !important;            /* Số màu tối */
-}
-
-
+        .btn-tab.active .tab-badge {
+            background-color: rgba(255, 255, 255, 0.25) !important;
+            color: #ffffff !important;
+            border: none !important;
+        }
 
         /* MENU CHECKBOX DROPDOWN CHO BỘ LỌC ẨN/HIỆN */
         .checkbox-dropdown-menu {
