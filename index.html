@@ -1150,10 +1150,14 @@
                 
                 const isChecked = !hiddenForums.includes(domain);
                 
-                label.innerHTML = `
-                    <input type="checkbox" value="${domain}" ${isChecked ? 'checked' : ''}>
-                    <span>${domain.toUpperCase()}</span>
-                `;
+                // Sử dụng split('.') để lấy phần tên trước dấu chấm đầu tiên
+const cleanName = domain.split('.')[0].toUpperCase(); 
+
+label.innerHTML = `
+    <input type="checkbox" value="${domain}" ${isChecked ? 'checked' : ''}>
+    <span>${cleanName}</span>
+`;
+
 
                 label.querySelector('input').addEventListener('change', (e) => {
                     const val = e.target.value;
@@ -1212,11 +1216,14 @@
             createTabButton(languages[currentLang].all_title, 'all', totalAllPostsCount);
             
             // 4. Danh sách các nút diễn đàn
-            Object.keys(forumsData).forEach(domain => { 
-                if (!hiddenForums.includes(domain)) {
-                    createTabButton(domain.toUpperCase(), domain, forumsData[domain].length); 
-                }
-            });
+Object.keys(forumsData).forEach(domain => { 
+    if (!hiddenForums.includes(domain)) {
+        // Lấy tên diễn đàn bỏ đuôi .com, .vn...
+        const cleanName = domain.split('.')[0].toUpperCase();
+        createTabButton(cleanName, domain, forumsData[domain].length); 
+    }
+});
+
 
             // Kiểm tra trạng thái Active Tab hiện tại bảo toàn dữ liệu
             const tabs = filterContainer.querySelectorAll('.btn-tab:not(.btn-tab-icon)');
