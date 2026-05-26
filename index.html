@@ -1243,7 +1243,7 @@ let randomAllPosts = [];
     const badge = document.createElement('span');
     badge.className = 'tab-badge';
     // Nếu là tab 'all', hiển thị số lượng là 50 (hoặc nhỏ hơn nếu tổng số bài ít hơn 50)
-    badge.textContent = domainKey === 'all' ? Math.min(50, count) : count;
+    badge.textContent = count;
     button.appendChild(badge);
     if (domainKey === currentDomain) button.classList.add('active');
     
@@ -1254,26 +1254,14 @@ let randomAllPosts = [];
         currentPage = 1;
         resetRandomHistory(); 
 
-        // --- XỬ LÝ NGẪU NHIÊN 50 BÀI CHO TAB ALL POSTS ---
+                // --- XỬ LÝ NGẪU NHIÊN CHO TAB ALL POSTS ---
         if (domainKey === 'all') {
-            let totalPosts = [];
-            Object.entries(forumsData).forEach(([domain, posts]) => {
-                if (!hiddenForums.includes(domain)) {
-                    totalPosts = totalPosts.concat(posts);
-                }
-            });
-            // Xáo trộn mảng bài viết (Fisher-Yates Shuffle)
-            for (let i = totalPosts.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [totalPosts[i], totalPosts[j]] = [totalPosts[j], totalPosts[i]];
-            }
-            // Lấy tối đa 50 bài viết đầu tiên sau khi xáo trộn
-            randomAllPosts = totalPosts.slice(0, 50);
+            randomAllPosts = []; // Xóa danh sách cũ để bốc ngẫu nhiên lại từ đầu cho trang 1
         } else {
-            // Xóa bộ nhớ tạm nếu chuyển sang tab khác
             randomAllPosts = [];
         }
         // -------------------------------------------------
+
 
         displayPosts();
 
@@ -1292,47 +1280,64 @@ let randomAllPosts = [];
 }
 
 
-        function getActivePosts() {
-    let targetPosts = [];
-    if (currentDomain === 'fav_bookmarks') {
-        targetPosts = [...bookmarks];
-    } else if (currentDomain === 'all') {
-        // Thay vì lấy toàn bộ, ta lấy mảng 50 bài ngẫu nhiên đã xử lý ở click event
-        // Trường hợp render lần đầu tiên chưa kịp click, ta tự khởi tạo nếu mảng đang trống
-        if (randomAllPosts.length === 0) {
-            let totalPosts = [];
-            Object.entries(forumsData).forEach(([domain, posts]) => {
-                if (!hiddenForums.includes(domain)) {
-                    totalPosts = totalPosts.concat(posts);
-                }
-            });
-            for (let i = totalPosts.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [totalPosts[i], totalPosts[j]] = [totalPosts[j], totalPosts[i]];
-            }
-            randomAllPosts = totalPosts.slice(0, 50);
-        }
-        targetPosts = [...randomAllPosts];
-    } else {
-        targetPosts = hiddenForums.includes(currentDomain) ? [] : (forumsData[currentDomain] || []);
+        // Hàm hỗ trợ lấy toàn bộ bài viết từ các diễn đàn không bị ẩn (Dạng mảng phẳng)
+function getAllFlattenedPosts() {
+    const availableDomains = Object.keys(forumsData).filter(domain => !hiddenForums.includes(domain));
+    let flattened = [];
+    for (const domain of availableDomains) {
+        flattened = flattened.concat(forumsData[domain] || []);
     }
+    
+    // Nếu đang có từ khóa tìm kiếm, lọc ngay từ đây
+    if (searchQuery !== '') {
+        try {
+            const escapedQuery = searchQuery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            const searchRegex = new RegExp('\\b' + escapedQuery, 'i');
+            flattened = flattened.filter(post => searchRegex.test(post.title));
+        } catch (e) {
+            console.error("Lỗi Regex Search:", e);
+        }
+    }
+    return flattened;
+}
 
-    // --- NÂNG CẤP LOGIC TÌM KIẾM CHÍNH XÁC TỪ ĐẦU TỪ ---
+function getActivePosts() {
+    if (currentDomain === 'fav_bookmarks') {
+        let targetPosts = [...bookmarks];
+        if (searchQuery !== '') {
+            try {
+                const escapedQuery = searchQuery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                const searchRegex = new RegExp('\\b' + escapedQuery, 'i');
+                targetPosts = targetPosts.filter(post => searchRegex.test(post.title));
+            } catch (e) {}
+        }
+        return targetPosts;
+    } 
+    
+    if (currentDomain === 'all') {
+        // Trả về toàn bộ danh sách phẳng (để hàm displayPosts tính đúng tổng số trang)
+        return getAllFlattenedPosts();
+    } 
+    
+    // Trường hợp chọn đích danh 1 diễn đàn cụ thể
+    let targetPosts = hiddenForums.includes(currentDomain) ? [] : (forumsData[currentDomain] || []);
     if (searchQuery !== '') {
         try {
             const escapedQuery = searchQuery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
             const searchRegex = new RegExp('\\b' + escapedQuery, 'i');
             targetPosts = targetPosts.filter(post => searchRegex.test(post.title));
-        } catch (e) {
-            console.error("Lỗi Regex Search:", e);
-        }
+        } catch (e) {}
     }
     return targetPosts;
 }
 
 
 
-        function displayPosts() {
+
+        
+        
+
+    function displayPosts() {
     listContainer.innerHTML = ''; 
     randomNavContainer.innerHTML = ''; 
     const targetPosts = getActivePosts();
@@ -1380,14 +1385,42 @@ let randomAllPosts = [];
 
     const totalPages = Math.ceil(targetPosts.length / postsPerPage);
     if (currentPage > totalPages) currentPage = totalPages || 1;
-    const startIndex = (currentPage - 1) * postsPerPage;
-    const paginatedPosts = targetPosts.slice(startIndex, startIndex + postsPerPage);
+    
+    // --- BIẾN CHỨA DỮ LIỆU HIỂN THỊ CỦA TRANG HIỆN TẠI ---
+    let paginatedPosts = [];
+
+    if (currentDomain === 'all' && currentPage === 1) {
+        // Nếu ở trang 1 của tab All, bốc ngẫu nhiên 50 bài và ghim lại (nếu chưa có bộ nhớ tạm)
+        if (randomAllPosts.length === 0) {
+            const totalCount = targetPosts.length;
+            const selectedIndices = new Set();
+            const selectedPosts = [];
+            
+            // Chạy tối đa 50 lần, an toàn và siêu tốc cho file 7MB
+            const limit = Math.min(postsPerPage, totalCount);
+            while (selectedPosts.length < limit && selectedIndices.size < totalCount) {
+                const randomIndex = Math.floor(Math.random() * totalCount);
+                if (!selectedIndices.has(randomIndex)) {
+                    selectedIndices.add(randomIndex);
+                    selectedPosts.push(targetPosts[randomIndex]);
+                }
+            }
+            randomAllPosts = selectedPosts;
+        }
+        paginatedPosts = randomAllPosts;
+    } else {
+        // Các trang còn lại (Trang 2, 3,...) hoặc các tab khác: Cắt mảng tuần tự bình thường
+        const startIndex = (currentPage - 1) * postsPerPage;
+        paginatedPosts = targetPosts.slice(startIndex, startIndex + postsPerPage);
+    }
+    // -----------------------------------------------------
 
     paginatedPosts.forEach(post => {
         renderPostCard(post);
     });
     renderPagination(totalPages);
 }
+
 
 
                 function renderPostCard(post) {
