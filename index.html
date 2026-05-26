@@ -1285,20 +1285,23 @@
 
             const faviconUrl = `${localFaviconFolder}/${post.domain}.png`; 
 
-            // --- XỬ LÝ HIGHLIGHT CHỮ Ở ĐÂY ---
-            let displayedTitle = post.title;
-            if (searchQuery && searchQuery.trim() !== '') {
-                try {
-                    // Trốn các ký tự đặc biệt nếu có trong ô tìm kiếm để tránh lỗi Regex
-                    const escapedQuery = searchQuery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-                    const regex = new RegExp(`(${escapedQuery})`, 'gi');
-                    // Bọc từ khóa bằng thẻ mark mà không làm thay đổi font chữ gốc (Hoa/Thường)
-                    displayedTitle = post.title.replace(regex, '<mark class="search-highlight">$1</mark>');
-                } catch (e) {
-                    console.error("Lỗi highlight:", e);
-                }
-            }
-            // ---------------------------------
+            // --- XỬ LÝ HIGHLIGHT CHỮ CHUẨN XÁC THEO RANH GIỚI TỪ ---
+let displayedTitle = post.title;
+if (searchQuery && searchQuery.trim() !== '') {
+    try {
+        const escapedQuery = searchQuery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        
+        // Thêm \\b vào trước để chỉ highlight phần đầu của từ khớp với tìm kiếm
+        const regex = new RegExp(`\\b(${escapedQuery})`, 'gi');
+        
+        displayedTitle = post.title.replace(regex, '<mark class="search-highlight">$1</mark>');
+    } catch (e) {
+        console.error("Lỗi highlight:", e);
+    }
+}
+// -----------------------------------------------------
+
+            
 
             const postItem = document.createElement('div');
             postItem.className = `post-item ${isRead ? 'is-read' : ''}`;
