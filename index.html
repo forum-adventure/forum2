@@ -1200,10 +1200,11 @@
                     <path d="M10 18h4v-2h-4v2zM3 6v2h18V6H3zm3 7h12v-2H6v2z"/>
                 </svg>
             `;
-            filterBtn.addEventListener('pointerdown', (e) => {
+            filterBtn.addEventListener('click', (e) => {
     e.stopPropagation(); // Ngăn chặn sự kiện lan ra ngoài document
     checkboxDropdownMenu.classList.toggle('open');
 });
+
             filterContainer.appendChild(filterBtn);
 
             // 3. Nút Tất cả bài viết
@@ -1570,13 +1571,16 @@ document.addEventListener('pointerdown', (e) => {
     const isClickInsideDropdown = document.getElementById('customDropdown').contains(e.target);
     const isClickInsideFilterMenu = document.getElementById('filterWrapper').contains(e.target);
     
+    // Kiểm tra xem vị trí chạm có thuộc về nút phễu lọc hay không
+    const isClickOnFilterBtn = document.getElementById('btnFilterToggle') && document.getElementById('btnFilterToggle').contains(e.target);
+
     // Đóng dropdown diễn đàn chính ngay khi chạm ra ngoài
     if (!isClickInsideDropdown) {
         customDropdown.classList.remove('open');
     }
 
-    // Đóng menu checkbox ẩn/hiển ngay khi chạm ra ngoài
-    if (!isClickInsideFilterMenu) {
+    // Chỉ đóng menu checkbox nếu chạm ra ngoài menu VÀ không chạm vào nút phễu
+    if (!isClickInsideFilterMenu && !isClickOnFilterBtn) {
         checkboxDropdownMenu.classList.remove('open');
     }
 
@@ -1585,6 +1589,7 @@ document.addEventListener('pointerdown', (e) => {
         actionBar.classList.remove('search-active');
     }
 });
+
 
 
         btnRandom.addEventListener('click', (e) => {
