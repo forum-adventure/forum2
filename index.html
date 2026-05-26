@@ -1209,9 +1209,9 @@ let newFeedPosts = [];
 });
             filterContainer.appendChild(filterBtn);
             
-            // Tạo nút New Feed với số lượng hiển thị tối đa là 50 (hoặc ít hơn nếu tổng số bài nhỏ hơn 50)
-        const newFeedCount = Math.min(allValidPosts.length, 50);
-        createTabButton(languages[currentLang].new_feed_title, 'new_feed', newFeedCount);
+            // ✅ ĐÃ SỬA LỖI: Lúc này biến allValidPosts đã tồn tại hợp lệ
+            const newFeedCount = Math.min(totalAllPostsCount, 50);
+            createTabButton(languages[currentLang].new_feed_title, 'new_feed', newFeedCount);
 
             // 3. Nút Tất cả bài viết
             createTabButton(languages[currentLang].all_title, 'all', totalAllPostsCount);
