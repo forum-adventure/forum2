@@ -1277,122 +1277,123 @@ function shuffleArray(array) {
 }
 
     
-        function getActivePosts() {
-    let targetPosts = [];
-    if (currentDomain === 'fav_bookmarks') {
-        targetPosts = [...bookmarks];
-    } else if (currentDomain === 'all') {
-        Object.entries(forumsData).forEach(([domain, posts]) => {
-            if (!hiddenForums.includes(domain)) {
-                targetPosts = targetPosts.concat(posts);
+        
+
+            function getActivePosts() {
+            let targetPosts = [];
+            if (currentDomain === 'fav_bookmarks') {
+                targetPosts = [...bookmarks];
+            } else if (currentDomain === 'all') {
+                Object.entries(forumsData).forEach(([domain, posts]) => {
+                    if (!hiddenForums.includes(domain)) {
+                        targetPosts = targetPosts.concat(posts);
+                    }
+                });
+            } else {
+                targetPosts = hiddenForums.includes(currentDomain) ? [] : (forumsData[currentDomain] || []);
             }
-        });
-    } else {
-        targetPosts = hiddenForums.includes(currentDomain) ? [] : (forumsData[currentDomain] || []);
-    }
 
-    // --- NÂNG CẤP: Xử lý hiển thị 50 bài ngẫu nhiên tại Trang 1 của Tab Tất cả diễn đàn ---
-    if (currentDomain === 'all' && searchQuery === '') {
-        if (currentPage === 1) {
-            // Trộn ngẫu nhiên toàn bộ bài viết và chỉ lấy đúng 50 bài cho trang 1
-            return shuffleArray(targetPosts).slice(0, postsPerPage);
-        } else {
-            // Từ trang 2 trở đi, loại bỏ 50 bài xuất hiện ở trang 1 (nếu cần thiết) 
-            // Tuy nhiên để phân trang liền mạch không bị hụt data, ta giữ nguyên gốc chia từ item thứ 51 trở đi.
-            // Biến paginatedPosts ở hàm displayPosts() sẽ tự động slice() chuẩn xác.
+            // --- NÂNG CẤP LOGIC TÌM KIẾM CHÍNH XÁC TỪ ĐẦU TỪ ---
+            if (searchQuery !== '') {
+                try {
+                    const escapedQuery = searchQuery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                    const searchRegex = new RegExp('\\b' + escapedQuery, 'i');
+                    targetPosts = targetPosts.filter(post => searchRegex.test(post.title));
+                } catch (e) {
+                    console.error("Lỗi Regex Search:", e);
+                }
+            }
+            return targetPosts;
         }
-    }
-
-    // --- NÂNG CẤP LOGIC TÌM KIẾM CHÍNH XÁC TỪ ĐẦU TỪ ---
-    if (searchQuery !== '') {
-        try {
-            const escapedQuery = searchQuery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-            const searchRegex = new RegExp('\\b' + escapedQuery, 'i');
-            targetPosts = targetPosts.filter(post => searchRegex.test(post.title));
-        } catch (e) {
-            console.error("Lỗi Regex Search:", e);
-        }
-    }
-    return targetPosts;
-}
-
-
 
         function displayPosts() {
-    listContainer.innerHTML = ''; 
-    randomNavContainer.innerHTML = ''; 
-    const targetPosts = getActivePosts();
+            listContainer.innerHTML = ''; 
+            randomNavContainer.innerHTML = ''; 
+            const targetPosts = getActivePosts();
 
-    // TRƯỜNG HỢP: Tab Yêu thích trống
-    if (currentDomain === 'fav_bookmarks' && targetPosts.length === 0) {
-        listContainer.innerHTML = `
-            <div class="empty-bookmarks-wrapper" style="text-align: center; padding: 40px 20px; background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border-color); animation: fadeIn 0.3s ease;">
-                <svg width="120" height="120" viewBox="0 0 24 24" fill="none" style="margin: 0 auto 16px; display: block; opacity: 0.7;">
-                    <path d="M19 1H5C3.9 1 3 1.9 3 3V21C3 22.1 3.9 23 5 23H19C20.1 23 21 22.1 21 21V3C21 1.9 20.1 1 19 1ZM19 21H5V3H19V21Z" fill="var(--sub-text)"/>
-                    <path d="M12 18.05L11.05 17.18C7.67 14.12 5.45 12.11 5.45 9.65C5.45 7.62 7.04 6.03 9.05 6.03C10.19 6.03 11.28 6.56 12 7.4C12.72 6.56 13.81 6.03 14.95 6.03C16.96 6.03 18.55 7.62 18.55 9.65C18.55 12.11 16.33 14.12 12.95 17.19L12 18.05Z" fill="var(--star-active)" style="opacity: 0.65;"/>
-                </svg>
-                <div style="font-weight: 500; font-size: 14.5px; color: var(--text-color); max-width: 450px; margin: 0 auto 20px; line-height: 1.5;">
-                    ${languages[currentLang].empty_bookmarks}
-                </div>
-                
-                <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
-                    <button class="btn-tab" onclick="importBookmarks()" style="padding: 8px 16px; font-size: 12px;">${languages[currentLang].btn_import}</button>
+            // TRƯỜNG HỢP: Tab Yêu thích trống
+            if (currentDomain === 'fav_bookmarks' && targetPosts.length === 0) {
+                listContainer.innerHTML = `
+                    <div class="empty-bookmarks-wrapper" style="text-align: center; padding: 40px 20px; background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border-color); animation: fadeIn 0.3s ease;">
+                        <svg width="120" height="120" viewBox="0 0 24 24" fill="none" style="margin: 0 auto 16px; display: block; opacity: 0.7;">
+                            <path d="M19 1H5C3.9 1 3 1.9 3 3V21C3 22.1 3.9 23 5 23H19C20.1 23 21 22.1 21 21V3C21 1.9 20.1 1 19 1ZM19 21H5V3H19V21Z" fill="var(--sub-text)"/>
+                            <path d="M12 18.05L11.05 17.18C7.67 14.12 5.45 12.11 5.45 9.65C5.45 7.62 7.04 6.03 9.05 6.03C10.19 6.03 11.28 6.56 12 7.4C12.72 6.56 13.81 6.03 14.95 6.03C16.96 6.03 18.55 7.62 18.55 9.65C18.55 12.11 16.33 14.12 12.95 17.19L12 18.05Z" fill="var(--star-active)" style="opacity: 0.65;"/>
+                        </svg>
+                        <div style="font-weight: 500; font-size: 14.5px; color: var(--text-color); max-width: 450px; margin: 0 auto 20px; line-height: 1.5;">
+                            ${languages[currentLang].empty_bookmarks}
+                        </div>
+                        
+                        <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                            <button class="btn-tab" onclick="importBookmarks()" style="padding: 8px 16px; font-size: 12px;">${languages[currentLang].btn_import}</button>
+                            <input type="file" id="importFileInput" accept=".txt" style="display: none;" onchange="handleFileSelect(event)">
+                        </div>
+                    </div>
+                `;
+                paginationContainer.innerHTML = '';
+                return;
+            }
+
+            // TRƯỜNG HỢP: Các bộ lọc khác hoặc Tìm kiếm không ra kết quả
+            if (targetPosts.length === 0) {
+                listContainer.innerHTML = `<div class="empty-message">${languages[currentLang].not_found}</div>`;
+                paginationContainer.innerHTML = '';
+                return;
+            }
+
+            // Nếu là tab Yêu thích và CÓ bài viết, chèn thêm thanh công cụ Xuất dữ liệu lên đầu danh sách bài viết
+            if (currentDomain === 'fav_bookmarks') {
+                const backupBar = document.createElement('div');
+                backupBar.style = "display: flex; gap: 10px; justify-content: flex-end; margin-bottom: 12px; padding: 0 4px;";
+                backupBar.innerHTML = `
+                    <button class="btn-tab" onclick="exportBookmarks()" style="padding: 6px 12px; font-size: 11px; opacity: 0.8;">${languages[currentLang].btn_export}</button>
+                    <button class="btn-tab" onclick="importBookmarks()" style="padding: 6px 12px; font-size: 11px; opacity: 0.8;">${languages[currentLang].btn_import}</button>
                     <input type="file" id="importFileInput" accept=".txt" style="display: none;" onchange="handleFileSelect(event)">
-                </div>
-            </div>
-        `;
-        paginationContainer.innerHTML = '';
-        return;
-    }
+                `;
+                listContainer.appendChild(backupBar);
+            }
 
-    // TRƯỜNG HỢP: Các bộ lọc khác hoặc Tìm kiếm không ra kết quả
-    if (targetPosts.length === 0) {
-        listContainer.innerHTML = `<div class="empty-message">${languages[currentLang].not_found}</div>`;
-        paginationContainer.innerHTML = '';
-        return;
-    }
+            // Tính tổng số trang dựa trên TOÀN BỘ số bài viết gốc
+            const totalPages = Math.ceil(targetPosts.length / postsPerPage);
+            if (currentPage > totalPages) currentPage = totalPages || 1;
+            
+            // XỬ LÝ PHÂN TÁCH DATA ĐỂ HIỂN THỊ
+            let paginatedPosts = [];
+            if (currentDomain === 'all' && searchQuery === '' && currentPage === 1) {
+                // Trang 1 Tab Tất cả: Xáo trộn mảng gốc và lấy đúng 50 bài ngẫu nhiên
+                paginatedPosts = shuffleArray(targetPosts).slice(0, postsPerPage);
+            } else {
+                // Các trang sau hoặc tab khác: Lấy theo vị trí phân trang tuần tự chính xác
+                const startIndex = (currentPage - 1) * postsPerPage;
+                paginatedPosts = targetPosts.slice(startIndex, startIndex + postsPerPage);
+            }
 
-    // Nếu là tab Yêu thích và CÓ bài viết, chèn thêm thanh công cụ Xuất dữ liệu lên đầu danh sách bài viết
-    if (currentDomain === 'fav_bookmarks') {
-        const backupBar = document.createElement('div');
-        backupBar.style = "display: flex; gap: 10px; justify-content: flex-end; margin-bottom: 12px; padding: 0 4px;";
-        backupBar.innerHTML = `
-            <button class="btn-tab" onclick="exportBookmarks()" style="padding: 6px 12px; font-size: 11px; opacity: 0.8;">${languages[currentLang].btn_export}</button>
-            <button class="btn-tab" onclick="importBookmarks()" style="padding: 6px 12px; font-size: 11px; opacity: 0.8;">${languages[currentLang].btn_import}</button>
-            <input type="file" id="importFileInput" accept=".txt" style="display: none;" onchange="handleFileSelect(event)">
-        `;
-        listContainer.appendChild(backupBar);
-    }
+            // KIỂM TRA ĐỂ TẠO CONTAINER RIÊNG CHO TRANG 1 TAB TẤT CẢ
+            if (currentDomain === 'all' && searchQuery === '' && currentPage === 1) {
+                const randomContainer = document.createElement('div');
+                randomContainer.className = 'random-posts-container';
+                randomContainer.id = 'randomPostsContainer';
+                randomContainer.style = "display: flex; flex-direction: column; gap: 12px; width: 100%;";
+                
+                listContainer.appendChild(randomContainer);
+                
+                paginatedPosts.forEach(post => {
+                    renderPostCard(post, randomContainer);
+                });
+            } else {
+                paginatedPosts.forEach(post => {
+                    renderPostCard(post, listContainer);
+                });
+            }
+            
+            // Gọi hàm render thanh điều hướng (Lúc này totalPages đã được tính đúng)
+            renderPagination(totalPages);
+        }
 
-        const totalPages = Math.ceil(targetPosts.length / postsPerPage);
-    if (currentPage > totalPages) currentPage = totalPages || 1;
-    
-    // Nếu đang ở Trang 1 của Tất cả diễn đàn, data trả về từ getActivePosts() ĐÃ LÀ 50 bài ngẫu nhiên
-    // Do đó startIndex sẽ bằng 0 và lấy trọn vẹn mảng. Các trang sau sẽ tính toán bình thường.
-    const startIndex = (currentDomain === 'all' && searchQuery === '' && currentPage === 1) ? 0 : (currentPage - 1) * postsPerPage;
-    const paginatedPosts = (currentDomain === 'all' && searchQuery === '' && currentPage === 1) ? targetPosts : targetPosts.slice(startIndex, startIndex + postsPerPage);
+                
+               
 
-    // KIỂM TRA ĐỂ TẠO CONTAINER RIÊNG CHO TRANG 1 TAB TẤT CẢ
-    if (currentDomain === 'all' && searchQuery === '' && currentPage === 1) {
-        const randomContainer = document.createElement('div');
-        randomContainer.className = 'random-posts-container';
-        randomContainer.id = 'randomPostsContainer';
-        randomContainer.style = "display: flex; flex-direction: column; gap: 12px; width: 100%;";
         
-        listContainer.appendChild(randomContainer);
         
-        paginatedPosts.forEach(post => {
-            renderPostCard(post, randomContainer); // Truyền container riêng vào để render
-        });
-    } else {
-        // Hiển thị bình thường đúng với cấu trúc data của các trang khác hoặc tab khác
-        paginatedPosts.forEach(post => {
-            renderPostCard(post, listContainer);
-        });
-    }
-    
-    renderPagination(totalPages);
-}
 
 
 
