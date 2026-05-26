@@ -430,77 +430,82 @@
             font-weight: 600;
         }
 
-        /* SEARCH CONTAINER CO GIÃN THEO V1 MÀU */
-        .search-container {
-            position: relative;
-            flex: 0 0 45px; 
-            height: 45px;
-            transition: flex 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-            flex-shrink: 0;
-        }
+        /* 1. SỬA CONTAINER: Đảm bảo khi thu gọn phải là khối vuông hoàn hảo 45px */
+.search-container {
+    position: relative;
+    flex: 0 0 45px; 
+    width: 45px;   /* Ép thêm thuộc tính width cố định khi thu gọn */
+    height: 45px;
+    transition: flex 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    flex-shrink: 0;
+}
 
-        .search-input {
-            width: 100%;
-            height: 100%;
-            padding: 12px 38px 12px 12px; /* SỬA LỖI ĐÈ CHỮ: Cố định sẵn khoảng đệm padding bên phải cho nút X ngay từ đầu */
-            font-size: 14px;
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            background-color: var(--search-bg);
-            color: var(--text-color);
-            box-sizing: border-box;
-            outline: none;
-            transition: all 0.2s ease;
-            box-shadow: var(--card-shadow);
-            cursor: pointer;
-            
-            /* SỬA LỖI IPHONE: Chống lỗi vỡ border-radius và loại bỏ đổ bóng nội tuyến của iOS */
-            -webkit-appearance: none;
-            appearance: none;
-        }
-        .search-input::placeholder {
-            color: transparent;
-            transition: color 0.2s ease;
-        }
+/* 2. SỬA INPUT: Cân bằng lại padding ở 2 trạng thái */
+.search-input {
+    width: 100%;
+    height: 100%;
+    /* TRẠNG THÁI THU GỌN BAN ĐẦU: padding đều 2 bên trái phải để icon cân chính giữa */
+    padding: 12px; 
+    font-size: 14px;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    background-color: var(--search-bg);
+    color: var(--text-color);
+    box-sizing: border-box;
+    outline: none;
+    transition: all 0.2s ease;
+    box-shadow: var(--card-shadow);
+    cursor: pointer;
+    
+    -webkit-appearance: none;
+    appearance: none;
+}
 
-        .search-icon {
-            position: absolute;
-            left: 13px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 18px;
-            height: 18px;
-            fill: var(--sub-text);
-            pointer-events: none;
-            transition: fill 0.2s ease;
-        }
+.search-input::placeholder {
+    color: transparent;
+    transition: color 0.2s ease;
+}
 
-        /* TRẠNG THÁI KHI ACTIVE Ô TÌM KIẾM */
-        .action-bar.search-active .custom-dropdown {
-            flex: 0 0 50px; 
-        }
+.search-icon {
+    position: absolute;
+    left: 13px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 18px;
+    height: 18px;
+    fill: var(--sub-text);
+    pointer-events: none;
+    transition: fill 0.2s ease;
+}
 
-        .action-bar.search-active .custom-dropdown .dropdown-selected {
-            padding-left: 10px;
-            padding-right: 22px;
-            font-size: 12px;
-        }
-        .action-bar.search-active .custom-dropdown .dropdown-selected::after {
-            right: 8px;
-        }
+        /* TRẠNG THÁI KHI ACTIVE Ô TÌM KIẾM (BẤM MỞ RỘNG) */
+.action-bar.search-active .custom-dropdown {
+    flex: 0 0 50px; 
+}
 
-        /* Đổi width: auto thành flex: 1 để kích hoạt lực đẩy mượt mà từ trái sang phải */
-        .action-bar.search-active .search-container {
-            flex: 1; 
-        }
-        .action-bar.search-active .search-input::placeholder {
-            color: var(--sub-text);
-        }
+.action-bar.search-active .custom-dropdown .dropdown-selected {
+    padding-left: 10px;
+    padding-right: 22px;
+    font-size: 12px;
+}
+.action-bar.search-active .custom-dropdown .dropdown-selected::after {
+    right: 8px;
+}
 
-        .action-bar.search-active .search-input {
-            cursor: text;
-            padding-left: 42px; /* Thêm padding đẩy chữ qua phải, nhường chỗ cho icon */
-        }
+.action-bar.search-active .search-container {
+    flex: 1; 
+    width: auto; /* Thả tự do width để flex: 1 chiếm trọn không gian */
+}
+.action-bar.search-active .search-input::placeholder {
+    color: var(--sub-text);
+}
+
+/* KHI ACTIVE: Mới kích hoạt khoảng đệm lớn để chống chữ đè nút X và nhường chỗ cho kính lúp */
+.action-bar.search-active .search-input {
+    cursor: text;
+    padding-left: 42px;  /* Đẩy chữ qua phải nhường chỗ cho icon kính lúp */
+    padding-right: 38px; /* Giữ khoảng trống bên phải cho nút X xóa text không bị đè chữ */
+}
     
 
         /* Nút đọc ngẫu nhiên khôi phục thiết kế đồng bộ v1 */
