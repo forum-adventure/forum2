@@ -1595,6 +1595,8 @@ document.addEventListener('pointerdown', (e) => {
         btnRandom.addEventListener('click', (e) => {
             e.preventDefault();
             e.stopPropagation();
+            // Ép nút nhả trạng thái focus để trả lại màu nền ban đầu ngay lập tức
+            btnRandom.blur();
 
             const allCurrentPosts = getActivePosts();
             if (allCurrentPosts.length === 0) { alert(languages[currentLang].alert_no_post); return; }
