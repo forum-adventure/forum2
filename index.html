@@ -85,6 +85,7 @@
             line-height: 1.6;
             transition: background-color 0.3s, color 0.3s;
             touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
         }
 
         /* Top Utilities Bar */
@@ -719,6 +720,17 @@
             .action-bar.search-active .custom-dropdown .dropdown-selected::after {
                 right: 4px;
             }
+            mark.search-highlight {
+    background-color: #fef08a; /* Màu vàng nhạt dịu mắt (giống bộ màu Slate/Tailwind) */
+    color: #0f172a;            /* Chữ đen xám đậm để dễ đọc */
+    padding: 0 2px;
+    border-radius: 2px;
+}
+:root[data-theme="dark"] mark.search-highlight {
+    background-color: #ca8a04; /* Màu vàng sậm hơn ở giao diện tối để không bị chói */
+    color: #ffffff;
+}
+
         }
     </style>
 </head>
@@ -1256,18 +1268,33 @@
             renderPagination(totalPages);
         }
 
-        function renderPostCard(post) {
+                function renderPostCard(post) {
             const isRead = readHistory.includes(post.url);
             const isBookmarked = bookmarks.some(b => b.url === post.url);
 
             const faviconUrl = `${localFaviconFolder}/${post.domain}.png`; 
+
+            // --- XỬ LÝ HIGHLIGHT CHỮ Ở ĐÂY ---
+            let displayedTitle = post.title;
+            if (searchQuery && searchQuery.trim() !== '') {
+                try {
+                    // Trốn các ký tự đặc biệt nếu có trong ô tìm kiếm để tránh lỗi Regex
+                    const escapedQuery = searchQuery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                    const regex = new RegExp(`(${escapedQuery})`, 'gi');
+                    // Bọc từ khóa bằng thẻ mark mà không làm thay đổi font chữ gốc (Hoa/Thường)
+                    displayedTitle = post.title.replace(regex, '<mark class="search-highlight">$1</mark>');
+                } catch (e) {
+                    console.error("Lỗi highlight:", e);
+                }
+            }
+            // ---------------------------------
 
             const postItem = document.createElement('div');
             postItem.className = `post-item ${isRead ? 'is-read' : ''}`;
             postItem.innerHTML = `
                 <img class="post-avatar" src="${faviconUrl}" alt="${post.domain}" onerror="this.onerror=null; this.src='${defaultAvatar}';">
                 <div class="post-content-block">
-                    <a href="${post.url}" target="_blank" class="post-title">${post.title}</a>
+                    <a href="${post.url}" target="_blank" class="post-title">${displayedTitle}</a>
                     <span class="post-source">${languages[currentLang].source_label}${post.domain}</span>
                 </div>
                 <button class="btn-bookmark ${isBookmarked ? 'active' : ''}" title="Đánh dấu yêu thích">${isBookmarked ? '★' : '☆'}</button>
@@ -1318,6 +1345,7 @@
 
             listContainer.appendChild(postItem);
         }
+
 
         function renderPagination(totalPages) {
             paginationContainer.innerHTML = '';
