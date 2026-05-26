@@ -1148,10 +1148,10 @@
                     <path d="M10 18h4v-2h-4v2zM3 6v2h18V6H3zm3 7h12v-2H6v2z"/>
                 </svg>
             `;
-            filterBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                checkboxDropdownMenu.classList.toggle('open');
-            });
+            filterBtn.addEventListener('pointerdown', (e) => {
+    e.stopPropagation(); // Ngăn chặn sự kiện lan ra ngoài document
+    checkboxDropdownMenu.classList.toggle('open');
+});
             filterContainer.appendChild(filterBtn);
 
             // 3. Nút Tất cả bài viết
@@ -1410,23 +1410,28 @@
             searchInput.dispatchEvent(new Event('input')); 
         });
 
-        document.addEventListener('click', (e) => {
-            const isClickInsideSearch = document.getElementById('searchContainer').contains(e.target);
-            const isClickInsideDropdown = document.getElementById('customDropdown').contains(e.target);
-            const isClickInsideFilterMenu = document.getElementById('filterWrapper').contains(e.target);
-            
-            if (!isClickInsideDropdown) {
-                customDropdown.classList.remove('open');
-            }
+        // THAY THẾ BẰNG ĐOẠN CODE MỚI NÀY:
+document.addEventListener('pointerdown', (e) => {
+    const isClickInsideSearch = document.getElementById('searchContainer').contains(e.target);
+    const isClickInsideDropdown = document.getElementById('customDropdown').contains(e.target);
+    const isClickInsideFilterMenu = document.getElementById('filterWrapper').contains(e.target);
+    
+    // Đóng dropdown diễn đàn chính ngay khi chạm ra ngoài
+    if (!isClickInsideDropdown) {
+        customDropdown.classList.remove('open');
+    }
 
-            if (!isClickInsideFilterMenu) {
-                checkboxDropdownMenu.classList.remove('open');
-            }
+    // Đóng menu checkbox ẩn/hiển ngay khi chạm ra ngoài
+    if (!isClickInsideFilterMenu) {
+        checkboxDropdownMenu.classList.remove('open');
+    }
 
-            if (!isClickInsideSearch && searchInput.value.trim() === '') {
-                actionBar.classList.remove('search-active');
-            }
-        });
+    // Thu nhỏ thanh tìm kiếm nếu trống và chạm ra ngoài
+    if (!isClickInsideSearch && searchInput.value.trim() === '') {
+        actionBar.classList.remove('search-active');
+    }
+});
+
 
         btnRandom.addEventListener('click', (e) => {
             e.preventDefault();
