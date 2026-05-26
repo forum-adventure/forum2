@@ -1588,16 +1588,32 @@ displayedTitle = post.title.replace(regex, '<mark class="search-highlight">$1</m
 
         const clearSearchBtn = document.getElementById('clearSearch');
 
-        searchInput.addEventListener('input', (e) => {
-    clearTimeout(searchTimeout);
-    searchTimeout = setTimeout(() => {
-        searchQuery = e.target.value.trim().toLowerCase();
-        currentPage = 1;
-        resetRandomHistory();
-        randomAllPosts = []; // THÊM DÒNG NÀY: Xóa cache ngẫu nhiên để kết quả tìm kiếm hiển thị chuẩn xác
-        displayPosts();
-    }, 300);
-});
+                searchInput.addEventListener('input', (e) => {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                searchQuery = e.target.value.trim().toLowerCase();
+                currentPage = 1;
+                resetRandomHistory();
+                
+                // --- ĐOẠN MÃ THÊM MỚI THEO YÊU CẦU CỦA BẠN ---
+                // Nếu đang ở tab "Tất cả bài viết" và người dùng bắt đầu nhập từ khóa
+                if (currentDomain === 'all' && searchQuery !== '') {
+                    // Xóa mảng ngẫu nhiên tĩnh để ép hệ thống cắt mảng tuần tự theo từ khóa
+                    randomAllPosts = []; 
+                    
+                    // Tìm nút tab "Tất cả bài viết" trên giao diện và kích hoạt lại class active của nó
+                    const allTabButton = filterContainer.querySelector('[data-domain="all"]');
+                    if (allTabButton) {
+                        document.querySelectorAll('.btn-tab').forEach(btn => btn.classList.remove('active'));
+                        allTabButton.classList.add('active');
+                    }
+                }
+                // -------------------------------------------------
+
+                displayPosts();
+            }, 300);
+        });
+
 
 
         clearSearchBtn.addEventListener('click', () => {
