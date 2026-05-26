@@ -1241,12 +1241,15 @@
                 targetPosts = hiddenForums.includes(currentDomain) ? [] : (forumsData[currentDomain] || []);
             }
 
-            // Đồng bộ bộ lọc tìm kiếm chuỗi Latin / Không phân biệt hoa thường
-            if (searchQuery !== '') {
-                targetPosts = targetPosts.filter(post => post.title.toLowerCase().includes(searchQuery));
-            }
-            return targetPosts;
-        }
+            // Tìm kiếm theo ký tự đầu của từ (Starts With Word)
+if (searchQuery !== '') {
+    // Ép chữ về chuỗi an toàn để không bị lỗi Regex nếu gõ ký tự đặc biệt
+    const escapedQuery = searchQuery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    // \b ở đầu nghĩa là bắt buộc phải là bắt đầu của một từ mới
+    const regex = new RegExp('\\b' + escapedQuery, 'i');
+    targetPosts = targetPosts.filter(post => regex.test(post.title));
+}
+
 
         function displayPosts() {
             listContainer.innerHTML = ''; 
