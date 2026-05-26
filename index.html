@@ -272,30 +272,40 @@
             background-color: var(--hover-bg);
         }
 
-        /* Trạng thái Active của Tab - Nhạt và tự động thích ứng Light/Dark Mode */
+        /* Trạng thái Active của Tab - Nhạt nhẹ thanh lịch */
 .btn-tab.active {
-    /* Tạo nền nhạt bằng cách lấy chính màu chữ chính làm mờ đi 12% */
-    background-color: rgba(30, 41, 59, 0.12) !important; 
-    color: var(--text-color) !important;
-    border-color: transparent !important; /* Ẩn viền để nút nhìn thanh thoát hơn */
+    background-color: #cbd5e1 !important; /* Màu xám Slate nhạt nhẹ */
+    color: #0f172a !important;            /* Chữ màu xanh đen đậm để tương phản tốt */
+    border-color: #cbd5e1 !important;
 }
 
-/* Đảm bảo chữ bên trong chuyển theo màu text-color */
 .btn-tab.active span {
-    color: var(--text-color) !important;
+    color: #0f172a !important;
 }
 
-/* Badge (số lượng) đi kèm cũng tự tương thích */
+/* Badge (số lượng) đi kèm */
 .btn-tab.active .tab-badge {
-    background-color: var(--text-color) !important;
-    color: var(--card-bg) !important;
+    background-color: #0f172a !important; /* Badge nền tối */
+    color: #ffffff !important;            /* Số màu trắng */
     border: none !important;
 }
 
-/* ĐỐI VỚI DARK MODE: Tự động đổi màu nền nhạt sang tone tối */
+/* ĐỐI VỚI DARK MODE: Tự động đảo màu để không bị chói mắt */
 [data-theme="dark"] .btn-tab.active {
-    background-color: rgba(241, 245, 249, 0.15) !important; /* Nền sáng mờ trên nền đen */
+    background-color: #334155 !important; /* Xám xanh tối nhẹ hài hòa với nền đen */
+    color: #f1f5f9 !important;            /* Chữ trắng sáng */
+    border-color: #334155 !important;
 }
+
+[data-theme="dark"] .btn-tab.active span {
+    color: #f1f5f9 !important;
+}
+
+[data-theme="dark"] .btn-tab.active .tab-badge {
+    background-color: #f1f5f9 !important; /* Badge chuyển sang nền sáng */
+    color: #0f172a !important;            /* Số màu tối */
+}
+
 
 
         /* MENU CHECKBOX DROPDOWN CHO BỘ LỌC ẨN/HIỆN */
