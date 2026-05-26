@@ -843,6 +843,7 @@
                 error_server: "Không thể kết nối máy chủ dữ liệu.",
                 filter_tooltip: "Ẩn/hiện diễn đàn",
                 empty_bookmarks: "Bạn chưa có bài viết yêu thích nào. Hãy bấm nút ★ ở các bài viết để lưu lại nhé!",
+                new_feed_title: "New Feed ✨", // <-- Thêm dòng này
         btn_export: "📤 Xuất dữ liệu",
         btn_import: "📥 Nhập dữ liệu",
         import_success: "Nhập danh sách yêu thích thành công!",
@@ -874,6 +875,7 @@
                 error_server: "Failed to connect to data server.",
                 filter_tooltip: "Show/hide forums",
                   empty_bookmarks: "You don't have any favorite posts yet. Click the ★ button on any post to save it!",
+                new_feed_title: "New Feed ✨", // <-- Thêm dòng này
         btn_export: "📤 Export Data",
         btn_import: "📥 Import Data",
         import_success: "Favorites imported successfully!",
@@ -899,6 +901,8 @@
 
         // Quản lý danh sách các diễn đàn bị ẩn tạm thời (Không lưu localStorage)
         let hiddenForums = [];
+    // Biến lưu trữ danh sách bài viết tạm thời cho tab New Feed
+let newFeedPosts = []; 
 
         
         let bookmarks = JSON.parse(localStorage.getItem('bookmarks')) || [];
@@ -1204,6 +1208,10 @@
     checkboxDropdownMenu.classList.toggle('open');
 });
             filterContainer.appendChild(filterBtn);
+            
+            // Tạo nút New Feed với số lượng hiển thị tối đa là 50 (hoặc ít hơn nếu tổng số bài nhỏ hơn 50)
+        const newFeedCount = Math.min(allValidPosts.length, 50);
+        createTabButton(languages[currentLang].new_feed_title, 'new_feed', newFeedCount);
 
             // 3. Nút Tất cả bài viết
             createTabButton(languages[currentLang].all_title, 'all', totalAllPostsCount);
@@ -1250,6 +1258,25 @@
                 currentDomain = domainKey;
                 currentPage = 1;
                 resetRandomHistory(); 
+                
+                // [MỚI] Nếu người dùng bấm vào tab New Feed, tiến hành lấy 50 bài viết ngẫu nhiên mới
+        if (domainKey === 'new_feed') {
+            let allValidPosts = [];
+            Object.entries(forumsData).forEach(([domain, posts]) => {
+                if (!hiddenForums.includes(domain)) {
+                    allValidPosts = allValidPosts.concat(posts);
+                }
+            });
+            
+            // Thuật toán xáo trộn Fisher-Yates nhanh & mượt mà
+            for (let i = allValidPosts.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [allValidPosts[i], allValidPosts[j]] = [allValidPosts[j], allValidPosts[i]];
+            }
+            
+            // Lấy tối đa 50 bài viết sau khi trộn
+            newFeedPosts = allValidPosts.slice(0, 50);
+        }
                 displayPosts();
 
                 const containerWidth = filterContainer.offsetWidth;
@@ -1270,6 +1297,8 @@
     let targetPosts = [];
     if (currentDomain === 'fav_bookmarks') {
         targetPosts = [...bookmarks];
+    } else if (currentDomain === 'new_feed') {
+        targetPosts = [...newFeedPosts]; // <-- Thêm điều kiện này
     } else if (currentDomain === 'all') {
         Object.entries(forumsData).forEach(([domain, posts]) => {
             if (!hiddenForums.includes(domain)) {
