@@ -1392,41 +1392,36 @@ function getActivePosts() {
     const totalPages = Math.ceil(targetPosts.length / postsPerPage);
     if (currentPage > totalPages) currentPage = totalPages || 1;
     
-        // --- BIẾN CHỨA DỮ LIỆU HIỂN THỊ CỦA TRANG HIỆN TẠI ---
+            // --- BIẾN CHỨA DỮ LIỆU HIỂN THỊ CỦA TRANG HIỆN TẠI ---
     let paginatedPosts = [];
 
-    // NẾU Ở TAB ALL VÀ KHÔNG CÓ TỪ KHÓA TÌM KIẾM: Sử dụng cơ chế ghim 50 bài ngẫu nhiên
-    if (currentDomain === 'all' && searchQuery === '') {
-        if (currentPage === 1) {
-            // Nếu chưa có bộ nhớ tạm ngẫu nhiên, tiến hành bốc ngẫu nhiên 50 bài
-            if (randomAllPosts.length === 0) {
-                const totalCount = targetPosts.length;
-                const selectedIndices = new Set();
-                const selectedPosts = [];
-                const limit = Math.min(postsPerPage, totalCount);
-                
-                while (selectedPosts.length < limit && selectedIndices.size < totalCount) {
-                    const randomIndex = Math.floor(Math.random() * totalCount);
-                    if (!selectedIndices.has(randomIndex)) {
-                        selectedIndices.add(randomIndex);
-                        selectedPosts.push(targetPosts[randomIndex]);
-                    }
+    // CHỈ ghim bài ngẫu nhiên khi ở tab 'all', trang 1 và KHÔNG CÓ TỪ KHÓA TÌM KIẾM
+    if (currentDomain === 'all' && currentPage === 1 && searchQuery === '') {
+        // Nếu chưa có bộ nhớ tạm ngẫu nhiên thì tiến hành bốc ngẫu nhiên 50 bài
+        if (randomAllPosts.length === 0) {
+            const totalCount = targetPosts.length;
+            const selectedIndices = new Set();
+            const selectedPosts = [];
+            
+            const limit = Math.min(postsPerPage, totalCount);
+            while (selectedPosts.length < limit && selectedIndices.size < totalCount) {
+                const randomIndex = Math.floor(Math.random() * totalCount);
+                if (!selectedIndices.has(randomIndex)) {
+                    selectedIndices.add(randomIndex);
+                    selectedPosts.push(targetPosts[randomIndex]);
                 }
-                randomAllPosts = selectedPosts;
             }
-            paginatedPosts = randomAllPosts;
-        } else {
-            // Từ trang 2 trở đi khi không search: Cắt mảng tuần tự bình thường (bỏ qua 50 bài đầu tiên)
-            const startIndex = (currentPage - 1) * postsPerPage;
-            paginatedPosts = targetPosts.slice(startIndex, startIndex + postsPerPage);
+            randomAllPosts = selectedPosts;
         }
+        paginatedPosts = randomAllPosts;
     } else {
-        // NẾU CÓ TỪ KHÓA TÌM KIẾM (Hoặc ở các tab diễn đàn cụ thể): 
-        // Cắt mảng tuần tự theo đúng kết quả đã lọc để hiển thị chính xác
+        // NẾU CÓ TỪ KHÓA TÌM KIẾM (Dù ở tab all), hoặc ở các trang khác, tab khác:
+        // Tiến hành cắt mảng tuần tự theo đúng kết quả đã lọc để hiển thị chính xác bài viết gốc
         const startIndex = (currentPage - 1) * postsPerPage;
         paginatedPosts = targetPosts.slice(startIndex, startIndex + postsPerPage);
     }
     // -----------------------------------------------------
+
 
 
     paginatedPosts.forEach(post => {
