@@ -1390,21 +1390,17 @@ if (searchQuery && searchQuery.trim() !== '') {
                     btnTarget.classList.add('active');
                     btnTarget.textContent = '★';
                 } else {
-                    } else {
-    btnTarget.classList.remove('active');
-    btnTarget.textContent = '☆';
-    if (currentDomain === 'fav_bookmarks') {
-        postItem.remove();
-        
-        // Kiểm tra xem còn bài viết nào hiển thị không (trừ thanh công cụ backupBar ở đầu nếu có)
-        const remainingPosts = listContainer.querySelectorAll('.post-item');
-        if (remainingPosts.length === 0) {
-            // Nếu đã xóa hết bài, gọi lại hàm displayPosts để tự động dựng lại giao diện trống chuẩn chỉnh
-            displayPosts();
-        }
+                    btnTarget.classList.remove('active');
+                    btnTarget.textContent = '☆';
+                    if (currentDomain === 'fav_bookmarks') {
+    postItem.remove();
+    // Nếu mảng bookmarks đã trống, gọi lại displayPosts để vẽ lại giao diện thông báo chuẩn
+    if (bookmarks.length === 0) {
+        displayPosts();
     }
 }
 
+                }
             });
 
             listContainer.appendChild(postItem);
