@@ -189,19 +189,20 @@
             margin-bottom: 24px;
         }
 
-                .filter-container {
+                        .filter-container {
             position: relative;
             display: flex;            
-            flex-wrap: wrap;           /* MẶC ĐỊNH CHO MÁY TÍNH: Tự động xuống hàng gọn gàng */
+            flex-wrap: wrap;           /* Mặc định cho Desktop: Xuống hàng */
             gap: 8px;
             padding: 4px;
             margin-bottom: 24px;
+            overflow: hidden;          /* Khóa cuộn trên máy tính */
         }
 
-        /* Xóa bỏ khoảng đệm không cần thiết trên máy tính */
         .filter-container::-webkit-scrollbar {
             display: none;
         }
+
 
 
         /* SỬA LỖI ANDROID: Tạo khoảng đệm nhỏ ở cuối hàng để báo hiệu trực quan cho người dùng biết là cuộn ngang được */
@@ -724,11 +725,11 @@
             animation: fadeIn 0.3s ease-in-out;
         }
             
-                @media (max-width: 600px) {
-            /* THIẾT LẬP RIÊNG CHO MOBILE: Quay về chế độ cuộn ngang tiện lợi bằng ngón tay */
+                /* ÁP DỤNG CHO CẢ ĐIỆN THOẠI VÀ MÁY TÍNH BẢNG (Dưới 1024px) */
+        @media (max-width: 1024px) {
             .filter-container {
-                flex-wrap: nowrap;
-                overflow-x: auto;
+                flex-wrap: nowrap !important; /* Ép buộc cuộn ngang trên Tablet & Mobile */
+                overflow-x: auto !important;
                 scroll-behavior: smooth;
                 -webkit-overflow-scrolling: touch;
                 padding-bottom: 10px;
