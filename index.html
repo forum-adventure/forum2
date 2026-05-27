@@ -538,30 +538,28 @@
             flex-shrink: 0;
         }
 
-        .btn-random {
-    /* Đảo ngược màu: Lấy màu chủ đạo làm nền, chữ chuyển thành màu trắng */
+        /* --- CẤU HÌNH NÚT RANDOM CHUẨN HOÀN TOÀN --- */
+.btn-random {
     background-color: var(--accent-color);
     color: #ffffff;
     border: 1px solid var(--accent-color);
     border-radius: 12px;
-    outline: none; /* Loại bỏ đường viền focus mặc định của trình duyệt */
-    /* CHỐNG TÔ ĐẬM VÀ BÔI ĐEN TUYỆT ĐỐI (KỂ CẢ KHI BẤM GIỮ LÂU) */
-    -webkit-touch-callout: none; /* Khóa menu ngữ cảnh/copy trên iOS Safari khi nhấn giữ */
-    -webkit-user-select: none;   /* Safari */
-    -khtml-user-select: none;    /* Konqueror HTML */
-    -moz-user-select: none;      /* Firefox */
-    -ms-user-select: none;       /* Internet Explorer/Edge */
-    user-select: none;           /* Bản chuẩn: Chrome, Opera, Edge mới */
+    outline: none;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent; /* Loại bỏ lớp phủ highlight mặc định của iOS */
 }
 
 .btn-random:hover {
-    /* Khi hover: Dùng màu biến thể hover đậm hơn một chút để tạo hiệu ứng nhấn */
     background-color: var(--accent-hover);
     border-color: var(--accent-hover);
 }
 
 .btn-random:active {
-    /* Khi nhấn giữ: Chuyển sang màu nền sáng, chữ và viền tối */
     background-color: var(--hover-bg);
     border-color: var(--accent-color);
     color: var(--accent-color);
@@ -573,6 +571,22 @@
     color: #ffffff;
     border-color: var(--accent-color);
 }
+
+/* SỬA LỖI KẸT FOCUS TRÊN SAFARI IPHONE: Khóa hover/focus giả lập trên thiết bị cảm ứng */
+@media (hover: none) {
+    .btn-random:hover,
+    .btn-random:focus {
+        background-color: var(--accent-color) !important;
+        color: #ffffff !important;
+        border-color: var(--accent-color) !important;
+    }
+    .btn-random:active {
+        background-color: var(--hover-bg) !important;
+        border-color: var(--accent-color) !important;
+        color: var(--accent-color) !important;
+    }
+}
+
 
     
 
