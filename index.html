@@ -613,12 +613,22 @@
             box-shadow: var(--card-shadow);
         }
 
-        .post-item:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--card-shadow-hover);
-            border-color: var(--accent-color);
-            background-color: rgba(0, 0, 0, 0.01); 
-        }
+        /* Chỉ áp dụng hiệu ứng hover trên các thiết bị có chuột (Desktop, Laptop) */
+@media (hover: hover) {
+    .post-item:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--card-shadow-hover);
+        border-color: var(--accent-color);
+        background-color: rgba(0, 0, 0, 0.01); 
+    }
+}
+
+/* Cấu hình phản hồi chạm mượt mà riêng cho điện thoại khi bấm trực tiếp (Tùy chọn) */
+.post-item:active {
+    background-color: var(--hover-bg);
+    opacity: 0.9;
+}
+
 
         .post-avatar {
             width: 40px;
