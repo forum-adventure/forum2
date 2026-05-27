@@ -199,19 +199,6 @@
     display: flex; /* Kích hoạt flexbox để tách biệt nút ghim và khối cuộn */
     align-items: center;
 }
-    
-    /* THÊM ĐOẠN NÀY: Tạo lớp mặt nạ che giấu các nút tag đi vào sau icon phễu */
-.filter-wrapper::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 40px; /* Bắt đầu che từ ngay sát mép phải của nút phễu */
-    width: 30px; /* Độ rộng của dải mờ mịn (bạn có thể tăng giảm tùy ý) */
-    background: linear-gradient(to right, var(--bg-color) 20%, transparent);
-    z-index: 5; /* Nằm dưới nút phễu (z-index: 10) nhưng nằm TRÊN các nút tag (z-index: 1) */
-    pointer-events: none; /* Đảm bảo không cản trở hành vi vuốt/click của người dùng */
-}
 
                         /* CONTAINER CUỘN NGANG CỦA CÁC NÚT TAB (Không chứa nút phễu nữa) */
 .filter-container {
