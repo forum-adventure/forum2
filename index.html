@@ -189,14 +189,36 @@
             margin-bottom: 24px;
         }
 
-                        .filter-container {
+                        /* 1. Cấu hình lại khung chứa tab */
+        .filter-container {
             position: relative;
             display: flex;            
-            flex-wrap: wrap;           /* Mặc định cho Desktop: Xuống hàng */
+            flex-wrap: wrap;           
             gap: 8px;
             padding: 4px;
-            margin-bottom: 24px;
-            overflow: hidden;          /* Khóa cuộn trên máy tính */
+            margin-bottom: 12px;       /* Giảm margin một chút để nhường chỗ cho nút */
+            overflow: hidden;          
+            max-height: 88px;          /* Chiều cao cố định vừa đủ cho đúng 2 hàng tab */
+            transition: max-height 0.4s ease-in-out; /* Hiệu ứng bung ra mượt mà */
+        }
+
+        /* Khi được kích hoạt class này qua JS, khung sẽ mở rộng */
+        .filter-container.expanded {
+            max-height: 800px;         /* Cho phép mở rộng thoải mái để hiện hết tab */
+        }
+         /* 2. CSS cho nút Xem thêm / Thu gọn */
+    .toggle-filter-btn {
+            display: block;
+            margin: 0 auto 24px auto;  /* Căn giữa nút */
+            padding: 6px 16px;
+            font-size: 13px;
+            font-weight: 500;
+            border-radius: 20px;
+            cursor: pointer;
+            border: 1px solid #e2e8f0;
+            background-color: #ffffff;
+            color: #64748b;
+            transition: all 0.2s ease;
         }
 
         .filter-container::-webkit-scrollbar {
@@ -822,7 +844,13 @@
     </div>
 
     <div class="filter-wrapper" id="filterWrapper">
-        <div class="filter-container" id="filterContainer"></div>
+        <div class="filter-container" id="filterContainer">
+            <button class="filter-btn active" data-forum="all">Tất cả <span class="filter-count">0</span></button>
+            </div>
+
+        <button class="toggle-filter-btn" id="toggleFilterBtn">
+            Xem thêm <i class="fa-solid fa-chevron-down" style="margin-left: 4px; font-size: 11px;"></i>
+        </button>
         <div class="checkbox-dropdown-menu" id="checkboxDropdownMenu"></div>
     </div>
 
@@ -834,6 +862,27 @@
     <div class="random-nav-container" id="randomNavContainer"></div>
 
     <script>
+            // Xử lý bật/tắt hiển thị thêm hàng tab trên máy tính
+        document.addEventListener('DOMContentLoaded', () => {
+            const filterContainer = document.getElementById('filterContainer');
+            const toggleFilterBtn = document.getElementById('toggleFilterBtn');
+
+            if (toggleFilterBtn && filterContainer) {
+                toggleFilterBtn.addEventListener('click', () => {
+                    // Bật / Tắt class .expanded
+                    filterContainer.classList.toggle('expanded');
+                    
+                    // Kiểm tra xem đang mở hay đóng để đổi chữ và mũi tên tương ứng
+                    if (filterContainer.classList.contains('expanded')) {
+                        toggleFilterBtn.innerHTML = 'Thu gọn <i class="fa-solid fa-chevron-up" style="margin-left: 4px; font-size: 11px;"></i>';
+                    } else {
+                        toggleFilterBtn.innerHTML = 'Xem thêm <i class="fa-solid fa-chevron-down" style="margin-left: 4px; font-size: 11px;"></i>';
+                    }
+                });
+            }
+        });
+
+    
         // CẤU HÌNH NGÔN NGỮ ĐA QUỐC GIA (Mở rộng tùy ý)
         const languages = {
             vi: {
