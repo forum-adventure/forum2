@@ -267,6 +267,33 @@
     box-shadow: 6px 0 12px -4px rgba(0, 0, 0, 0.5);
 }
     
+    /* TẠO HIỆU ỨNG CHE KHUẤT CÁC NÚT KHI ĐI VÀO PHÍA SAU ICON PHỄU */
+.btn-tab-icon::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 100%;          /* Bắt đầu ngay từ cạnh phải của nút phễu */
+    width: 15px;         /* Độ rộng của dải che khuất (khoảng cách các nút biến mất hoàn toàn) */
+    pointer-events: none; /* Cho phép click/vuốt xuyên qua dải che này */
+    z-index: -1;         /* Nằm dưới icon phễu nhưng nằm trên các nút cuộn */
+    
+    /* Đổ màu gradient mờ dần từ màu nền hệ thống sang suốt trong */
+    background: var(--bg-color); /* Lấy trực tiếp màu nền tối/sáng của giao diện */
+
+}
+
+/* Điều chỉnh một chút cho filter-wrapper để không bị khuất nội dung */
+.filter-wrapper {
+    position: relative;
+    margin-top: 8px;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    overflow: hidden; /* Cắt bỏ phần thừa nếu dải che tràn ra ngoài wrapper */
+}
+
+    
     /* Các nút tab thông thường */
 .btn-tab:not(.btn-tab-icon) {
     z-index: 1; /* Thấp hơn nút icon phễu để đi xuyên xuống dưới */
