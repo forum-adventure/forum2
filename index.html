@@ -1623,25 +1623,30 @@ document.addEventListener('pointerdown', (e) => {
     const isClickInsideSearch = document.getElementById('searchContainer').contains(e.target);
     const isClickInsideDropdown = document.getElementById('customDropdown').contains(e.target);
     const isClickInsideFilterMenu = document.getElementById('filterWrapper').contains(e.target);
+    
+    // Kiểm tra xem vị trí chạm có thuộc về nút phễu lọc hay không
     const isClickOnFilterBtn = document.getElementById('btnFilterToggle') && document.getElementById('btnFilterToggle').contains(e.target);
 
-    // 1. Đóng dropdown diễn đàn chính ngay khi chạm ra ngoài vùng của nó
+    // BỔ SUNG CHÍNH XÁC: Kiểm tra xem có bấm trúng một nút bấm Tab diễn đàn nào khác không (bao gồm cả icon/chữ bên trong nút đó)
+    const isClickOnBtnTab = e.target.closest('.btn-tab') && !e.target.closest('.btn-tab-icon');
+
+    // Đóng dropdown diễn đàn chính ngay khi chạm ra ngoài
     if (!isClickInsideDropdown) {
         customDropdown.classList.remove('open');
     }
 
-    // 2. Đóng menu checkbox bộ lọc ẩn/hiện diễn đàn
-    // SỬA ĐỔI CHÍNH XÁC: Nếu bấm ra ngoài menu checkbox VÀ không phải đang bấm vào nút phễu, thì PHẢI đóng menu.
-    if (!isClickInsideFilterMenu && !isClickOnFilterBtn) {
+    // SỬA ĐỔI: Đóng menu bộ lọc nếu chạm ra ngoài menu (và ko phải nút phễu), HOẶC nếu chạm trúng bất kỳ nút tab nào khác
+    if ((!isClickInsideFilterMenu && !isClickOnFilterBtn) || isClickOnBtnTab) {
         checkboxDropdownMenu.classList.remove('open');
     }
 
-    // 3. Thu nhỏ thanh tìm kiếm nếu trống và chạm ra ngoài
+    // Thu nhỏ thanh tìm kiếm nếu trống và chạm ra ngoài
     if (!isClickInsideSearch && searchInput.value.trim() === '') {
         actionBar.classList.remove('search-active');
         searchInput.blur(); // Ép Safari/Chrome ẩn bàn phím ảo và hủy focus
     }
 });
+
 
 
 
