@@ -611,21 +611,13 @@
             gap: 16px;
             transition: all 0.25s ease;
             box-shadow: var(--card-shadow);
-            /* Thiết lập transition cho border, transform, box-shadow, background */
-    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
-    /* Khi bỏ tay/chuột ra: Phản hồi ngay lập tức không delay */
-    transition-delay: 0s; 
         }
 
         .post-item:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--card-shadow-hover);
-    border-color: var(--accent-color);
-    background-color: rgba(0, 0, 0, 0.01); 
-    
-    /* CHÌA KHÓA: Trì hoãn 0.18 giây trước khi chạy hiệu ứng Hover */
-    /* Ngón tay cuộn lướt qua nhanh sẽ không bị dính */
-    transition-delay: 0.18s; 
+            transform: translateY(-2px);
+            box-shadow: var(--card-shadow-hover);
+            border-color: var(--accent-color);
+            background-color: rgba(0, 0, 0, 0.01); 
         }
 
         .post-avatar {
