@@ -193,20 +193,24 @@
 
         /* WRAPPER BỌC THANH FILTER SLIDE VÀ MENU DROPDOWN */
         .filter-wrapper {
-            position: relative;
-            margin-top: 8px;
-            margin-bottom: 24px;
-        }
+    position: relative;
+    margin-top: 8px;
+    margin-bottom: 24px;
+    display: flex; /* Kích hoạt flexbox để tách biệt nút ghim và khối cuộn */
+    align-items: center;
+}
 
-                        .filter-container {
-            position: relative;
-            display: flex;            
-            flex-wrap: wrap;           /* Mặc định cho Desktop: Xuống hàng */
-            gap: 8px;
-            padding: 4px;
-            margin-bottom: 24px;
-            overflow: hidden;          /* Khóa cuộn trên máy tính */
-        }
+                        /* CONTAINER CUỘN NGANG CỦA CÁC NÚT TAB (Không chứa nút phễu nữa) */
+.filter-container {
+    position: relative;
+    display: flex;            
+    flex-wrap: wrap;           /* Mặc định cho Desktop: Xuống hàng */
+    gap: 8px;
+    padding: 4px;
+    overflow: hidden;          /* Khóa cuộn trên máy tính */
+    flex: 1;                   /* Chiếm trọn không gian còn lại */
+    min-width: 0;              /* Khắc phục lỗi flexbox không co bóp trên một số trình duyệt */
+}
 
         .filter-container::-webkit-scrollbar {
             display: none;
@@ -237,18 +241,36 @@
             gap: 5px;                   
         }
 
-        /* Nút icon cấu hình riêng */
-        .btn-tab-icon {
-            padding: 5px 8px;
-            border-radius: 14px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            /* Giữ màu nền cố định theo theme, không đổi khi hover/active */
-            background: var(--card-bg) !important; 
-            border-color: var(--border-color) !important;
-            color: var(--text-color) !important;
-        }
+        /* Nút icon phễu cấu hình riêng - Sử dụng Sticky cố định */
+.btn-tab-icon {
+    position: -webkit-sticky;  /* Hỗ trợ tối ưu cho Safari iOS */
+    position: sticky;
+    left: 0;                   /* Ghim chặt ở mép trái */
+    z-index: 10;               /* Đảm bảo nằm TRÊN các nút tab thông thường khi cuộn qua */
+    
+    padding: 5px 8px;
+    border-radius: 14px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--card-bg) !important; 
+    border-color: var(--border-color) !important;
+    color: var(--text-color) !important;
+    flex-shrink: 0;            /* Tuyệt đối không cho nút bị bóp méo */
+    margin-right: 8px;         /* Khoảng cách với các nút cuộn */
+    
+    /* Hiệu ứng đổ bóng nhẹ hoặc viền để tạo cảm giác các nút khác chui hẳn xuống dưới */
+    box-shadow: 6px 0 10px -4px rgba(0, 0, 0, 0.15); 
+}
+    /* Cấu hình khi ở giao diện Dark Mode để phần bóng đổ của nút ghim trông tự nhiên */
+:root[data-theme="dark"] .btn-tab-icon {
+    box-shadow: 6px 0 12px -4px rgba(0, 0, 0, 0.5);
+}
+    
+    /* Các nút tab thông thường */
+.btn-tab:not(.btn-tab-icon) {
+    z-index: 1; /* Thấp hơn nút icon phễu để đi xuyên xuống dưới */
+}
         
         /* SỬA LỖI TRÌNH DUYỆT CŨ/SAFARI: Ép path của SVG nhận biến màu văn bản chuẩn xác */
         .btn-tab-icon svg, .btn-tab-icon svg path {
@@ -750,12 +772,12 @@
             
                 /* ÁP DỤNG CHO CẢ ĐIỆN THOẠI VÀ MÁY TÍNH BẢNG (Dưới 1024px) */
         @media (max-width: 1024px) {
-            .filter-container {
-                flex-wrap: nowrap !important; /* Ép buộc cuộn ngang trên Tablet & Mobile */
-                overflow-x: auto !important;
-                scroll-behavior: smooth;
-                -webkit-overflow-scrolling: touch;
-                padding-bottom: 10px;
+    .filter-container {
+        flex-wrap: nowrap !important; /* Ép buộc cuộn ngang trên Tablet & Mobile */
+        overflow-x: auto !important;
+        scroll-behavior: smooth;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 10px;
             }
             /* Tạo khoảng đệm nhỏ ở cuối hàng mobile để báo hiệu có thể cuộn tiếp */
             .filter-container::after {
