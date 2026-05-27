@@ -613,22 +613,12 @@
             box-shadow: var(--card-shadow);
         }
 
-        /* Chỉ áp dụng hiệu ứng hover trên các thiết bị có chuột (Desktop, Laptop) */
-@media (hover: hover) {
-    .post-item:hover {
-        transform: translateY(-2px);
-        box-shadow: var(--card-shadow-hover);
-        border-color: var(--accent-color);
-        background-color: rgba(0, 0, 0, 0.01); 
-    }
-}
-
-/* Cấu hình phản hồi chạm mượt mà riêng cho điện thoại khi bấm trực tiếp (Tùy chọn) */
-.post-item:active {
-    background-color: var(--hover-bg);
-    opacity: 0.9;
-}
-
+        .post-item:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--card-shadow-hover);
+            border-color: var(--accent-color);
+            background-color: rgba(0, 0, 0, 0.01); 
+        }
 
         .post-avatar {
             width: 40px;
@@ -664,8 +654,14 @@
         }
 
         .post-title:hover {
-            color: var(--accent-color);
-        }
+    color: var(--accent-color);
+}
+
+/* Khi trang web bị thêm class này (bằng JS), toàn bộ hiệu ứng hover của tiêu đề sẽ bị vô hiệu hóa */
+body.disable-hover .post-title:hover {
+    color: inherit !important; /* Giữ nguyên màu chữ gốc, không đổi màu */
+    cursor: default;
+}
 
        
 
@@ -1927,6 +1923,33 @@ slider.addEventListener('mousemove', (e) => {
     const walk = (x - startX) * 1.5; // Nhân với 1.5 để tốc độ lướt nhanh và mượt hơn
     slider.scrollLeft = scrollLeft - walk;
 });
+
+    // CHỨC NĂNG TẮT HOVER TIÊU ĐỀ KHI ĐANG TƯƠNG TÁC TRÊN THANH FILTER
+const filterContainer = document.getElementById('filterContainer');
+
+if (filterContainer) {
+    // 1. Khi người dùng bắt đầu chạm/nhấn chuột vào thanh filter
+    const startInteraction = () => {
+        document.body.classList.add('disable-hover');
+    };
+
+    // 2. Khi người dùng nhấc tay/thả chuột hoặc rời khỏi thanh filter
+    const endInteraction = () => {
+        // Trì hoãn một chút (100ms) để Safari kịp hoàn tất việc nhận diện sự kiện, tránh dính hover sót lại
+        setTimeout(() => {
+            document.body.classList.remove('disable-hover');
+        }, 100);
+    };
+
+    // Sự kiện dành cho thiết bị di động (Cảm ứng)
+    filterContainer.addEventListener('touchstart', startInteraction, { passive: true });
+    filterContainer.addEventListener('touchend', endInteraction, { passive: true });
+    filterContainer.addEventListener('touchcancel', endInteraction, { passive: true });
+
+    // Sự kiện dành cho máy tính (Để đồng bộ nếu bạn kéo chuột trên thanh filter)
+    filterContainer.addEventListener('mousedown', startInteraction);
+    window.addEventListener('mouseup', endInteraction);
+}
 
 
     </script>
