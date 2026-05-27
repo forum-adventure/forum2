@@ -183,79 +183,22 @@
         }
 
         /* WRAPPER BỌC THANH FILTER SLIDE VÀ MENU DROPDOWN */
-        /* --- PHẦN CẬP NHẬT CSS CHO THANH TRƯỢT VÀ MŨI TÊN CHUYỂN HƯỚNG --- */
+        .filter-wrapper {
+            position: relative;
+            margin-top: 8px;
+            margin-bottom: 24px;
+        }
 
-/* Đảm bảo wrapper là gốc tọa độ và che các phần tử tràn ra ngoài */
-.filter-wrapper {
-    position: relative;
-    margin-top: 8px;
-    margin-bottom: 24px;
-    display: flex;
-    align-items: center;
-}
-
-/* Thêm khoảng đệm hai bên container để các nút không che mất nội dung tab đầu/cuối */
-.filter-container {
-    position: relative;
-    display: flex;            
-    flex-wrap: nowrap;
-    gap: 8px;
-    overflow-x: auto;
-    scroll-behavior: smooth;
-    -webkit-overflow-scrolling: touch;
-    padding: 4px 40px 10px 40px; /* Tăng padding trái/phải từ 4px lên 40px nhường chỗ cho nút */
-    width: 100%;
-    box-sizing: border-box;
-}
-
-/* Các nút điều hướng mũi tên */
-.btn-nav-arrow {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    background-color: var(--card-bg);
-    border: 1px solid var(--border-color);
-    color: var(--text-color);
-    font-size: 14px;
-    font-weight: bold;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    box-shadow: var(--card-shadow);
-    z-index: 10;
-    transition: all 0.2s ease;
-    user-select: none;
-    -webkit-tap-highlight-color: transparent;
-}
-
-.btn-nav-arrow:hover {
-    background-color: var(--hover-bg);
-    border-color: var(--accent-color);
-    transform: translateY(-50%) scale(1.1);
-}
-
-.btn-nav-arrow.arrow-left {
-    left: 4px;
-}
-
-.btn-nav-arrow.arrow-right {
-    right: 4px;
-}
-
-/* Ẩn hoàn toàn các nút mũi tên trên thiết bị di động vì thao tác vuốt bằng tay đã rất tối ưu */
-@media (max-width: 600px) {
-    .btn-nav-arrow {
-        display: none !important;
-    }
-    .filter-container {
-        padding: 4px 4px 10px 4px; /* Trả lại padding nhỏ gọn trên Mobile */
-    }
-}
-
+        .filter-container {
+            position: relative;
+            display: flex;            
+            flex-wrap: nowrap;
+            gap: 8px;
+            overflow-x: auto;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+            padding: 4px 4px 10px 4px;
+        }
 
         .filter-container::-webkit-scrollbar {
             display: none;
@@ -781,6 +724,54 @@
             animation: fadeIn 0.3s ease-in-out;
         }
             
+    
+            /* CSS CHO HAI NÚT MŨI TÊN ĐIỀU HƯỚNG THANH FILTER */
+        .filter-wrapper {
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-arrow-btn {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
+            z-index: 10;
+            box-shadow: var(--card-shadow);
+            transition: all 0.2s ease;
+            font-weight: bold;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .nav-arrow-btn:hover {
+            background-color: var(--hover-bg);
+            border-color: var(--accent-color);
+            transform: scale(1.1);
+        }
+
+        .nav-arrow-btn.left {
+            left: -12px; /* Đẩy hơi ra ngoài viền một chút tạo cảm giác thanh lịch */
+        }
+
+        .nav-arrow-btn.right {
+            right: -12px;
+        }
+
+        /* Ẩn hoàn toàn nút mũi tên trên thiết bị di động vì họ có thể vuốt chạm mượt mà */
+        @media (max-width: 768px) {
+            .nav-arrow-btn {
+                display: none !important;
+            }
+        }
+
         @media (max-width: 600px) {
             .btn-action-util {
                 height: 45px;
@@ -864,11 +855,11 @@
     </div>
 
         <div class="filter-wrapper" id="filterWrapper">
-        <button class="btn-nav-arrow arrow-left" id="arrowLeft" title="Cuộn sang trái">&larr;</button>
+        <button class="nav-arrow-btn left" id="arrowLeft" title="Cuộn sang trái">&larr;</button>
         
         <div class="filter-container" id="filterContainer"></div>
         
-        <button class="btn-nav-arrow arrow-right" id="arrowRight" title="Cuộn sang phải">&rarr;</button>
+        <button class="nav-arrow-btn right" id="arrowRight" title="Cuộn sang phải">&rarr;</button>
         
         <div class="checkbox-dropdown-menu" id="checkboxDropdownMenu"></div>
     </div>
@@ -1898,41 +1889,69 @@ function handleFileSelect(event) {
     reader.readAsText(file);
 }
     
-    // CHỨC NĂNG KÉO CHUỘT ĐỂ CUỘN THANH FILTER TRÊN MÁY TÍNH
+    // CHỨC NĂNG KÉO CHUỘT VÀ BẤM MŨI TÊN ĐỂ CUỘN THANH FILTER
+const slider = document.getElementById('filterContainer');
 const arrowLeft = document.getElementById('arrowLeft');
 const arrowRight = document.getElementById('arrowRight');
 
-// Định mức mỗi lần bấm sẽ cuộn đi 200px
-const scrollAmount = 200; 
+// 1. Hàm kiểm tra trạng thái cuộn để ẩn/hiện mũi tên hợp lý
+function updateArrowVisibility() {
+    if (!arrowLeft || !arrowRight) return;
+    
+    const scrollLeft = slider.scrollLeft;
+    const maxScrollLeft = slider.scrollWidth - slider.clientWidth;
 
-if (arrowLeft && arrowRight && slider) {
-    arrowLeft.addEventListener('click', () => {
-        slider.scrollBy({
-            left: -scrollAmount,
-            behavior: 'smooth'
-        });
-    });
+    // Nếu cuộn sát lề trái, ẩn mũi tên trái (cho sai số 2px)
+    if (scrollLeft <= 2) {
+        arrowLeft.style.opacity = '0';
+        arrowLeft.style.pointerEvents = 'none';
+    } else {
+        arrowLeft.style.opacity = '1';
+        arrowLeft.style.pointerEvents = 'auto';
+    }
 
-    arrowRight.addEventListener('click', () => {
-        slider.scrollBy({
-            left: scrollAmount,
-            behavior: 'smooth'
-        });
-    });
+    // Nếu cuộn sát lề phải, ẩn mũi tên phải
+    if (scrollLeft >= maxScrollLeft - 2) {
+        arrowRight.style.opacity = '0';
+        arrowRight.style.pointerEvents = 'none';
+    } else {
+        arrowRight.style.opacity = '1';
+        arrowRight.style.pointerEvents = 'auto';
+    }
 }
 
-const slider = document.getElementById('filterContainer');
+// Theo dõi sự kiện cuộn của thanh chứa để cập nhật UI mũi tên
+slider.addEventListener('scroll', updateArrowVisibility);
+// Chạy kiểm tra ngay sau khi load dữ liệu hoặc đổi kích thước cửa sổ
+window.addEventListener('resize', updateArrowVisibility);
+setTimeout(updateArrowVisibility, 500); // Kích hoạt trễ phòng trường hợp render dữ liệu chậm
+
+// 2. Xử lý sự kiện click vào nút mũi tên
+arrowLeft.addEventListener('click', () => {
+    slider.scrollBy({
+        left: -200, // Khoảng cách cuộn sang trái (pixel)
+        behavior: 'smooth'
+    });
+});
+
+arrowRight.addEventListener('click', () => {
+    slider.scrollBy({
+        left: 200, // Khoảng cách cuộn sang phải (pixel)
+        behavior: 'smooth'
+    });
+});
+
+// 3. Giữ nguyên tính năng kéo thả chuột (Drag to scroll) cũ của bạn
 let isDown = false;
 let startX;
-let scrollLeft;
+let scrollLeftOffset;
 
 slider.addEventListener('mousedown', (e) => {
-    // Chỉ kích hoạt khi click chuột trái và không bấm vào các nút bên trong để tránh lỗi click nhầm
     if (e.pointerType === 'mouse' || e.button === 0) {
         isDown = true;
         slider.style.cursor = 'grabbing';
         startX = e.pageX - slider.offsetLeft;
-        scrollLeft = slider.scrollLeft;
+        scrollLeftOffset = slider.scrollLeft;
     }
 });
 
@@ -1950,9 +1969,10 @@ slider.addEventListener('mousemove', (e) => {
     if (!isDown) return;
     e.preventDefault();
     const x = e.pageX - slider.offsetLeft;
-    const walk = (x - startX) * 1.5; // Nhân với 1.5 để tốc độ lướt nhanh và mượt hơn
-    slider.scrollLeft = scrollLeft - walk;
+    const walk = (x - startX) * 1.5; 
+    slider.scrollLeft = scrollLeftOffset - walk;
 });
+
 
 
     </script>
