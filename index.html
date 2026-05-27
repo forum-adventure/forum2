@@ -189,41 +189,14 @@
             margin-bottom: 24px;
         }
 
-                        /* 1. Cấu hình lại khung chứa tab */
-                /* Cấu hình lại khung chứa tab cố định đúng 2 hàng */
-        .filter-container {
+                        .filter-container {
             position: relative;
             display: flex;            
-            flex-wrap: wrap;           
+            flex-wrap: wrap;           /* Mặc định cho Desktop: Xuống hàng */
             gap: 8px;
             padding: 4px;
-            margin-bottom: 12px;       
-            overflow: hidden;          
-            
-            /* DÙNG THUỘC TÍNH NÀY ĐỂ ÉP ĐÚNG 2 HÀNG */
-            max-height: 84px;          /* Đã đo đạc chính xác theo kích thước nút 34px + gap 8px */
-            
-            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1); /* Hiệu ứng mượt hơn */
-        }
-
-        /* Khi được kích hoạt class này qua JS, khung sẽ mở rộng */
-        .filter-container.expanded {
-            max-height: 1000px;        /* Tăng lên hẳn 1000px để không bị thiếu nếu sau này bạn thêm nhiều diễn đàn */
-        }
-
-         /* 2. CSS cho nút Xem thêm / Thu gọn */
-    .toggle-filter-btn {
-            display: block;
-            margin: 0 auto 24px auto;  /* Căn giữa nút */
-            padding: 6px 16px;
-            font-size: 13px;
-            font-weight: 500;
-            border-radius: 20px;
-            cursor: pointer;
-            border: 1px solid #e2e8f0;
-            background-color: #ffffff;
-            color: #64748b;
-            transition: all 0.2s ease;
+            margin-bottom: 24px;
+            overflow: hidden;          /* Khóa cuộn trên máy tính */
         }
 
         .filter-container::-webkit-scrollbar {
@@ -757,7 +730,6 @@
             .filter-container {
                 flex-wrap: nowrap !important; /* Ép buộc cuộn ngang trên Tablet & Mobile */
                 overflow-x: auto !important;
-                max-height: none !important;
                 scroll-behavior: smooth;
                 -webkit-overflow-scrolling: touch;
                 padding-bottom: 10px;
@@ -850,13 +822,7 @@
     </div>
 
     <div class="filter-wrapper" id="filterWrapper">
-        <div class="filter-container" id="filterContainer">
-            <button class="filter-btn active" data-forum="all">Tất cả <span class="filter-count">0</span></button>
-            </div>
-
-        <button class="toggle-filter-btn" id="toggleFilterBtn">
-            Xem thêm <i class="fa-solid fa-chevron-down" style="margin-left: 4px; font-size: 11px;"></i>
-        </button>
+        <div class="filter-container" id="filterContainer"></div>
         <div class="checkbox-dropdown-menu" id="checkboxDropdownMenu"></div>
     </div>
 
@@ -868,27 +834,6 @@
     <div class="random-nav-container" id="randomNavContainer"></div>
 
     <script>
-            // Xử lý bật/tắt hiển thị thêm hàng tab trên máy tính
-        document.addEventListener('DOMContentLoaded', () => {
-            const filterContainer = document.getElementById('filterContainer');
-            const toggleFilterBtn = document.getElementById('toggleFilterBtn');
-
-            if (toggleFilterBtn && filterContainer) {
-                toggleFilterBtn.addEventListener('click', () => {
-                    // Bật / Tắt class .expanded
-                    filterContainer.classList.toggle('expanded');
-                    
-                    // Kiểm tra xem đang mở hay đóng để đổi chữ và mũi tên tương ứng
-                    if (filterContainer.classList.contains('expanded')) {
-                        toggleFilterBtn.innerHTML = 'Thu gọn <i class="fa-solid fa-chevron-up" style="margin-left: 4px; font-size: 11px;"></i>';
-                    } else {
-                        toggleFilterBtn.innerHTML = 'Xem thêm <i class="fa-solid fa-chevron-down" style="margin-left: 4px; font-size: 11px;"></i>';
-                    }
-                });
-            }
-        });
-
-    
         // CẤU HÌNH NGÔN NGỮ ĐA QUỐC GIA (Mở rộng tùy ý)
         const languages = {
             vi: {
