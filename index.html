@@ -182,45 +182,26 @@
             transition: color 0.3s ease;
         }
 
-        /* WRAPPER BỌC THANH FILTER SLIDE VÀ MENU DROPDOWN */
-        /* Thêm thuộc tính để làm điểm neo cho nút con sticky */
-.filter-wrapper {
-    position: relative;
-    margin-top: 8px;
-    margin-bottom: 24px;
-    padding-left: 42px; /* Tạo khoảng trống cố định bên trái để nhường chỗ cho nút phễu */
-}
+        /* NÂNG CẤP WRAPPER BỌC THANH FILTER SLIDE VÀ MENU DROPDOWN - STICKY FIXED */
+        .filter-wrapper {
+            position: relative;
+            margin-top: 8px;
+            margin-bottom: 24px;
+            padding-left: 42px; /* Khống chế khoảng cách bên trái nhường chỗ cho nút phễu cố định */
+        }
 
-/* Biến nút icon thành Sticky cố định ở rìa trái */
-.btn-tab-icon {
-    position: absolute; /* Đóng đinh cố định so với filter-wrapper */
-    left: 4px;
-    top: 4px;
-    z-index: 10;
-    height: 28px; /* Đồng bộ chiều cao chuẩn với các nút tab khác */
-    padding: 0 10px;
-    border-radius: 14px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    background: var(--card-bg) !important;
-    border: 1px solid var(--border-color) !important;
-    cursor: pointer;
-}
-
-/* Tạo một lớp mặt nạ che phủ mịn màng phía sau nút giúp các tab cuộn nền mờ dần */
-.filter-wrapper::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: 55px; /* Bao phủ vùng nút và phủ mờ một chút sang phải */
-    background: linear-gradient(to right, var(--bg-color) 70%, transparent);
-    z-index: 5;
-    pointer-events: none; /* Cho phép click xuyên qua lớp mờ này */
-}
-
+        /* Mặt nạ đổ màu Gradient tinh tế che phủ các tab khi cuộn sát rìa trái */
+        .filter-wrapper::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 55px;
+            background: linear-gradient(to right, var(--bg-color) 70%, transparent);
+            z-index: 5;
+            pointer-events: none;
+        }
 
         .filter-container {
             position: relative;
@@ -260,37 +241,40 @@
             gap: 5px;                   
         }
 
-        /* Nút icon cấu hình riêng */
+        /* Đóng đinh cố định (Sticky) nút phễu lọc lên góc trái hệ thống */
         .btn-tab-icon {
-            padding: 5px 8px;
+            position: absolute;
+            left: 4px;
+            top: 4px;
+            z-index: 10;
+            height: 28px;
+            padding: 0 10px;
             border-radius: 14px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            /* Giữ màu nền cố định theo theme, không đổi khi hover/active */
             background: var(--card-bg) !important; 
-            border-color: var(--border-color) !important;
+            border: 1px solid var(--border-color) !important;
             color: var(--text-color) !important;
+            box-shadow: var(--card-shadow);
         }
         
         /* SỬA LỖI TRÌNH DUYỆT CŨ/SAFARI: Ép path của SVG nhận biến màu văn bản chuẩn xác */
         .btn-tab-icon svg, .btn-tab-icon svg path {
             width: 14px;
             height: 14px;
-            /* Điểm cốt lõi: fill luôn lấy theo biến chữ của hệ thống để tự đổi khi switch mode */
             fill: var(--text-color) !important; 
             transition: none !important;
         }
         /* Triệt tiêu hoàn toàn hiệu ứng đổi màu khi hover hoặc active cho riêng nút này */
         .btn-tab-icon:hover, .btn-tab-icon:active {
-            background-color: var(--card-bg) !important;
-            border-color: var(--border-color) !important;
+            background-color: var(--hover-bg) !important;
+            border-color: var(--accent-color) !important;
         }
         .btn-tab-icon:hover svg, .btn-tab-icon.active svg,
         .btn-tab-icon:hover svg path, .btn-tab-icon.active svg path {
             fill: var(--text-color) !important;
         }
-
 
         .tab-badge {
             font-size: 9.5px;           
@@ -465,83 +449,79 @@
         }
 
         /* 1. SỬA CONTAINER: Đảm bảo khi thu gọn phải là khối vuông hoàn hảo 45px */
-.search-container {
-    position: relative;
-    flex: 0 0 45px; 
-    width: 45px;   /* Ép thêm thuộc tính width cố định khi thu gọn */
-    height: 45px;
-    transition: flex 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-    flex-shrink: 0;
-}
+        .search-container {
+            position: relative;
+            flex: 0 0 45px; 
+            width: 45px;   
+            height: 45px;
+            transition: flex 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            flex-shrink: 0;
+        }
 
-/* 2. SỬA INPUT: Cân bằng lại padding ở 2 trạng thái */
-.search-input {
-    width: 100%;
-    height: 100%;
-    /* TRẠNG THÁI THU GỌN BAN ĐẦU: padding đều 2 bên trái phải để icon cân chính giữa */
-    padding: 12px; 
-    font-size: 14px;
-    border: 1px solid var(--border-color);
-    border-radius: 12px;
-    background-color: var(--search-bg);
-    color: var(--text-color);
-    box-sizing: border-box;
-    outline: none;
-    transition: all 0.2s ease;
-    box-shadow: var(--card-shadow);
-    cursor: pointer;
-    
-    -webkit-appearance: none;
-    appearance: none;
-}
+        /* 2. SỬA INPUT: Cân bằng lại padding ở 2 trạng thái */
+        .search-input {
+            width: 100%;
+            height: 100%;
+            padding: 12px; 
+            font-size: 14px;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            background-color: var(--search-bg);
+            color: var(--text-color);
+            box-sizing: border-box;
+            outline: none;
+            transition: all 0.2s ease;
+            box-shadow: var(--card-shadow);
+            cursor: pointer;
+            -webkit-appearance: none;
+            appearance: none;
+        }
 
-.search-input::placeholder {
-    color: transparent;
-    transition: color 0.2s ease;
-}
+        .search-input::placeholder {
+            color: transparent;
+            transition: color 0.2s ease;
+        }
 
-.search-icon {
-    position: absolute;
-    left: 13px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 18px;
-    height: 18px;
-    fill: var(--sub-text);
-    pointer-events: none;
-    transition: fill 0.2s ease;
-}
+        .search-icon {
+            position: absolute;
+            left: 13px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 18px;
+            height: 18px;
+            fill: var(--sub-text);
+            pointer-events: none;
+            transition: fill 0.2s ease;
+        }
 
         /* TRẠNG THÁI KHI ACTIVE Ô TÌM KIẾM (BẤM MỞ RỘNG) */
-.action-bar.search-active .custom-dropdown {
-    flex: 0 0 50px; 
-}
+        .action-bar.search-active .custom-dropdown {
+            flex: 0 0 50px; 
+        }
 
-.action-bar.search-active .custom-dropdown .dropdown-selected {
-    padding-left: 10px;
-    padding-right: 22px;
-    font-size: 12px;
-}
-.action-bar.search-active .custom-dropdown .dropdown-selected::after {
-    right: 8px;
-}
+        .action-bar.search-active .custom-dropdown .dropdown-selected {
+            padding-left: 10px;
+            padding-right: 22px;
+            font-size: 12px;
+        }
+        .action-bar.search-active .custom-dropdown .dropdown-selected::after {
+            right: 8px;
+        }
 
-.action-bar.search-active .search-container {
-    flex: 1; 
-    width: auto; /* Thả tự do width để flex: 1 chiếm trọn không gian */
-}
-.action-bar.search-active .search-input::placeholder {
-    color: var(--sub-text);
-}
+        .action-bar.search-active .search-container {
+            flex: 1; 
+            width: auto; 
+        }
+        .action-bar.search-active .search-input::placeholder {
+            color: var(--sub-text);
+        }
 
-/* KHI ACTIVE: Mới kích hoạt khoảng đệm lớn để chống chữ đè nút X và nhường chỗ cho kính lúp */
-.action-bar.search-active .search-input {
-    cursor: text;
-    padding-left: 42px;  /* Đẩy chữ qua phải nhường chỗ cho icon kính lúp */
-    padding-right: 38px; /* Giữ khoảng trống bên phải cho nút X xóa text không bị đè chữ */
-}
+        .action-bar.search-active .search-input {
+            cursor: text;
+            padding-left: 42px;  
+            padding-right: 38px; 
+        }
     
-
         /* Nút đọc ngẫu nhiên khôi phục thiết kế đồng bộ v1 */
         .btn-action-util {
             height: 45px;
@@ -562,45 +542,35 @@
         }
 
         .btn-random {
-    /* Đảo ngược màu: Lấy màu chủ đạo làm nền, chữ chuyển thành màu trắng */
-    background-color: var(--accent-color);
-    color: #ffffff;
-    border: 1px solid var(--accent-color);
-    border-radius: 12px;
-    outline: none; /* Loại bỏ đường viền focus mặc định của trình duyệt */
-    /* CHỐNG TÔ ĐẬM VÀ BÔI ĐEN TUYỆT ĐỐI (KỂ CẢ KHI BẤM GIỮ LÂU) */
-    -webkit-touch-callout: none; /* Khóa menu ngữ cảnh/copy trên iOS Safari khi nhấn giữ */
-    -webkit-user-select: none;   /* Safari */
-    -khtml-user-select: none;    /* Konqueror HTML */
-    -moz-user-select: none;      /* Firefox */
-    -ms-user-select: none;       /* Internet Explorer/Edge */
-    user-select: none;           /* Bản chuẩn: Chrome, Opera, Edge mới */
-}
+            background-color: var(--accent-color);
+            color: #ffffff;
+            border: 1px solid var(--accent-color);
+            border-radius: 12px;
+            outline: none; 
+            -webkit-touch-callout: none; 
+            -webkit-user-select: none;   
+            -khtml-user-select: none;    
+            -moz-user-select: none;      
+            -ms-user-select: none;       
+            user-select: none;           
+        }
 
-.btn-random:hover {
-    /* Khi hover: Dùng màu biến thể hover đậm hơn một chút để tạo hiệu ứng nhấn */
-    background-color: var(--accent-hover);
-    border-color: var(--accent-hover);
-}
+        .btn-random:hover {
+            background-color: var(--accent-hover);
+            border-color: var(--accent-hover);
+        }
 
-.btn-random:active {
-    /* Khi nhấn giữ: Chuyển sang màu nền sáng, chữ và viền tối */
-    background-color: var(--hover-bg);
-    border-color: var(--accent-color);
-    color: var(--accent-color);
-}
+        .btn-random:active {
+            background-color: var(--hover-bg);
+            border-color: var(--accent-color);
+            color: var(--accent-color);
+        }
 
-/* Đảm bảo khi thả chuột/thả tay ra (hết active) nút sẽ về lại trạng thái chuẩn */
-.btn-random:focus:not(:active) {
-    background-color: var(--accent-color);
-    color: #ffffff;
-    border-color: var(--accent-color);
-}
-
-    
-
-
-
+        .btn-random:focus:not(:active) {
+            background-color: var(--accent-color);
+            color: #ffffff;
+            border-color: var(--accent-color);
+        }
 
         /* DANH SÁCH BÀI VIẾT */
         .list-container {
@@ -647,7 +617,7 @@
             flex-direction: column;
             gap: 4px;
             flex: 1;
-            min-width: 0; /* SỬA LỖI SAFARI/CHROME: Ngăn tiêu đề dài bẻ gãy layout card flexbox */
+            min-width: 0; 
         }
 
         .post-title {
@@ -657,7 +627,6 @@
             font-size: 15px;
             transition: all 0.2s;
             line-height: 1.4;
-            /* Cải thiện hiển thị text dài */
             display: block;
             word-break: break-word; 
         }
@@ -665,8 +634,6 @@
         .post-title:hover {
             color: var(--accent-color);
         }
-
-       
 
         .post-source {
             font-size: 12px;
@@ -768,7 +735,6 @@
                 font-size: 12px;
                 letter-spacing: 2px;
             }
-            /* SỬA LỖI IPHONE MINI/MÀN HÌNH NHỎ: Ép co dropdown về mức vừa vặn mà không làm mất text hay lệch mũi tên */
             .action-bar.search-active .custom-dropdown {
                 flex: 0 0 65px; 
             }
@@ -781,16 +747,15 @@
                 right: 4px;
             }
             mark.search-highlight {
-    background-color: #fef08a; /* Màu vàng nhạt dịu mắt (giống bộ màu Slate/Tailwind) */
-    color: #0f172a;            /* Chữ đen xám đậm để dễ đọc */
-    padding: 0 2px;
-    border-radius: 2px;
-}
-:root[data-theme="dark"] mark.search-highlight {
-    background-color: #ca8a04; /* Màu vàng sậm hơn ở giao diện tối để không bị chói */
-    color: #ffffff;
-}
-
+                background-color: #fef08a; 
+                color: #0f172a;            
+                padding: 0 2px;
+                border-radius: 2px;
+            }
+            :root[data-theme="dark"] mark.search-highlight {
+                background-color: #ca8a04; 
+                color: #ffffff;
+            }
         }
     </style>
 </head>
@@ -840,6 +805,11 @@
     </div>
 
     <div class="filter-wrapper" id="filterWrapper">
+        <button class="btn-tab btn-tab-icon" id="btnFilterToggle">
+            <svg viewBox="0 0 24 24">
+                <path d="M10 18h4v-2h-4v2zM3 6v2h18V6H3zm3 7h12v-2H6v2z"/>
+            </svg>
+        </button>
         <div class="filter-container" id="filterContainer"></div>
         <div class="checkbox-dropdown-menu" id="checkboxDropdownMenu"></div>
     </div>
@@ -852,7 +822,6 @@
     <div class="random-nav-container" id="randomNavContainer"></div>
 
     <script>
-        // CẤU HÌNH NGÔN NGỮ ĐA QUỐC GIA (Mở rộng tùy ý)
         const languages = {
             vi: {
                 contribute: "đóng góp link bài viết",
@@ -878,12 +847,12 @@
                 error_server: "Không thể kết nối máy chủ dữ liệu.",
                 filter_tooltip: "Ẩn/hiện diễn đàn",
                 empty_bookmarks: "Bạn chưa có bài viết yêu thích nào. Hãy bấm nút ★ ở các bài viết để lưu lại nhé!",
-        btn_export: "📤 Xuất dữ liệu",
-        btn_import: "📥 Nhập dữ liệu",
-        import_success: "Nhập danh sách yêu thích thành công!",
-        import_invalid: "File dữ liệu không hợp lệ hoặc bị lỗi!",
-        import_empty: "File dữ liệu trống!",
-        confirm_import: "Hành động này sẽ ghi đè lên danh sách yêu thích hiện tại. Bạn có chắc chắn muốn tiếp tục?"
+                btn_export: "📤 Xuất dữ liệu",
+                btn_import: "📥 Nhập dữ liệu",
+                import_success: "Nhập danh sách yêu thích thành công!",
+                import_invalid: "File dữ liệu không hợp lệ hoặc bị lỗi!",
+                import_empty: "File dữ liệu trống!",
+                confirm_import: "Hành động này sẽ ghi đè lên danh sách yêu thích hiện tại. Bạn có chắc chắn muốn tiếp tục?"
             },
             en: {
                 contribute: "contribute post links",
@@ -908,18 +877,17 @@
                 source_label: "Source: ",
                 error_server: "Failed to connect to data server.",
                 filter_tooltip: "Show/hide forums",
-                  empty_bookmarks: "You don't have any favorite posts yet. Click the ★ button on any post to save it!",
-        btn_export: "📤 Export Data",
-        btn_import: "📥 Import Data",
-        import_success: "Favorites imported successfully!",
-        import_invalid: "Invalid data file or corrupted!",
-        import_empty: "Data file is empty!",
-        confirm_import: "This will overwrite your current favorites. Do you want to proceed?" 
+                empty_bookmarks: "You don't have any favorite posts yet. Click the ★ button on any post to save it!",
+                btn_export: "📤 Export Data",
+                btn_import: "📥 Import Data",
+                import_success: "Favorites imported successfully!",
+                import_invalid: "Invalid data file or corrupted!",
+                import_empty: "Data file is empty!",
+                confirm_import: "This will overwrite your current favorites. Do you want to proceed?" 
             }
         };
 
         let currentLang = localStorage.getItem('lang') || 'en';
-
         let masterData = { vn: {}, int: {} };
         let activeSource = 'all'; 
         let forumsData = {}; 
@@ -931,11 +899,8 @@
 
         let randomHistory = [];
         let currentRandomIndex = -1;
-
-        // Quản lý danh sách các diễn đàn bị ẩn tạm thời (Không lưu localStorage)
         let hiddenForums = [];
 
-        
         let bookmarks = JSON.parse(localStorage.getItem('bookmarks')) || [];
         const defaultAvatar = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2394a3b8'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.53c-.26-.81-1-1.4-1.9-1.4h-1v-3c0-.55-.45-1-1-1h-6v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z'/></svg>";
         const localFaviconFolder = "favicons"; 
@@ -951,12 +916,12 @@
         const btnLangToggle = document.getElementById('btnLangToggle');
         const searchInput = document.getElementById('searchInput');
         const actionBar = document.getElementById('actionBar');
+        const btnFilterToggle = document.getElementById('btnFilterToggle');
 
         const savedTheme = localStorage.getItem('theme') || 'light';
         document.documentElement.setAttribute('data-theme', savedTheme);
         updateThemeUI(savedTheme);
 
-        // Khởi động ngôn ngữ ban đầu
         applyLanguage(currentLang);
 
         btnThemeToggle.addEventListener('click', () => {
@@ -973,6 +938,12 @@
             applyLanguage(currentLang);
             updateDropdownSelectedText();
             updateCurrentForumsData();
+        });
+
+        // Đăng ký sự kiện mở/đóng menu checkbox cho nút tĩnh cố định ngoài luồng cuộn
+        btnFilterToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            checkboxDropdownMenu.classList.toggle('open');
         });
 
         function updateThemeUI(theme) {
@@ -996,9 +967,8 @@
                 }
             });
 
-            const filterBtn = document.getElementById('btnFilterToggle');
-            if (filterBtn) {
-                filterBtn.setAttribute('title', languages[lang].filter_tooltip);
+            if (btnFilterToggle) {
+                btnFilterToggle.setAttribute('title', languages[lang].filter_tooltip);
             }
         }
 
@@ -1156,7 +1126,6 @@
             renderTabs();
         }
 
-        // SỬA LỖI 1: TỰ ĐỘNG ẨN CHECKBOX KHÔNG CÓ BÀI VIẾT (COUNT === 0)
         function renderCheckboxMenu() {
             checkboxDropdownMenu.innerHTML = '';
             
@@ -1172,25 +1141,19 @@
             if (filteredDomains.length === 0) return;
 
             filteredDomains.forEach(domain => {
-                // Đếm số lượng bài viết thực tế của domain này trong forumsData hiện tại
                 const count = forumsData[domain] ? forumsData[domain].length : 0;
-
-                // KHÔI PHỤC LOGIC V1: Nếu không có bài viết nào, tự động ẩn (bỏ qua không render checkbox)
                 if (count === 0) return;
 
                 const label = document.createElement('label');
                 label.className = 'checkbox-item';
                 
                 const isChecked = !hiddenForums.includes(domain);
-                
-                // Sử dụng split('.') để lấy phần tên trước dấu chấm đầu tiên
-const cleanName = domain.split('.')[0].toUpperCase(); 
+                const cleanName = domain.split('.')[0].toUpperCase(); 
 
-label.innerHTML = `
-    <input type="checkbox" value="${domain}" ${isChecked ? 'checked' : ''}>
-    <span>${cleanName}</span>
-`;
-
+                label.innerHTML = `
+                    <input type="checkbox" value="${domain}" ${isChecked ? 'checked' : ''}>
+                    <span>${cleanName}</span>
+                `;
 
                 label.querySelector('input').addEventListener('change', (e) => {
                     const val = e.target.value;
@@ -1228,43 +1191,24 @@ label.innerHTML = `
             // 1. Nút Yêu thích
             createTabButton(languages[currentLang].fav_title, 'fav_bookmarks', bookmarks.length);
             
-            // 2. NÚT ICON FILTER Ở CHÍNH GIỮA
-            const filterBtn = document.createElement('button');
-            filterBtn.className = 'btn-tab btn-tab-icon';
-            filterBtn.id = 'btnFilterToggle';
-            filterBtn.setAttribute('title', languages[currentLang].filter_tooltip);
-            filterBtn.innerHTML = `
-                <svg viewBox="0 0 24 24">
-                    <path d="M10 18h4v-2h-4v2zM3 6v2h18V6H3zm3 7h12v-2H6v2z"/>
-                </svg>
-            `;
-            filterBtn.addEventListener('click', (e) => {
-    e.stopPropagation(); // Ngăn chặn sự kiện lan ra ngoài document
-    checkboxDropdownMenu.classList.toggle('open');
-});
-
-            filterContainer.appendChild(filterBtn);
-
-            // 3. Nút Tất cả bài viết
+            // 2. Nút Tất cả bài viết
             createTabButton(languages[currentLang].all_title, 'all', totalAllPostsCount);
             
-            // 4. Danh sách các nút diễn đàn
-Object.keys(forumsData).forEach(domain => { 
-    if (!hiddenForums.includes(domain)) {
-        // Lấy tên diễn đàn bỏ đuôi .com, .vn...
-        const cleanName = domain.split('.')[0].toUpperCase();
-        createTabButton(cleanName, domain, forumsData[domain].length); 
-    }
-});
+            // 3. Danh sách các nút diễn đàn cụ thể
+            Object.keys(forumsData).forEach(domain => { 
+                if (!hiddenForums.includes(domain)) {
+                    const cleanName = domain.split('.')[0].toUpperCase();
+                    createTabButton(cleanName, domain, forumsData[domain].length); 
+                }
+            });
 
-
-            // Kiểm tra trạng thái Active Tab hiện tại bảo toàn dữ liệu
-            const tabs = filterContainer.querySelectorAll('.btn-tab:not(.btn-tab-icon)');
+            // Bảo toàn cấu hình trạng thái Active của tab hiện tại
+            const tabs = filterContainer.querySelectorAll('.btn-tab');
             let targetTab = null;
             tabs.forEach(tab => { if (tab.getAttribute('data-domain') === currentDomain) targetTab = tab; });
             
             if (targetTab) {
-                document.querySelectorAll('.btn-tab').forEach(btn => btn.classList.remove('active'));
+                tabs.forEach(btn => btn.classList.remove('active'));
                 targetTab.classList.add('active');
                 displayPosts();
             } else {
@@ -1279,36 +1223,36 @@ Object.keys(forumsData).forEach(domain => {
             button.className = 'btn-tab';
             button.setAttribute('data-domain', domainKey);
             
-            // --- BỔ SUNG: Chèn Favicon cho các tab diễn đàn ---
             if (domainKey !== 'fav_bookmarks' && domainKey !== 'all') {
                 const tabIcon = document.createElement('img');
                 tabIcon.src = `${localFaviconFolder}/${domainKey}.png`;
                 tabIcon.alt = domainKey;
-                // Thiết kế style trực tiếp để icon gọn gàng, đồng bộ giao diện
                 tabIcon.style.width = '16px';
                 tabIcon.style.height = '16px';
                 tabIcon.style.borderRadius = '50%';
                 tabIcon.style.objectFit = 'cover';
                 tabIcon.style.flexShrink = '0';
-                // Xử lý lỗi nếu thiếu ảnh icon thì đổi sang ảnh mặc định hệ thống
                 tabIcon.onerror = function() {
                     this.onerror = null;
                     this.src = defaultAvatar;
                 };
                 button.appendChild(tabIcon);
             }
-            // -------------------------------------------------
+
             const labelSpan = document.createElement('span');
             labelSpan.textContent = label;
             button.appendChild(labelSpan);
+
             const badge = document.createElement('span');
             badge.className = 'tab-badge';
             badge.textContent = count;
             button.appendChild(badge);
+
             if (domainKey === currentDomain) button.classList.add('active');
             
             button.addEventListener('click', () => {
-                document.querySelectorAll('.btn-tab').forEach(btn => btn.classList.remove('active'));
+                const tabs = filterContainer.querySelectorAll('.btn-tab');
+                tabs.forEach(btn => btn.classList.remove('active'));
                 button.classList.add('active');
                 currentDomain = domainKey;
                 currentPage = 1;
@@ -1329,20 +1273,16 @@ Object.keys(forumsData).forEach(domain => {
             filterContainer.appendChild(button);
         }
 
-    // Hàm trộn ngẫu nhiên mảng (Fisher-Yates Shuffle) không làm thay đổi mảng gốc
-function shuffleArray(array) {
-    let shuffled = [...array];
-    for (let i = shuffled.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-    }
-    return shuffled;
-}
+        function shuffleArray(array) {
+            let shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
 
-    
-        
-
-            function getActivePosts() {
+        function getActivePosts() {
             let targetPosts = [];
             if (currentDomain === 'fav_bookmarks') {
                 targetPosts = [...bookmarks];
@@ -1356,7 +1296,6 @@ function shuffleArray(array) {
                 targetPosts = hiddenForums.includes(currentDomain) ? [] : (forumsData[currentDomain] || []);
             }
 
-            // --- NÂNG CẤP LOGIC TÌM KIẾM CHÍNH XÁC TỪ ĐẦU TỪ ---
             if (searchQuery !== '') {
                 try {
                     const escapedQuery = searchQuery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -1374,7 +1313,6 @@ function shuffleArray(array) {
             randomNavContainer.innerHTML = ''; 
             const targetPosts = getActivePosts();
 
-            // TRƯỜNG HỢP: Tab Yêu thích trống
             if (currentDomain === 'fav_bookmarks' && targetPosts.length === 0) {
                 listContainer.innerHTML = `
                     <div class="empty-bookmarks-wrapper" style="text-align: center; padding: 40px 20px; background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border-color); animation: fadeIn 0.3s ease;">
@@ -1385,7 +1323,6 @@ function shuffleArray(array) {
                         <div style="font-weight: 500; font-size: 14.5px; color: var(--text-color); max-width: 450px; margin: 0 auto 20px; line-height: 1.5;">
                             ${languages[currentLang].empty_bookmarks}
                         </div>
-                        
                         <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
                             <button class="btn-tab" onclick="importBookmarks()" style="padding: 8px 16px; font-size: 12px;">${languages[currentLang].btn_import}</button>
                             <input type="file" id="importFileInput" accept=".txt" style="display: none;" onchange="handleFileSelect(event)">
@@ -1396,14 +1333,12 @@ function shuffleArray(array) {
                 return;
             }
 
-            // TRƯỜNG HỢP: Các bộ lọc khác hoặc Tìm kiếm không ra kết quả
             if (targetPosts.length === 0) {
                 listContainer.innerHTML = `<div class="empty-message">${languages[currentLang].not_found}</div>`;
                 paginationContainer.innerHTML = '';
                 return;
             }
 
-            // Nếu là tab Yêu thích và CÓ bài viết, chèn thêm thanh công cụ Xuất dữ liệu lên đầu danh sách bài viết
             if (currentDomain === 'fav_bookmarks') {
                 const backupBar = document.createElement('div');
                 backupBar.style = "display: flex; gap: 10px; justify-content: flex-end; margin-bottom: 12px; padding: 0 4px;";
@@ -1415,22 +1350,17 @@ function shuffleArray(array) {
                 listContainer.appendChild(backupBar);
             }
 
-            // Tính tổng số trang dựa trên TOÀN BỘ số bài viết gốc
             const totalPages = Math.ceil(targetPosts.length / postsPerPage);
             if (currentPage > totalPages) currentPage = totalPages || 1;
             
-            // XỬ LÝ PHÂN TÁCH DATA ĐỂ HIỂN THỊ
             let paginatedPosts = [];
             if (currentDomain === 'all' && searchQuery === '' && currentPage === 1) {
-                // Trang 1 Tab Tất cả: Xáo trộn mảng gốc và lấy đúng 50 bài ngẫu nhiên
                 paginatedPosts = shuffleArray(targetPosts).slice(0, postsPerPage);
             } else {
-                // Các trang sau hoặc tab khác: Lấy theo vị trí phân trang tuần tự chính xác
                 const startIndex = (currentPage - 1) * postsPerPage;
                 paginatedPosts = targetPosts.slice(startIndex, startIndex + postsPerPage);
             }
 
-            // KIỂM TRA ĐỂ TẠO CONTAINER RIÊNG CHO TRANG 1 TAB TẤT CẢ
             if (currentDomain === 'all' && searchQuery === '' && currentPage === 1) {
                 const randomContainer = document.createElement('div');
                 randomContainer.className = 'random-posts-container';
@@ -1438,102 +1368,78 @@ function shuffleArray(array) {
                 randomContainer.style = "display: flex; flex-direction: column; gap: 12px; width: 100%;";
                 
                 listContainer.appendChild(randomContainer);
-                
-                paginatedPosts.forEach(post => {
-                    renderPostCard(post, randomContainer);
-                });
+                paginatedPosts.forEach(post => { renderPostCard(post, randomContainer); });
             } else {
-                paginatedPosts.forEach(post => {
-                    renderPostCard(post, listContainer);
-                });
+                paginatedPosts.forEach(post => { renderPostCard(post, listContainer); });
             }
             
-            // Gọi hàm render thanh điều hướng (Lúc này totalPages đã được tính đúng)
             renderPagination(totalPages);
         }
 
-                
-               
+        function renderPostCard(post, targetContainer) {
+            const isBookmarked = bookmarks.some(b => b.url === post.url);
+            const faviconUrl = `${localFaviconFolder}/${post.domain}.png`; 
 
-        
-        
-
-
-
-                function renderPostCard(post, targetContainer) {
-    
-    const isBookmarked = bookmarks.some(b => b.url === post.url);
-    const faviconUrl = `${localFaviconFolder}/${post.domain}.png`; 
-
-    // --- XỬ LÝ HIGHLIGHT CHỮ CHUẨN XÁC THEO RANH GIỚI TỪ ---
-    let displayedTitle = post.title;
-    if (searchQuery && searchQuery.trim() !== '') {
-        try {
-            const escapedQuery = searchQuery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-            
-            // Thêm \\b vào trước để chỉ highlight phần đầu của từ khớp với tìm kiếm
-            const regex = new RegExp(`\\b(${escapedQuery})`, 'gi');
-            
-            displayedTitle = post.title.replace(regex, '<mark class="search-highlight">$1</mark>');
-        } catch (e) {
-            console.error("Lỗi highlight:", e);
-        }
-    }
-    // -----------------------------------------------------
-
-            
-
-            const postItem = document.createElement('div');
-    postItem.className = `post-item`;
-
-    postItem.innerHTML = `
-        <img class="post-avatar" src="${faviconUrl}" alt="${post.domain}" onerror="this.onerror=null; this.src='${defaultAvatar}';">
-        <div class="post-content-block">
-            <a href="${post.url}" target="_blank" class="post-title">${displayedTitle}</a>
-            <span class="post-source">${languages[currentLang].source_label}${post.domain}</span>
-        </div>
-        <button class="btn-bookmark ${isBookmarked ? 'active' : ''}" title="Đánh dấu yêu thích">${isBookmarked ? '★' : '☆'}</button>
-    `;
-
-    postItem.querySelector('.btn-bookmark').addEventListener('click', (e) => {
-        e.stopPropagation();
-        let currentBookmarks = JSON.parse(localStorage.getItem('bookmarks')) || [];
-        const foundIndex = currentBookmarks.findIndex(b => b.url === post.url);
-        let isNowBookmarked = false;
-
-        if (foundIndex > -1) { 
-            currentBookmarks.splice(foundIndex, 1); 
-        } else { 
-            currentBookmarks.push({ title: post.title, url: post.url, domain: post.domain }); 
-            isNowBookmarked = true;
-        }
-        
-        bookmarks = currentBookmarks;
-        localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
-        
-        const favTab = filterContainer.querySelector('[data-domain="fav_bookmarks"] .tab-badge');
-        if (favTab) favTab.textContent = bookmarks.length;
-        
-        const btnTarget = e.currentTarget;
-        if (isNowBookmarked) {
-            btnTarget.classList.add('active');
-            btnTarget.textContent = '★';
-        } else {
-            btnTarget.classList.remove('active');
-            btnTarget.textContent = '☆';
-            if (currentDomain === 'fav_bookmarks') {
-                postItem.remove();
-                // Nếu mảng bookmarks đã trống, gọi lại displayPosts để vẽ lại giao diện thông báo chuẩn
-                if (bookmarks.length === 0) {
-                    displayPosts();
+            let displayedTitle = post.title;
+            if (searchQuery && searchQuery.trim() !== '') {
+                try {
+                    const escapedQuery = searchQuery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                    const regex = new RegExp(`\\b(${escapedQuery})`, 'gi');
+                    displayedTitle = post.title.replace(regex, '<mark class="search-highlight">$1</mark>');
+                } catch (e) {
+                    console.error("Lỗi highlight:", e);
                 }
             }
+
+            const postItem = document.createElement('div');
+            postItem.className = `post-item`;
+
+            postItem.innerHTML = `
+                <img class="post-avatar" src="${faviconUrl}" alt="${post.domain}" onerror="this.onerror=null; this.src='${defaultAvatar}';">
+                <div class="post-content-block">
+                    <a href="${post.url}" target="_blank" class="post-title">${displayedTitle}</a>
+                    <span class="post-source">${languages[currentLang].source_label}${post.domain}</span>
+                </div>
+                <button class="btn-bookmark ${isBookmarked ? 'active' : ''}" title="Đánh dấu yêu thích">${isBookmarked ? '★' : '☆'}</button>
+            `;
+
+            postItem.querySelector('.btn-bookmark').addEventListener('click', (e) => {
+                e.stopPropagation();
+                let currentBookmarks = JSON.parse(localStorage.getItem('bookmarks')) || [];
+                const foundIndex = currentBookmarks.findIndex(b => b.url === post.url);
+                let isNowBookmarked = false;
+
+                if (foundIndex > -1) { 
+                    currentBookmarks.splice(foundIndex, 1); 
+                } else { 
+                    currentBookmarks.push({ title: post.title, url: post.url, domain: post.domain }); 
+                    isNowBookmarked = true;
+                }
+                
+                bookmarks = currentBookmarks;
+                localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
+                
+                const favTab = filterContainer.querySelector('[data-domain="fav_bookmarks"] .tab-badge');
+                if (favTab) favTab.textContent = bookmarks.length;
+                
+                const btnTarget = e.currentTarget;
+                if (isNowBookmarked) {
+                    btnTarget.classList.add('active');
+                    btnTarget.textContent = '★';
+                } else {
+                    btnTarget.classList.remove('active');
+                    btnTarget.textContent = '☆';
+                    if (currentDomain === 'fav_bookmarks') {
+                        postItem.remove();
+                        if (bookmarks.length === 0) {
+                            displayPosts();
+                        }
+                    }
+                }
+            });
+
+            targetContainer.appendChild(postItem);
         }
-    });
-
-    targetContainer.appendChild(postItem);
-}
-
 
         function renderPagination(totalPages) {
             paginationContainer.innerHTML = '';
@@ -1596,7 +1502,7 @@ function shuffleArray(array) {
             paginationContainer.innerHTML = '';
             const currentPost = randomHistory[currentRandomIndex];
             if (currentPost) {
-                renderPostCard(currentPost, listContainer); // Truyền thêm listContainer vào đây
+                renderPostCard(currentPost, listContainer);
             }
             renderRandomNavigation();
         }
@@ -1626,80 +1532,62 @@ function shuffleArray(array) {
             searchInput.dispatchEvent(new Event('input')); 
         });
 
-        // THAY THẾ BẰNG ĐOẠN CODE MỚI NÀY:
-document.addEventListener('pointerdown', (e) => {
-    const isClickInsideSearch = document.getElementById('searchContainer').contains(e.target);
-    const isClickInsideDropdown = document.getElementById('customDropdown').contains(e.target);
-    const isClickInsideFilterMenu = document.getElementById('filterWrapper').contains(e.target);
-    
-    // Kiểm tra xem vị trí chạm có thuộc về nút phễu lọc hay không
-    const isClickOnFilterBtn = document.getElementById('btnFilterToggle') && document.getElementById('btnFilterToggle').contains(e.target);
+        document.addEventListener('pointerdown', (e) => {
+            const isClickInsideSearch = document.getElementById('searchContainer').contains(e.target);
+            const isClickInsideDropdown = document.getElementById('customDropdown').contains(e.target);
+            const isClickInsideFilterMenu = document.getElementById('filterWrapper').contains(e.target);
+            const isClickOnFilterBtn = document.getElementById('btnFilterToggle') && document.getElementById('btnFilterToggle').contains(e.target);
 
-    // Đóng dropdown diễn đàn chính ngay khi chạm ra ngoài
-    if (!isClickInsideDropdown) {
-        customDropdown.classList.remove('open');
-    }
+            if (!isClickInsideDropdown) {
+                customDropdown.classList.remove('open');
+            }
 
-    // Chỉ đóng menu checkbox nếu chạm ra ngoài menu VÀ không chạm vào nút phễu
-    if (!isClickInsideFilterMenu && !isClickOnFilterBtn) {
-        checkboxDropdownMenu.classList.remove('open');
-    }
+            if (!isClickInsideFilterMenu && !isClickOnFilterBtn) {
+                checkboxDropdownMenu.classList.remove('open');
+            }
 
-    // Thu nhỏ thanh tìm kiếm nếu trống và chạm ra ngoài
-    if (!isClickInsideSearch && searchInput.value.trim() === '') {
-        actionBar.classList.remove('search-active');
-    }
-});
-
-
+            if (!isClickInsideSearch && searchInput.value.trim() === '') {
+                actionBar.classList.remove('search-active');
+            }
+        });
 
         btnRandom.addEventListener('click', (e) => {
-    e.preventDefault();
-    e.stopPropagation();
+            e.preventDefault();
+            e.stopPropagation();
 
-    const allCurrentPosts = getActivePosts();
-    if (allCurrentPosts.length === 0) { alert(languages[currentLang].alert_no_post); return; }
-    if (currentRandomIndex < randomHistory.length - 1) { randomHistory = randomHistory.slice(0, currentRandomIndex + 1); }
+            const allCurrentPosts = getActivePosts();
+            if (allCurrentPosts.length === 0) { alert(languages[currentLang].alert_no_post); return; }
+            if (currentRandomIndex < randomHistory.length - 1) { randomHistory = randomHistory.slice(0, currentRandomIndex + 1); }
 
-    let randomPost;
-    if (allCurrentPosts.length > 1) {
-        const currentPostUrl = randomHistory[currentRandomIndex]?.url;
-        do {
-            randomPost = allCurrentPosts[Math.floor(Math.random() * allCurrentPosts.length)];
-        } while (randomPost.url === currentPostUrl);
-    } else {
-        randomPost = allCurrentPosts[0];
-    }
+            let randomPost;
+            if (allCurrentPosts.length > 1) {
+                const currentPostUrl = randomHistory[currentRandomIndex]?.url;
+                do {
+                    randomPost = allCurrentPosts[Math.floor(Math.random() * allCurrentPosts.length)];
+                } while (randomPost.url === currentPostUrl);
+            } else {
+                randomPost = allCurrentPosts[0];
+            }
 
-    randomHistory.push(randomPost);
-    currentRandomIndex = randomHistory.length - 1;
-    showRandomPostAtCurrentIndex();
+            randomHistory.push(randomPost);
+            currentRandomIndex = randomHistory.length - 1;
+            showRandomPostAtCurrentIndex();
 
-    // --- ĐOẠN SỬA ĐỔI CHÍNH XÁC CHO LOGIC TRƯỢT TAB ---
-    // Nếu đang ở 'all' hoặc 'fav_bookmarks', đích đến chính là nút 'all' hoặc 'fav_bookmarks' đó luôn
-    // Ngược lại nếu đang ở tab cụ thể thì trượt về tab cụ thể đó.
-    const targetDomainKey = (currentDomain === 'all' || currentDomain === 'fav_bookmarks') ? currentDomain : randomPost.domain;
-    
-    // Tìm đúng phần tử button đang hiển thị trên thanh filter
-    const targetTabButton = filterContainer.querySelector(`.btn-tab[data-domain="${targetDomainKey}"]`);
-    
-    if (targetTabButton) {
-        const containerWidth = filterContainer.offsetWidth;
-        const buttonWidth = targetTabButton.offsetWidth;
-        const buttonLeft = targetTabButton.offsetLeft;
-        
-        // Tính toán khoảng cách để đưa nút vào giữa thanh cuộn ngang
-        const targetScrollLeft = buttonLeft - (containerWidth / 2) + (buttonWidth / 2);
-        
-        filterContainer.scrollTo({
-            left: targetScrollLeft,
-            behavior: 'smooth'
+            const targetDomainKey = (currentDomain === 'all' || currentDomain === 'fav_bookmarks') ? currentDomain : randomPost.domain;
+            const targetTabButton = filterContainer.querySelector(`.btn-tab[data-domain="${targetDomainKey}"]`);
+            
+            if (targetTabButton) {
+                const containerWidth = filterContainer.offsetWidth;
+                const buttonWidth = targetTabButton.offsetWidth;
+                const buttonLeft = targetTabButton.offsetLeft;
+                const targetScrollLeft = buttonLeft - (containerWidth / 2) + (buttonWidth / 2);
+                
+                filterContainer.scrollTo({
+                    left: targetScrollLeft,
+                    behavior: 'smooth'
+                });
+            }
         });
-    }
-});
-
-
-
 
         const customDropdown = document.getElementById('customDropdown');
         const dropdownSelected = document.getElementById('dropdownSelected');
@@ -1724,7 +1612,6 @@ document.addEventListener('pointerdown', (e) => {
                 currentPage = 1; 
                 currentDomain = 'all'; 
                 
-                // SỬA LỖI 2: Giữ nguyên từ khóa tìm kiếm khi đổi nguồn bộ lọc chính (Không xóa trắng searchQuery)
                 resetRandomHistory(); 
                 updateCurrentForumsData(); 
             });
@@ -1749,7 +1636,6 @@ document.addEventListener('pointerdown', (e) => {
             updateCurrentForumsData();
         }
 
-        // --- ĐOẠN CODE CHẶN DOUBLE-ZOOM ĐƯỢC GIỮ NGUYÊN VẸN THEO YÊU CẦU CỦA BẠN ---
         let lastTouchEnd = 0;
         document.addEventListener('touchend', (event) => {
             const now = (new Date()).getTime();
@@ -1767,146 +1653,125 @@ document.addEventListener('pointerdown', (e) => {
 
         window.addEventListener('DOMContentLoaded', () => loadExternalData());
     
-    // ================= PHẦN XỬ LÝ XUẤT/NHẬP DỮ LIỆU YÊU THÍCH =================
-
-// 1. Hàm xuất dữ liệu ra file TXT theo cấu trúc: Tiêu đề | URL
-function exportBookmarks() {
-    const currentBookmarks = JSON.parse(localStorage.getItem('bookmarks')) || [];
-    if (currentBookmarks.length === 0) {
-        alert(languages[currentLang].alert_no_post);
-        return;
-    }
-    
-    // Chuyển mảng object thành chuỗi văn bản thuần dạng: Tiêu đề | URL
-    const lines = currentBookmarks.map(item => `${item.title} | ${item.url}`);
-    const dataStr = lines.join('\n');
-    const dataUri = 'data:text/plain;charset=utf-8,' + encodeURIComponent(dataStr);
-    
-    // Tạo tên file chứa ngày xuất
-    const dateStr = new Date().toISOString().slice(0,10);
-    const exportFileDefaultName = `forum_favorites_${dateStr}.txt`;
-    
-    const linkElement = document.createElement('a');
-    linkElement.setAttribute('href', dataUri);
-    linkElement.setAttribute('download', exportFileDefaultName);
-    linkElement.click();
-}
-
-// 2. Hàm kích hoạt mở cửa sổ chọn file
-function importBookmarks() {
-    document.getElementById('importFileInput').click();
-}
-
-// 3. Xử lý đọc file text dạng "Tiêu đề | URL" và nạp vào hệ thống
-function handleFileSelect(event) {
-    const input = event.target;
-    if (!input.files || input.files.length === 0) return;
-    
-    // Cảnh báo người dùng hành động này sẽ ghi đè dữ liệu cũ
-    if (!confirm(languages[currentLang].confirm_import)) {
-        input.value = ''; 
-        return;
-    }
-
-    const file = input.files[0];
-    const reader = new FileReader();
-    
-    reader.onload = function(e) {
-        const text = e.target.result.trim();
-        if (!text) {
-            alert(languages[currentLang].import_empty);
-            input.value = '';
-            return;
-        }
-        
-        try {
-            // Tách file thành từng dòng
-            const lines = text.split('\n');
-            const parsedData = [];
-            
-            lines.forEach(line => {
-                if (!line.trim()) return; // Bỏ qua dòng trống
-                
-                const parts = line.split('|');
-                if (parts.length >= 2) {
-                    const title = parts[0].trim();
-                    const url = parts[1].trim();
-                    
-                    try {
-                        // Tự động bóc tách domain từ URL để cấp Favicon chính xác
-                        const urlObj = new URL(url);
-                        const domain = urlObj.hostname.replace('www.', '');
-                        
-                        parsedData.push({ title, url, domain });
-                    } catch (urlErr) {
-                        // Nếu URL không hợp lệ thì bỏ qua dòng đó
-                        console.warn("URL không hợp lệ:", url);
-                    }
-                }
-            });
-            
-            if (parsedData.length > 0) {
-                // Ghi đè vào bộ nhớ tạm toàn cục và LocalStorage
-                bookmarks = parsedData;
-                localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
-                
-                // Thông báo và tự động vẽ lại giao diện tức thì
-                alert(languages[currentLang].import_success);
-                
-                // Cập nhật lại số lượng huy hiệu (badge) trên tab Yêu thích
-                const favTab = filterContainer.querySelector('[data-domain="fav_bookmarks"] .tab-badge');
-                if (favTab) favTab.textContent = bookmarks.length;
-                
-                // Reload tab hiện tại
-                displayPosts();
-            } else {
-                alert(languages[currentLang].import_invalid);
+        function exportBookmarks() {
+            const currentBookmarks = JSON.parse(localStorage.getItem('bookmarks')) || [];
+            if (currentBookmarks.length === 0) {
+                alert(languages[currentLang].alert_no_post);
+                return;
             }
-        } catch (err) {
-            console.error("Lỗi import file:", err);
-            alert(languages[currentLang].import_invalid);
+            
+            const lines = currentBookmarks.map(item => `${item.title} | ${item.url}`);
+            const dataStr = lines.join('\n');
+            const dataUri = 'data:text/plain;charset=utf-8,' + encodeURIComponent(dataStr);
+            
+            const dateStr = new Date().toISOString().slice(0,10);
+            const exportFileDefaultName = `forum_favorites_${dateStr}.txt`;
+            
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
         }
-        input.value = ''; // Làm sạch input file
-    };
-    
-    reader.readAsText(file);
-}
-    
-    // CHỨC NĂNG KÉO CHUỘT ĐỂ CUỘN THANH FILTER TRÊN MÁY TÍNH
-const slider = document.getElementById('filterContainer');
-let isDown = false;
-let startX;
-let scrollLeft;
 
-slider.addEventListener('mousedown', (e) => {
-    // Chỉ kích hoạt khi click chuột trái và không bấm vào các nút bên trong để tránh lỗi click nhầm
-    if (e.pointerType === 'mouse' || e.button === 0) {
-        isDown = true;
-        slider.style.cursor = 'grabbing';
-        startX = e.pageX - slider.offsetLeft;
-        scrollLeft = slider.scrollLeft;
-    }
-});
+        function importBookmarks() {
+            document.getElementById('importFileInput').click();
+        }
 
-slider.addEventListener('mouseleave', () => {
-    isDown = false;
-    slider.style.cursor = 'pointer';
-});
+        function handleFileSelect(event) {
+            const input = event.target;
+            if (!input.files || input.files.length === 0) return;
+            
+            if (!confirm(languages[currentLang].confirm_import)) {
+                input.value = ''; 
+                return;
+            }
 
-slider.addEventListener('mouseup', () => {
-    isDown = false;
-    slider.style.cursor = 'pointer';
-});
+            const file = input.files[0];
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                const text = e.target.result.trim();
+                if (!text) {
+                    alert(languages[currentLang].import_empty);
+                    input.value = '';
+                    return;
+                }
+                
+                try {
+                    const lines = text.split('\n');
+                    const parsedData = [];
+                    
+                    lines.forEach(line => {
+                        if (!line.trim()) return; 
+                        
+                        const parts = line.split('|');
+                        if (parts.length >= 2) {
+                            const title = parts[0].trim();
+                            const url = parts[1].trim();
+                            
+                            try {
+                                const urlObj = new URL(url);
+                                const domain = urlObj.hostname.replace('www.', '');
+                                parsedData.push({ title, url, domain });
+                            } catch (urlErr) {
+                                console.warn("URL không hợp lệ:", url);
+                            }
+                        }
+                    });
+                    
+                    if (parsedData.length > 0) {
+                        bookmarks = parsedData;
+                        localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
+                        alert(languages[currentLang].import_success);
+                        
+                        const favTab = filterContainer.querySelector('[data-domain="fav_bookmarks"] .tab-badge');
+                        if (favTab) favTab.textContent = bookmarks.length;
+                        
+                        displayPosts();
+                    } else {
+                        alert(languages[currentLang].import_invalid);
+                    }
+                } catch (err) {
+                    console.error("Lỗi import file:", err);
+                    alert(languages[currentLang].import_invalid);
+                }
+                input.value = ''; 
+            };
+            
+            reader.readAsText(file);
+        }
+            
+        const slider = document.getElementById('filterContainer');
+        let isDown = false;
+        let startX;
+        let scrollLeft;
 
-slider.addEventListener('mousemove', (e) => {
-    if (!isDown) return;
-    e.preventDefault();
-    const x = e.pageX - slider.offsetLeft;
-    const walk = (x - startX) * 1.5; // Nhân với 1.5 để tốc độ lướt nhanh và mượt hơn
-    slider.scrollLeft = scrollLeft - walk;
-});
+        slider.addEventListener('mousedown', (e) => {
+            if (e.pointerType === 'mouse' || e.button === 0) {
+                isDown = true;
+                slider.style.cursor = 'grabbing';
+                startX = e.pageX - slider.offsetLeft;
+                scrollLeft = slider.scrollLeft;
+            }
+        });
 
+        slider.addEventListener('mouseleave', () => {
+            isDown = false;
+            slider.style.cursor = 'pointer';
+        });
 
+        slider.addEventListener('mouseup', () => {
+            isDown = false;
+            slider.style.cursor = 'pointer';
+        });
+
+        slider.addEventListener('mousemove', (e) => {
+            if (!isDown) return;
+            e.preventDefault();
+            const x = e.pageX - slider.offsetLeft;
+            const walk = (x - startX) * 1.5; 
+            slider.scrollLeft = scrollLeft - walk;
+        });
     </script>
 </body>
 </html>
