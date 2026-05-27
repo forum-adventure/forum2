@@ -190,22 +190,27 @@
         }
 
                         /* 1. Cấu hình lại khung chứa tab */
+                /* Cấu hình lại khung chứa tab cố định đúng 2 hàng */
         .filter-container {
             position: relative;
             display: flex;            
             flex-wrap: wrap;           
             gap: 8px;
             padding: 4px;
-            margin-bottom: 12px;       /* Giảm margin một chút để nhường chỗ cho nút */
+            margin-bottom: 12px;       
             overflow: hidden;          
-            max-height: 88px;          /* Chiều cao cố định vừa đủ cho đúng 2 hàng tab */
-            transition: max-height 0.4s ease-in-out; /* Hiệu ứng bung ra mượt mà */
+            
+            /* DÙNG THUỘC TÍNH NÀY ĐỂ ÉP ĐÚNG 2 HÀNG */
+            max-height: 84px;          /* Đã đo đạc chính xác theo kích thước nút 34px + gap 8px */
+            
+            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1); /* Hiệu ứng mượt hơn */
         }
 
         /* Khi được kích hoạt class này qua JS, khung sẽ mở rộng */
         .filter-container.expanded {
-            max-height: 800px;         /* Cho phép mở rộng thoải mái để hiện hết tab */
+            max-height: 1000px;        /* Tăng lên hẳn 1000px để không bị thiếu nếu sau này bạn thêm nhiều diễn đàn */
         }
+
          /* 2. CSS cho nút Xem thêm / Thu gọn */
     .toggle-filter-btn {
             display: block;
@@ -752,6 +757,7 @@
             .filter-container {
                 flex-wrap: nowrap !important; /* Ép buộc cuộn ngang trên Tablet & Mobile */
                 overflow-x: auto !important;
+                max-height: none !important;
                 scroll-behavior: smooth;
                 -webkit-overflow-scrolling: touch;
                 padding-bottom: 10px;
