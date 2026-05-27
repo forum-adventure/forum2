@@ -259,13 +259,52 @@
     flex-shrink: 0;            /* Tuyệt đối không cho nút bị bóp méo */
     margin-right: 8px;         /* Khoảng cách với các nút cuộn */
     
-    /* Hiệu ứng đổ bóng nhẹ hoặc viền để tạo cảm giác các nút khác chui hẳn xuống dưới */
-    box-shadow: 6px 0 10px -4px rgba(0, 0, 0, 0.15); 
+    /* ================= BỔ SUNG CÁC THUỘC TÍNH DƯỚI ĐÂY ================= */
+    
+    /* 1. Thiết lập vùng an toàn phía sau: Tạo một lớp nền giả mở rộng về bên trái 
+       để triệt tiêu hoàn toàn khoảng hở, che khuất 100% các nút tab khi cuộn qua */
+    background-clip: padding-box; 
 }
-    /* Cấu hình khi ở giao diện Dark Mode để phần bóng đổ của nút ghim trông tự nhiên */
+
+/* 2. Tạo phần che chắn tuyệt đối phía bên trái nút bấm */
+.btn-tab-icon::before {
+    content: '';
+    position: absolute;
+    top: -5px;      /* Phủ cao hơn viền nút một chút để an toàn */
+    bottom: -5px;
+    left: -20px;    /* Kéo dài hẳn về bên trái sát lề container */
+    right: 0;
+    background: var(--bg-color); /* Lấy màu nền chính của giao diện (body) để đồng bộ che khuất */
+    z-index: -2;    /* Nằm dưới nút bấm nhưng nằm trên các tab cuộn */
+    pointer-events: none;
+}
+
+/* 3. Tạo một lớp nền phụ trùng màu với card-bg để ôm sát bo góc mượt mà */
+.btn-tab-icon::after {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: -1px;
+    right: -1px;
+    bottom: -1px;
+    background: var(--card-bg);
+    border-radius: 14px; /* Trùng với border-radius của nút phễu để ôm sát khít */
+    z-index: -1;
+    border: 1px solid var(--border-color);
+    pointer-events: none;
+}
+
+/* Khử đổ bóng cũ bị lỗi lộ chi tiết và thay bằng shadow tinh tế hơn ở cạnh phải */
+.btn-tab-icon {
+    box-shadow: 4px 0 8px -2px rgba(0, 0, 0, 0.12); 
+    border: none !important; /* Nhường phần hiển thị border cho lớp filter mượt mà hơn */
+}
+
+/* Cấu hình khi ở giao diện Dark Mode để phần bóng đổ của nút ghim trông tự nhiên */
 :root[data-theme="dark"] .btn-tab-icon {
-    box-shadow: 6px 0 12px -4px rgba(0, 0, 0, 0.5);
+    box-shadow: 4px 0 10px -2px rgba(0, 0, 0, 0.4);
 }
+
     
     /* Các nút tab thông thường */
 .btn-tab:not(.btn-tab-icon) {
