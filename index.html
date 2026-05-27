@@ -654,14 +654,8 @@
         }
 
         .post-title:hover {
-    color: var(--accent-color);
-}
-
-/* Khi trang web bị thêm class này (bằng JS), toàn bộ hiệu ứng hover của tiêu đề sẽ bị vô hiệu hóa */
-body.disable-hover .post-title:hover {
-    color: inherit !important; /* Giữ nguyên màu chữ gốc, không đổi màu */
-    cursor: default;
-}
+            color: var(--accent-color);
+        }
 
        
 
@@ -802,6 +796,17 @@ body.disable-hover .post-title:hover {
                 color: #ffffff;
             }
         }
+/* Tắt toàn bộ hiệu ứng hover và pointer-events của danh sách khi đang cuộn tab */
+body.is-swiping-tabs .post-item {
+    pointer-events: none !important;
+    transform: none !important;
+    background-color: var(--card-bg) !important;
+    border-color: var(--border-color) !important;
+    box-shadow: var(--card-shadow) !important;
+}
+body.is-swiping-tabs .post-title {
+    color: var(--text-color) !important;
+}
 
     </style>
 </head>
@@ -1923,33 +1928,31 @@ slider.addEventListener('mousemove', (e) => {
     const walk = (x - startX) * 1.5; // Nhân với 1.5 để tốc độ lướt nhanh và mượt hơn
     slider.scrollLeft = scrollLeft - walk;
 });
+    
+    // ================= SỬA LỖI KẸT HOVER TRÊN SAFARI IPHONE =================
+let isScrollingTabs;
 
-    // CHỨC NĂNG TẮT HOVER TIÊU ĐỀ KHI ĐANG TƯƠNG TÁC TRÊN THANH FILTER
-const filterContainer = document.getElementById('filterContainer');
+slider.addEventListener('scroll', () => {
+    // Ngay khi thanh tab phát sinh hành động cuộn (vuốt bằng tay hoặc chuột)
+    document.body.classList.add('is-swiping-tabs');
 
-if (filterContainer) {
-    // 1. Khi người dùng bắt đầu chạm/nhấn chuột vào thanh filter
-    const startInteraction = () => {
-        document.body.classList.add('disable-hover');
-    };
+    // Xóa bỏ thời gian chờ cũ
+    window.clearTimeout(isScrollingTabs);
 
-    // 2. Khi người dùng nhấc tay/thả chuột hoặc rời khỏi thanh filter
-    const endInteraction = () => {
-        // Trì hoãn một chút (100ms) để Safari kịp hoàn tất việc nhận diện sự kiện, tránh dính hover sót lại
-        setTimeout(() => {
-            document.body.classList.remove('disable-hover');
-        }, 100);
-    };
+    // Nếu sau 150ms không có hành động cuộn tiếp theo, hiểu là đã dừng vuốt và trả lại trạng thái bình thường
+    isScrollingTabs = setTimeout(() => {
+        document.body.classList.remove('is-swiping-tabs');
+    }, 150);
+}, { passive: true });
 
-    // Sự kiện dành cho thiết bị di động (Cảm ứng)
-    filterContainer.addEventListener('touchstart', startInteraction, { passive: true });
-    filterContainer.addEventListener('touchend', endInteraction, { passive: true });
-    filterContainer.addEventListener('touchcancel', endInteraction, { passive: true });
-
-    // Sự kiện dành cho máy tính (Để đồng bộ nếu bạn kéo chuột trên thanh filter)
-    filterContainer.addEventListener('mousedown', startInteraction);
-    window.addEventListener('mouseup', endInteraction);
-}
+// Phòng hờ trường hợp người dùng nhấc tay lên đột ngột nhưng thanh cuộn không trượt quán tính
+slider.addEventListener('touchend', () => {
+    setTimeout(() => {
+        if (slider && !slider.classList.contains('grabbing')) {
+            document.body.classList.remove('is-swiping-tabs');
+        }
+    }, 200);
+}, { passive: true });
 
 
     </script>
