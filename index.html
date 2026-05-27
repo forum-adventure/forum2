@@ -1618,32 +1618,31 @@ function shuffleArray(array) {
             searchInput.dispatchEvent(new Event('input')); 
         });
 
-        // THAY THẾ BẰNG ĐOẠN CODE MỚI NÀY:
+        // THAY THẾ TOÀN BỘ ĐOẠN ĐĂNG KÝ SỰ KIỆN POINTERDOWN BẰNG ĐOẠN NÀY:
 document.addEventListener('pointerdown', (e) => {
     const isClickInsideSearch = document.getElementById('searchContainer').contains(e.target);
     const isClickInsideDropdown = document.getElementById('customDropdown').contains(e.target);
     const isClickInsideFilterMenu = document.getElementById('filterWrapper').contains(e.target);
-    
-    // Kiểm tra xem vị trí chạm có thuộc về nút phễu lọc hay không
     const isClickOnFilterBtn = document.getElementById('btnFilterToggle') && document.getElementById('btnFilterToggle').contains(e.target);
 
-    // Đóng dropdown diễn đàn chính ngay khi chạm ra ngoài
+    // 1. Đóng dropdown diễn đàn chính ngay khi chạm ra ngoài vùng của nó
     if (!isClickInsideDropdown) {
         customDropdown.classList.remove('open');
     }
 
-    // Chỉ đóng menu checkbox nếu chạm ra ngoài menu VÀ không chạm vào nút phễu
+    // 2. Đóng menu checkbox bộ lọc ẩn/hiện diễn đàn
+    // SỬA ĐỔI CHÍNH XÁC: Nếu bấm ra ngoài menu checkbox VÀ không phải đang bấm vào nút phễu, thì PHẢI đóng menu.
     if (!isClickInsideFilterMenu && !isClickOnFilterBtn) {
         checkboxDropdownMenu.classList.remove('open');
     }
 
-    // Thu nhỏ thanh tìm kiếm nếu trống và chạm ra ngoài
-if (!isClickInsideSearch && searchInput.value.trim() === '') {
-    actionBar.classList.remove('search-active');
-    searchInput.blur(); // Thêm dòng này để ép Safari ẩn bàn phím ảo và hủy focus
-}
-
+    // 3. Thu nhỏ thanh tìm kiếm nếu trống và chạm ra ngoài
+    if (!isClickInsideSearch && searchInput.value.trim() === '') {
+        actionBar.classList.remove('search-active');
+        searchInput.blur(); // Ép Safari/Chrome ẩn bàn phím ảo và hủy focus
+    }
 });
+
 
 
 
