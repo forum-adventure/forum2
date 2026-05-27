@@ -189,20 +189,20 @@
             margin-bottom: 24px;
         }
 
-        .filter-container {
+                .filter-container {
             position: relative;
             display: flex;            
-            flex-wrap: nowrap;
+            flex-wrap: wrap;           /* MẶC ĐỊNH CHO MÁY TÍNH: Tự động xuống hàng gọn gàng */
             gap: 8px;
-            overflow-x: auto;
-            scroll-behavior: smooth;
-            -webkit-overflow-scrolling: touch;
-            padding: 4px 4px 10px 4px;
+            padding: 4px;
+            margin-bottom: 24px;
         }
 
+        /* Xóa bỏ khoảng đệm không cần thiết trên máy tính */
         .filter-container::-webkit-scrollbar {
             display: none;
         }
+
 
         /* SỬA LỖI ANDROID: Tạo khoảng đệm nhỏ ở cuối hàng để báo hiệu trực quan cho người dùng biết là cuộn ngang được */
         .filter-container::after {
@@ -724,7 +724,21 @@
             animation: fadeIn 0.3s ease-in-out;
         }
             
-        @media (max-width: 600px) {
+                @media (max-width: 600px) {
+            /* THIẾT LẬP RIÊNG CHO MOBILE: Quay về chế độ cuộn ngang tiện lợi bằng ngón tay */
+            .filter-container {
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                scroll-behavior: smooth;
+                -webkit-overflow-scrolling: touch;
+                padding-bottom: 10px;
+            }
+            /* Tạo khoảng đệm nhỏ ở cuối hàng mobile để báo hiệu có thể cuộn tiếp */
+            .filter-container::after {
+                content: '';
+                padding-right: 20px;
+            }
+
             .btn-action-util {
                 height: 45px;
             }
@@ -748,17 +762,17 @@
                 right: 4px;
             }
             mark.search-highlight {
-    background-color: #fef08a; /* Màu vàng nhạt dịu mắt (giống bộ màu Slate/Tailwind) */
-    color: #0f172a;            /* Chữ đen xám đậm để dễ đọc */
-    padding: 0 2px;
-    border-radius: 2px;
-}
-:root[data-theme="dark"] mark.search-highlight {
-    background-color: #ca8a04; /* Màu vàng sậm hơn ở giao diện tối để không bị chói */
-    color: #ffffff;
-}
-
+                background-color: #fef08a; /* Màu vàng nhạt dịu mắt (giống bộ màu Slate/Tailwind) */
+                color: #0f172a;            /* Chữ đen xám đậm để dễ đọc */
+                padding: 0 2px;
+                border-radius: 2px;
+            }
+            :root[data-theme="dark"] mark.search-highlight {
+                background-color: #ca8a04; /* Màu vàng sậm hơn ở giao diện tối để không bị chói */
+                color: #ffffff;
+            }
         }
+
     </style>
 </head>
 <body>
