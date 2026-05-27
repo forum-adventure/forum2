@@ -184,26 +184,21 @@
 
         /* WRAPPER BỌC THANH FILTER SLIDE VÀ MENU DROPDOWN */
         .filter-wrapper {
-    position: relative;
-    margin-top: 8px;
-    margin-bottom: 24px;
-}
-
+            position: relative;
+            margin-top: 8px;
+            margin-bottom: 24px;
+        }
 
         .filter-container {
-    display: flex;            
-    flex-wrap: nowrap;
-    gap: 8px;
-    overflow-x: auto;
-    scroll-behavior: smooth;
-    -webkit-overflow-scrolling: touch;
-    padding: 4px;
-
-    /* TẠO ĐƯỜNG BO TRÒN KHI NÚT TRƯỢT XUỐNG DƯỚI NÚT PHỄU */
-    -webkit-mask-image: linear-gradient(to right, transparent 0px, transparent 42px, #000 56px);
-    mask-image: linear-gradient(to right, transparent 0px, transparent 42px, #000 56px);
-}
-
+            position: relative;
+            display: flex;            
+            flex-wrap: nowrap;
+            gap: 8px;
+            overflow-x: auto;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+            padding: 4px 4px 10px 4px;
+        }
 
         .filter-container::-webkit-scrollbar {
             display: none;
@@ -234,11 +229,7 @@
 
         /* Nút icon cấu hình riêng */
         .btn-tab-icon {
-            position: absolute;
             padding: 5px 8px;
-            left: 4px;             /* Căn chỉnh vừa khít với padding của container */
-    top: 4px;
-    z-index: 10;
             border-radius: 14px;
             display: inline-flex;
             align-items: center;
@@ -816,17 +807,9 @@
     </div>
 
     <div class="filter-wrapper" id="filterWrapper">
-    <button class="btn-tab btn-tab-icon" id="btnFilterToggle">
-        <svg viewBox="0 0 24 24">
-            <path d="M10 18h4v-2h-4v2zM3 6v2h18V6H3zm3 7h12v-2H6v2z"/>
-        </svg>
-    </button>
-    
-    <div class="filter-container" id="filterContainer"></div>
-    
-    <div class="checkbox-dropdown-menu" id="checkboxDropdownMenu"></div>
-</div>
-
+        <div class="filter-container" id="filterContainer"></div>
+        <div class="checkbox-dropdown-menu" id="checkboxDropdownMenu"></div>
+    </div>
 
     <div class="list-container" id="listContainer">
         <div class="empty-message" data-i18n="loading_cache">Đang tải dữ liệu bộ nhớ đệm...</div>
@@ -1209,7 +1192,6 @@ label.innerHTML = `
                 }
             });
 
-            // 1. Nút Yêu thích
             // 1. NÚT ICON FILTER ĐƯỢC ĐƯA LÊN ĐẦU TIÊN
 const filterBtn = document.createElement('button');
 filterBtn.className = 'btn-tab btn-tab-icon';
