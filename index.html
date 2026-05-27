@@ -1641,7 +1641,8 @@ document.addEventListener('pointerdown', (e) => {
     randomHistory.push(randomPost);
     currentRandomIndex = randomHistory.length - 1;
     showRandomPostAtCurrentIndex();
-// --- BỔ SUNG: TỰ ĐỘNG TRƯỢT THANH TAB ĐẾN DIỄN ĐÀN ĐƯỢC CHỌN ---
+
+    // --- BỔ SUNG: TỰ ĐỘNG TRƯỢT THANH TAB ĐẾN DIỄN ĐÀN ĐƯỢC CHỌN ---
     // Xác định domain đích (nếu đang ở tab 'all' hoặc 'fav_bookmarks' thì tìm nút riêng của domain đó)
     const targetDomainKey = (currentDomain === 'all' || currentDomain === 'fav_bookmarks') ? randomPost.domain : currentDomain;
     
@@ -1661,6 +1662,7 @@ document.addEventListener('pointerdown', (e) => {
         });
     }
 });
+
 
 
         const customDropdown = document.getElementById('customDropdown');
