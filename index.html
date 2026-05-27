@@ -1637,9 +1637,11 @@ document.addEventListener('pointerdown', (e) => {
     }
 
     // Thu nhỏ thanh tìm kiếm nếu trống và chạm ra ngoài
-    if (!isClickInsideSearch && searchInput.value.trim() === '') {
-        actionBar.classList.remove('search-active');
-    }
+if (!isClickInsideSearch && searchInput.value.trim() === '') {
+    actionBar.classList.remove('search-active');
+    searchInput.blur(); // Thêm dòng này để ép Safari ẩn bàn phím ảo và hủy focus
+}
+
 });
 
 
