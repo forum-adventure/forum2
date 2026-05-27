@@ -183,22 +183,79 @@
         }
 
         /* WRAPPER BỌC THANH FILTER SLIDE VÀ MENU DROPDOWN */
-        .filter-wrapper {
-            position: relative;
-            margin-top: 8px;
-            margin-bottom: 24px;
-        }
+        /* --- PHẦN CẬP NHẬT CSS CHO THANH TRƯỢT VÀ MŨI TÊN CHUYỂN HƯỚNG --- */
 
-        .filter-container {
-            position: relative;
-            display: flex;            
-            flex-wrap: nowrap;
-            gap: 8px;
-            overflow-x: auto;
-            scroll-behavior: smooth;
-            -webkit-overflow-scrolling: touch;
-            padding: 4px 4px 10px 4px;
-        }
+/* Đảm bảo wrapper là gốc tọa độ và che các phần tử tràn ra ngoài */
+.filter-wrapper {
+    position: relative;
+    margin-top: 8px;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+}
+
+/* Thêm khoảng đệm hai bên container để các nút không che mất nội dung tab đầu/cuối */
+.filter-container {
+    position: relative;
+    display: flex;            
+    flex-wrap: nowrap;
+    gap: 8px;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    padding: 4px 40px 10px 40px; /* Tăng padding trái/phải từ 4px lên 40px nhường chỗ cho nút */
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Các nút điều hướng mũi tên */
+.btn-nav-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    font-size: 14px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: var(--card-shadow);
+    z-index: 10;
+    transition: all 0.2s ease;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.btn-nav-arrow:hover {
+    background-color: var(--hover-bg);
+    border-color: var(--accent-color);
+    transform: translateY(-50%) scale(1.1);
+}
+
+.btn-nav-arrow.arrow-left {
+    left: 4px;
+}
+
+.btn-nav-arrow.arrow-right {
+    right: 4px;
+}
+
+/* Ẩn hoàn toàn các nút mũi tên trên thiết bị di động vì thao tác vuốt bằng tay đã rất tối ưu */
+@media (max-width: 600px) {
+    .btn-nav-arrow {
+        display: none !important;
+    }
+    .filter-container {
+        padding: 4px 4px 10px 4px; /* Trả lại padding nhỏ gọn trên Mobile */
+    }
+}
+
 
         .filter-container::-webkit-scrollbar {
             display: none;
@@ -806,14 +863,16 @@
         <button class="btn-action-util btn-random" id="btnRandom" title="Xem ngẫu nhiên một bài viết từ danh mục hiện tại" data-i18n="random_btn">Đọc ngẫu nhiên</button>
     </div>
 
-    <div class="filter-wrapper" id="filterWrapper">
+        <div class="filter-wrapper" id="filterWrapper">
+        <button class="btn-nav-arrow arrow-left" id="arrowLeft" title="Cuộn sang trái">&larr;</button>
+        
         <div class="filter-container" id="filterContainer"></div>
+        
+        <button class="btn-nav-arrow arrow-right" id="arrowRight" title="Cuộn sang phải">&rarr;</button>
+        
         <div class="checkbox-dropdown-menu" id="checkboxDropdownMenu"></div>
     </div>
 
-    <div class="list-container" id="listContainer">
-        <div class="empty-message" data-i18n="loading_cache">Đang tải dữ liệu bộ nhớ đệm...</div>
-    </div>
 
     <div class="pagination-container" id="paginationContainer"></div>
     <div class="random-nav-container" id="randomNavContainer"></div>
@@ -1840,6 +1899,28 @@ function handleFileSelect(event) {
 }
     
     // CHỨC NĂNG KÉO CHUỘT ĐỂ CUỘN THANH FILTER TRÊN MÁY TÍNH
+const arrowLeft = document.getElementById('arrowLeft');
+const arrowRight = document.getElementById('arrowRight');
+
+// Định mức mỗi lần bấm sẽ cuộn đi 200px
+const scrollAmount = 200; 
+
+if (arrowLeft && arrowRight && slider) {
+    arrowLeft.addEventListener('click', () => {
+        slider.scrollBy({
+            left: -scrollAmount,
+            behavior: 'smooth'
+        });
+    });
+
+    arrowRight.addEventListener('click', () => {
+        slider.scrollBy({
+            left: scrollAmount,
+            behavior: 'smooth'
+        });
+    });
+}
+
 const slider = document.getElementById('filterContainer');
 let isDown = false;
 let startX;
