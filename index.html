@@ -1641,6 +1641,25 @@ document.addEventListener('pointerdown', (e) => {
     randomHistory.push(randomPost);
     currentRandomIndex = randomHistory.length - 1;
     showRandomPostAtCurrentIndex();
+// --- BỔ SUNG: TỰ ĐỘNG TRƯỢT THANH TAB ĐẾN DIỄN ĐÀN ĐƯỢC CHỌN ---
+    // Xác định domain đích (nếu đang ở tab 'all' hoặc 'fav_bookmarks' thì tìm nút riêng của domain đó)
+    const targetDomainKey = (currentDomain === 'all' || currentDomain === 'fav_bookmarks') ? randomPost.domain : currentDomain;
+    
+    // Tìm phần tử button của diễn đàn đó trên thanh filter
+    const targetTabButton = filterContainer.querySelector(`.btn-tab[data-domain="${targetDomainKey}"]`);
+    
+    if (targetTabButton) {
+        const containerWidth = filterContainer.offsetWidth;
+        const buttonWidth = targetTabButton.offsetWidth;
+        const buttonLeft = targetTabButton.offsetLeft;
+        // Tính toán vị trí để nút nằm chính giữa thanh cuộn ngang
+        const targetScrollLeft = buttonLeft - (containerWidth / 2) + (buttonWidth / 2);
+        
+        filterContainer.scrollTo({
+            left: targetScrollLeft,
+            behavior: 'smooth'
+        });
+    }
 });
 
 
