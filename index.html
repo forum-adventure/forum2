@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="vi" data-theme="light">
+<html lang="vi" data-theme="dark">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -942,9 +943,9 @@
         const searchInput = document.getElementById('searchInput');
         const actionBar = document.getElementById('actionBar');
 
-        const savedTheme = localStorage.getItem('theme') || 'light';
-        document.documentElement.setAttribute('data-theme', savedTheme);
-        updateThemeUI(savedTheme);
+        const savedTheme = localStorage.getItem('theme') || 'dark'; 
+document.documentElement.setAttribute('data-theme', savedTheme);
+updateThemeUI(savedTheme);
 
         // Khởi động ngôn ngữ ban đầu
         applyLanguage(currentLang);
