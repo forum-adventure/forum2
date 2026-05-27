@@ -183,11 +183,44 @@
         }
 
         /* WRAPPER BỌC THANH FILTER SLIDE VÀ MENU DROPDOWN */
-        .filter-wrapper {
-            position: relative;
-            margin-top: 8px;
-            margin-bottom: 24px;
-        }
+        /* Thêm thuộc tính để làm điểm neo cho nút con sticky */
+.filter-wrapper {
+    position: relative;
+    margin-top: 8px;
+    margin-bottom: 24px;
+    padding-left: 42px; /* Tạo khoảng trống cố định bên trái để nhường chỗ cho nút phễu */
+}
+
+/* Biến nút icon thành Sticky cố định ở rìa trái */
+.btn-tab-icon {
+    position: absolute; /* Đóng đinh cố định so với filter-wrapper */
+    left: 4px;
+    top: 4px;
+    z-index: 10;
+    height: 28px; /* Đồng bộ chiều cao chuẩn với các nút tab khác */
+    padding: 0 10px;
+    border-radius: 14px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--card-bg) !important;
+    border: 1px solid var(--border-color) !important;
+    cursor: pointer;
+}
+
+/* Tạo một lớp mặt nạ che phủ mịn màng phía sau nút giúp các tab cuộn nền mờ dần */
+.filter-wrapper::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 55px; /* Bao phủ vùng nút và phủ mờ một chút sang phải */
+    background: linear-gradient(to right, var(--bg-color) 70%, transparent);
+    z-index: 5;
+    pointer-events: none; /* Cho phép click xuyên qua lớp mờ này */
+}
+
 
         .filter-container {
             position: relative;
@@ -724,54 +757,6 @@
             animation: fadeIn 0.3s ease-in-out;
         }
             
-    
-            /* CSS CHO HAI NÚT MŨI TÊN ĐIỀU HƯỚNG THANH FILTER */
-        .filter-wrapper {
-            display: flex;
-            align-items: center;
-        }
-
-        .nav-arrow-btn {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            color: var(--text-color);
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: absolute;
-            z-index: 10;
-            box-shadow: var(--card-shadow);
-            transition: all 0.2s ease;
-            font-weight: bold;
-            user-select: none;
-            -webkit-user-select: none;
-        }
-
-        .nav-arrow-btn:hover {
-            background-color: var(--hover-bg);
-            border-color: var(--accent-color);
-            transform: scale(1.1);
-        }
-
-        .nav-arrow-btn.left {
-            left: -12px; /* Đẩy hơi ra ngoài viền một chút tạo cảm giác thanh lịch */
-        }
-
-        .nav-arrow-btn.right {
-            right: -12px;
-        }
-
-        /* Ẩn hoàn toàn nút mũi tên trên thiết bị di động vì họ có thể vuốt chạm mượt mà */
-        @media (max-width: 768px) {
-            .nav-arrow-btn {
-                display: none !important;
-            }
-        }
-
         @media (max-width: 600px) {
             .btn-action-util {
                 height: 45px;
@@ -854,16 +839,14 @@
         <button class="btn-action-util btn-random" id="btnRandom" title="Xem ngẫu nhiên một bài viết từ danh mục hiện tại" data-i18n="random_btn">Đọc ngẫu nhiên</button>
     </div>
 
-        <div class="filter-wrapper" id="filterWrapper">
-        <button class="nav-arrow-btn left" id="arrowLeft" title="Cuộn sang trái">&larr;</button>
-        
+    <div class="filter-wrapper" id="filterWrapper">
         <div class="filter-container" id="filterContainer"></div>
-        
-        <button class="nav-arrow-btn right" id="arrowRight" title="Cuộn sang phải">&rarr;</button>
-        
         <div class="checkbox-dropdown-menu" id="checkboxDropdownMenu"></div>
     </div>
 
+    <div class="list-container" id="listContainer">
+        <div class="empty-message" data-i18n="loading_cache">Đang tải dữ liệu bộ nhớ đệm...</div>
+    </div>
 
     <div class="pagination-container" id="paginationContainer"></div>
     <div class="random-nav-container" id="randomNavContainer"></div>
@@ -1889,69 +1872,19 @@ function handleFileSelect(event) {
     reader.readAsText(file);
 }
     
-    // CHỨC NĂNG KÉO CHUỘT VÀ BẤM MŨI TÊN ĐỂ CUỘN THANH FILTER
+    // CHỨC NĂNG KÉO CHUỘT ĐỂ CUỘN THANH FILTER TRÊN MÁY TÍNH
 const slider = document.getElementById('filterContainer');
-const arrowLeft = document.getElementById('arrowLeft');
-const arrowRight = document.getElementById('arrowRight');
-
-// 1. Hàm kiểm tra trạng thái cuộn để ẩn/hiện mũi tên hợp lý
-function updateArrowVisibility() {
-    if (!arrowLeft || !arrowRight) return;
-    
-    const scrollLeft = slider.scrollLeft;
-    const maxScrollLeft = slider.scrollWidth - slider.clientWidth;
-
-    // Nếu cuộn sát lề trái, ẩn mũi tên trái (cho sai số 2px)
-    if (scrollLeft <= 2) {
-        arrowLeft.style.opacity = '0';
-        arrowLeft.style.pointerEvents = 'none';
-    } else {
-        arrowLeft.style.opacity = '1';
-        arrowLeft.style.pointerEvents = 'auto';
-    }
-
-    // Nếu cuộn sát lề phải, ẩn mũi tên phải
-    if (scrollLeft >= maxScrollLeft - 2) {
-        arrowRight.style.opacity = '0';
-        arrowRight.style.pointerEvents = 'none';
-    } else {
-        arrowRight.style.opacity = '1';
-        arrowRight.style.pointerEvents = 'auto';
-    }
-}
-
-// Theo dõi sự kiện cuộn của thanh chứa để cập nhật UI mũi tên
-slider.addEventListener('scroll', updateArrowVisibility);
-// Chạy kiểm tra ngay sau khi load dữ liệu hoặc đổi kích thước cửa sổ
-window.addEventListener('resize', updateArrowVisibility);
-setTimeout(updateArrowVisibility, 500); // Kích hoạt trễ phòng trường hợp render dữ liệu chậm
-
-// 2. Xử lý sự kiện click vào nút mũi tên
-arrowLeft.addEventListener('click', () => {
-    slider.scrollBy({
-        left: -200, // Khoảng cách cuộn sang trái (pixel)
-        behavior: 'smooth'
-    });
-});
-
-arrowRight.addEventListener('click', () => {
-    slider.scrollBy({
-        left: 200, // Khoảng cách cuộn sang phải (pixel)
-        behavior: 'smooth'
-    });
-});
-
-// 3. Giữ nguyên tính năng kéo thả chuột (Drag to scroll) cũ của bạn
 let isDown = false;
 let startX;
-let scrollLeftOffset;
+let scrollLeft;
 
 slider.addEventListener('mousedown', (e) => {
+    // Chỉ kích hoạt khi click chuột trái và không bấm vào các nút bên trong để tránh lỗi click nhầm
     if (e.pointerType === 'mouse' || e.button === 0) {
         isDown = true;
         slider.style.cursor = 'grabbing';
         startX = e.pageX - slider.offsetLeft;
-        scrollLeftOffset = slider.scrollLeft;
+        scrollLeft = slider.scrollLeft;
     }
 });
 
@@ -1969,10 +1902,9 @@ slider.addEventListener('mousemove', (e) => {
     if (!isDown) return;
     e.preventDefault();
     const x = e.pageX - slider.offsetLeft;
-    const walk = (x - startX) * 1.5; 
-    slider.scrollLeft = scrollLeftOffset - walk;
+    const walk = (x - startX) * 1.5; // Nhân với 1.5 để tốc độ lướt nhanh và mượt hơn
+    slider.scrollLeft = scrollLeft - walk;
 });
-
 
 
     </script>
