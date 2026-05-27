@@ -198,7 +198,24 @@
             scroll-behavior: smooth;
             -webkit-overflow-scrolling: touch;
             padding: 4px 4px 10px 4px;
-        }
+        /* Cấu hình mặt nạ gradient mặc định (Mờ cả 2 đầu) */
+    --mask-left: 0px;
+    --mask-right: 0px;
+    -webkit-mask-image: linear-gradient(to right, 
+        transparent, 
+        #000 var(--mask-left), 
+        #000 calc(100% - var(--mask-right)), 
+        transparent
+    );
+    mask-image: linear-gradient(to right, 
+        transparent, 
+        #000 var(--mask-left), 
+        #000 calc(100% - var(--mask-right)), 
+        transparent
+    );
+    /* Tạo hiệu ứng chuyển đổi độ mờ mượt mà khi thay đổi biến */
+    transition: -webkit-mask-image 0.2s ease, mask-image 0.2s ease;
+}
 
         .filter-container::-webkit-scrollbar {
             display: none;
@@ -1239,6 +1256,28 @@ Object.keys(forumsData).forEach(domain => {
                 const allTab = filterContainer.querySelector('[data-domain="all"]');
                 if (allTab) allTab.click();
             }
+                    // --- HIỆU ỨNG LÀM MỜ THÔNG MINH KHI CUỘN THANH FILTER ---
+        function updateScrollMask() {
+            const scrollLeft = filterContainer.scrollLeft;
+            // Thuộc tính scrollWidth - offsetWidth là khoảng cách tối đa có thể cuộn sang phải
+            const maxScrollable = filterContainer.scrollWidth - filterContainer.offsetWidth;
+            
+            // Nếu vị trí cuộn > 5px thì hiện làm mờ bên trái (rộng 24px), ngược lại sát mép thì ẩn (0px)
+            const leftMask = scrollLeft > 5 ? '24px' : '0px';
+            // Nếu vị trí cuộn chưa sát mép phải (còn cách > 5px) thì hiện mờ bên phải, ngược lại ẩn
+            const rightMask = (maxScrollable - scrollLeft) > 5 ? '24px' : '0px';
+            
+            filterContainer.style.setProperty('--mask-left', leftMask);
+            filterContainer.style.setProperty('--mask-right', rightMask);
+        }
+
+        // Lắng nghe sự kiện cuộn trên thanh filter
+        filterContainer.removeEventListener('scroll', updateScrollMask); // Xóa listener cũ tránh trùng lặp
+        filterContainer.addEventListener('scroll', updateScrollMask);
+        
+        // Gọi chạy ngay lần đầu tiên để kiểm tra xem màn hình có đủ rộng để cuộn không
+        setTimeout(updateScrollMask, 50);
+
         }
 
         function createTabButton(label, domainKey, count) {
@@ -1417,8 +1456,12 @@ function shuffleArray(array) {
             
             // Gọi hàm render thanh điều hướng (Lúc này totalPages đã được tính đúng)
             renderPagination(totalPages);
-        }
-
+        
+// THÊM DÒNG NÀY VÀO CUỐI HÀM DISPLAYPOSTS
+    if (typeof updateScrollMask === 'function') {
+        setTimeout(updateScrollMask, 350); // Chờ hiệu ứng cuộn smooth (300ms) kết thúc rồi tính toán lại độ mờ
+    }
+}
                 
                
 
