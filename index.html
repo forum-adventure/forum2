@@ -341,9 +341,18 @@ button,
 
         /* Khôi phục trạng thái Active của Tab theo cấu hình màu chuẩn V1 */
         .btn-tab.active {
-            background-color: var(--accent-color) !important;
             color: #ffffff !important;
-            border-color: var(--accent-color) !important;
+        }
+
+        /* Phân tách màu nền active dịu hơn theo từng giao diện (Theme) */
+        :root[data-theme="light"] .btn-tab.active {
+            background-color: #475569 !important; /* Xám đá dịu mắt cho Light Mode */
+            border-color: #475569 !important;
+        }
+        
+        :root[data-theme="dark"] .btn-tab.active {
+            background-color: var(--toggle-bg) !important; /* Xám xanh chìm hơn cho Dark Mode */
+            border-color: var(--border-color) !important;
         }
 
         .btn-tab.active span {
