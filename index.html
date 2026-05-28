@@ -13,6 +13,16 @@
     <link rel="icon" type="image/png" href="favicon.png">
 
     <style>
+    /* Chặn chọn văn bản trên tất cả các nút bấm */
+button, 
+.btn, 
+[role="button"] {
+    -webkit-user-select: none;  /* Safari */
+    -moz-user-select: none;     /* Firefox */
+    -ms-user-select: none;      /* IE10+/Edge cũ */
+    user-select: none;          /* Tiêu chuẩn: Chrome, Edge, Opera */
+}
+    
         /* KHÔI PHỤC HOÀN TOÀN CẤU HÌNH MÀU SẮC GIAO DIỆN V1 */
         :root[data-theme="light"] {
             --bg-color: #f8fafc;          /* Nền xám trắng rất dịu */
