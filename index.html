@@ -240,56 +240,41 @@
             align-items: center;
             gap: 5px;                   
         }
-
-        /* Nút icon phễu cấu hình riêng - Sử dụng Sticky cố định */
-/* CONTAINER BỌC RIÊNG NÚT ICON PHỄU (TẤM CHẮN CỐ ĐỊNH) */
-.filter-sticky-block {
+    
+    /* CONTAINER MỚI: Ôm sát nút phễu và thừa hưởng tính năng ghim (Sticky) cố định */
+.icon-filter-container {
     position: -webkit-sticky;  /* Hỗ trợ tối ưu cho Safari iOS */
     position: sticky;
-    left: 0;                   /* Ghim chặt ở mép trái của filter-wrapper */
-    z-index: 10;               /* Nằm trên các nút tab thông thường khi cuộn qua */
-    background-color: var(--bg-color); /* Đồng bộ màu nền theo theme sáng/tối */
-    display: inline-flex;
-    align-items: center;
-    padding: 4px 8px 4px 0;    /* Tạo khoảng đệm nhỏ bên phải nút */
+    left: 0;                   /* Ghim chặt ở mép trái */
+    z-index: 10;               /* Đảm bảo nằm TRÊN các nút tab thông thường khi cuộn qua */
+    display: inline-flex;      /* Kích hoạt flexbox để ôm sát */
+    width: max-content;        /* Ép container ôm khít theo kích thước nút bên trong */
+    height: auto;
+    flex-shrink: 0;            /* Tuyệt đối không cho container bị bóp méo */
+    margin-right: 8px;         /* Khoảng cách an toàn với các nút cuộn phía sau */
+    background: transparent;   /* Container trong suốt để nút bên trong hiển thị trọn vẹn */
     
-    /* Thiết lập bo góc: Trên-Phải và Dưới-Phải bo tròn, các góc bên Trái để Vuông */
-    border-radius: 0 16px 16px 0; 
-    
-    flex-shrink: 0;            /* Không cho khối bị bóp méo */
+    /* Chuyển hiệu ứng đổ bóng từ nút cũ lên container để bao bọc hoàn hảo */
+    box-shadow: 6px 0 10px -4px rgba(0, 0, 0, 0.15); 
 }
 
-/* ĐIỀU CHỈNH LẠI NÚT ICON BÊN TRONG */
+        /* Nút icon phễu cấu hình riêng - Sử dụng Sticky cố định */
 .btn-tab-icon {
-    /* Xóa bỏ position sticky cũ vì container ngoài đã ghim rồi */
-    position: relative; 
-    left: auto;
-    
     padding: 5px 8px;
-    border-radius: 12px;       /* Bo tròn đều nút bên trong để khớp thẩm mỹ */
+    border-radius: 14px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     background: var(--card-bg) !important; 
-    border: 1px solid var(--border-color) !important;
+    border-color: var(--border-color) !important;
     color: var(--text-color) !important;
-    flex-shrink: 0;
-    margin-right: 0;           /* Khoảng cách chuyển ra cho container bọc ngoài điều phối */
-    
-    /* Đổ bóng nhẹ sang phải để thấy rõ ranh giới khi tab đi xuyên qua */
-    box-shadow: 4px 0 8px -3px rgba(0, 0, 0, 0.15); 
+    margin-right: 0 !important; /* Triệt tiêu margin vì container đã có margin-right */
+    box-shadow: none !important; /* Loại bỏ bóng đổ trùng lặp */
 }
-
-/* Cấu hình bóng đổ đổ cho nút ghim ở Dark Mode tự nhiên hơn */
-:root[data-theme="dark"] .btn-tab-icon {
-    box-shadow: 4px 0 10px -3px rgba(0, 0, 0, 0.5);
+    /* Cấu hình khi ở giao diện Dark Mode cho Container mới */
+:root[data-theme="dark"] .icon-filter-container {
+    box-shadow: 6px 0 12px -4px rgba(0, 0, 0, 0.5);
 }
-
-/* Đảm bảo khối cuộn tab không bị đè khoảng cách */
-.filter-container {
-    padding-left: 4px;         /* Khoảng hở đầu cho tab đầu tiên */
-}
-
     
     /* Các nút tab thông thường */
 .btn-tab:not(.btn-tab-icon) {
@@ -901,13 +886,18 @@ body.is-swiping-tabs .post-title {
         <button class="btn-action-util btn-random" id="btnRandom" title="Xem ngẫu nhiên một bài viết từ danh mục hiện tại" data-i18n="random_btn">Đọc ngẫu nhiên</button>
     </div>
 
-    <div class="filter-wrapper" id="filterWrapper">
-    <div class="filter-sticky-block">
+        <div class="filter-wrapper" id="filterWrapper">
+        <div class="icon-filter-container">
+            <button class="btn-tab btn-tab-icon" id="btnFilterToggle" title="Ẩn/hiện diễn đàn">
+                <svg viewBox="0 0 24 24">
+                    <path d="M10 18h4v-2h-4v2zM3 6v2h18V6H3zm3 7h12v-2H6v2z"/>
+                </svg>
+            </button>
         </div>
-    
-    <div class="filter-container" id="filterContainer"></div>
-    <div class="checkbox-dropdown-menu" id="checkboxDropdownMenu"></div>
-</div>
+        
+        <div class="filter-container" id="filterContainer"></div>
+        <div class="checkbox-dropdown-menu" id="checkboxDropdownMenu"></div>
+    </div>
 
 
     <div class="list-container" id="listContainer">
@@ -1306,7 +1296,7 @@ filterBtn.addEventListener('click', (e) => {
     checkboxDropdownMenu.classList.toggle('open');
 });
 
-document.querySelector('.filter-sticky-block').appendChild(iconBtn);
+filterContainer.appendChild(filterBtn);
 
 // 2. Nút Yêu thích đứng ngay sau nút Phễu
 createTabButton(languages[currentLang].fav_title, 'fav_bookmarks', bookmarks.length);
