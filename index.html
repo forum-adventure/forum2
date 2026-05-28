@@ -1751,9 +1751,10 @@ document.addEventListener('pointerdown', (e) => {
     showRandomPostAtCurrentIndex();
 
     // --- ĐOẠN SỬA ĐỔI CHÍNH XÁC CHO LOGIC TRƯỢT TAB ---
-    // Nếu đang ở 'all' hoặc 'fav_bookmarks', đích đến chính là nút 'all' hoặc 'fav_bookmarks' đó luôn
-    // Ngược lại nếu đang ở tab cụ thể thì trượt về tab cụ thể đó.
-    const targetDomainKey = (currentDomain === 'all' || currentDomain === 'fav_bookmarks') ? currentDomain : randomPost.domain;
+// Nếu đang ở 'all', ép vị trí đích cuộn đến thành vị trí của tab 'yêu thích' (fav_bookmarks)
+// Ngược lại nếu đang ở các tab khác thì giữ nguyên logic cũ.
+const targetDomainKey = (currentDomain === 'all') ? 'fav_bookmarks' : ((currentDomain === 'fav_bookmarks') ? 'fav_bookmarks' : randomPost.domain);
+
     
     // Tìm đúng phần tử button đang hiển thị trên thanh filter
     const targetTabButton = filterContainer.querySelector(`.btn-tab[data-domain="${targetDomainKey}"]`);
