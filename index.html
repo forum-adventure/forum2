@@ -242,30 +242,54 @@
         }
 
         /* Nút icon phễu cấu hình riêng - Sử dụng Sticky cố định */
-.btn-tab-icon {
+/* CONTAINER BỌC RIÊNG NÚT ICON PHỄU (TẤM CHẮN CỐ ĐỊNH) */
+.filter-sticky-block {
     position: -webkit-sticky;  /* Hỗ trợ tối ưu cho Safari iOS */
     position: sticky;
-    left: 0;                   /* Ghim chặt ở mép trái */
-    z-index: 10;               /* Đảm bảo nằm TRÊN các nút tab thông thường khi cuộn qua */
+    left: 0;                   /* Ghim chặt ở mép trái của filter-wrapper */
+    z-index: 10;               /* Nằm trên các nút tab thông thường khi cuộn qua */
+    background-color: var(--bg-color); /* Đồng bộ màu nền theo theme sáng/tối */
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 8px 4px 0;    /* Tạo khoảng đệm nhỏ bên phải nút */
+    
+    /* Thiết lập bo góc: Trên-Phải và Dưới-Phải bo tròn, các góc bên Trái để Vuông */
+    border-radius: 0 16px 16px 0; 
+    
+    flex-shrink: 0;            /* Không cho khối bị bóp méo */
+}
+
+/* ĐIỀU CHỈNH LẠI NÚT ICON BÊN TRONG */
+.btn-tab-icon {
+    /* Xóa bỏ position sticky cũ vì container ngoài đã ghim rồi */
+    position: relative; 
+    left: auto;
     
     padding: 5px 8px;
-    border-radius: 0 14px 14px 0;
+    border-radius: 12px;       /* Bo tròn đều nút bên trong để khớp thẩm mỹ */
     display: inline-flex;
     align-items: center;
     justify-content: center;
     background: var(--card-bg) !important; 
-    border-color: var(--border-color) !important;
+    border: 1px solid var(--border-color) !important;
     color: var(--text-color) !important;
-    flex-shrink: 0;            /* Tuyệt đối không cho nút bị bóp méo */
-    margin-right: 8px;         /* Khoảng cách với các nút cuộn */
+    flex-shrink: 0;
+    margin-right: 0;           /* Khoảng cách chuyển ra cho container bọc ngoài điều phối */
     
-    /* Hiệu ứng đổ bóng nhẹ hoặc viền để tạo cảm giác các nút khác chui hẳn xuống dưới */
-    box-shadow: 6px 0 10px -4px rgba(0, 0, 0, 0.15); 
+    /* Đổ bóng nhẹ sang phải để thấy rõ ranh giới khi tab đi xuyên qua */
+    box-shadow: 4px 0 8px -3px rgba(0, 0, 0, 0.15); 
 }
-    /* Cấu hình khi ở giao diện Dark Mode để phần bóng đổ của nút ghim trông tự nhiên */
+
+/* Cấu hình bóng đổ đổ cho nút ghim ở Dark Mode tự nhiên hơn */
 :root[data-theme="dark"] .btn-tab-icon {
-    box-shadow: 6px 0 12px -4px rgba(0, 0, 0, 0.5);
+    box-shadow: 4px 0 10px -3px rgba(0, 0, 0, 0.5);
 }
+
+/* Đảm bảo khối cuộn tab không bị đè khoảng cách */
+.filter-container {
+    padding-left: 4px;         /* Khoảng hở đầu cho tab đầu tiên */
+}
+
     
     /* Các nút tab thông thường */
 .btn-tab:not(.btn-tab-icon) {
@@ -878,9 +902,13 @@ body.is-swiping-tabs .post-title {
     </div>
 
     <div class="filter-wrapper" id="filterWrapper">
-        <div class="filter-container" id="filterContainer"></div>
-        <div class="checkbox-dropdown-menu" id="checkboxDropdownMenu"></div>
-    </div>
+    <div class="filter-sticky-block">
+        </div>
+    
+    <div class="filter-container" id="filterContainer"></div>
+    <div class="checkbox-dropdown-menu" id="checkboxDropdownMenu"></div>
+</div>
+
 
     <div class="list-container" id="listContainer">
         <div class="empty-message" data-i18n="loading_cache">Đang tải dữ liệu bộ nhớ đệm...</div>
@@ -1278,7 +1306,7 @@ filterBtn.addEventListener('click', (e) => {
     checkboxDropdownMenu.classList.toggle('open');
 });
 
-filterContainer.appendChild(filterBtn);
+document.querySelector('.filter-sticky-block').appendChild(iconBtn);
 
 // 2. Nút Yêu thích đứng ngay sau nút Phễu
 createTabButton(languages[currentLang].fav_title, 'fav_bookmarks', bookmarks.length);
