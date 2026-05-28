@@ -243,6 +243,7 @@
 
         /* Nút icon phễu cấu hình riêng - Sử dụng Sticky cố định */
 /* Chuyển các thuộc tính Sticky, Shadow và Margin sang cho Container bọc ngoài */
+/* Container bọc ngoài ôm sát nút phễu */
 .filter-icon-container {
     display: inline-flex;
     flex-shrink: 0;
@@ -251,8 +252,15 @@
     left: 0;                   
     z-index: 10;               
     margin-right: 8px;         
-    box-shadow: 6px 0 10px -4px rgba(0, 0, 0, 0.15);
-    border-radius: 14px; /* Bo viền đồng bộ shadow */
+    
+    /* 1. ĐỒNG BỘ MÀU NỀN VỚI BACKGROUND CHÍNH */
+    background-color: var(--bg-color); 
+
+    /* 2. CHỈ BO TRÒN CẠNH BÊN PHẢI (Top-Right và Bottom-Right), CẠNH TRÁI THÀNH HÌNH VUÔNG */
+    border-radius: 0 14px 14px 0; 
+
+    /* 3. ĐIỀU CHỈNH LẠI SHADOW ĐỂ CHỈ ĐỔ VỀ BÊN PHẢI, TRÁNH LÊN CẠNH VUÔNG BÊN TRÁI */
+    box-shadow: 6px 0 10px -4px rgba(0, 0, 0, 0.15); 
 }
 
 /* Đóng giao diện tối (Dark Mode) shadow tương ứng cho container */
