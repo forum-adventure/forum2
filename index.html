@@ -908,13 +908,14 @@ body.is-swiping-tabs .post-title {
     </div>
 
     <div class="brand-container">
-        <h1 class="brand-logo">
-            <a href="javascript:void(0)" onclick="resetToAllSource()" class="notranslate" translate="no" style="text-decoration: none; color: inherit;">
-            Forum Adventure
-        </a>
-        </h1>
-        <p class="brand-tagline" id="brandTagline" data-i18n="tagline">Danh Sách Bài Viết Diễn Đàn Có Nhiều Lượt Tương Tác</p>
-    </div>
+    <h1 class="brand-logo">
+        <a href="javascript:void(0)" onclick="resetToAllSource(); document.getElementById('filterContainer').scrollTo({ left: 0, behavior: 'smooth' });" class="notranslate" translate="no" style="text-decoration: none; color: inherit;">
+        Forum Adventure
+    </a>
+    </h1>
+    <p class="brand-tagline" id="brandTagline" data-i18n="tagline">Danh Sách Bài Viết Diễn Đàn Có Nhiều Lượt Tương Tác</p>
+</div>
+
 
     <div class="action-bar" id="actionBar">
         <div class="search-container" id="searchContainer">
@@ -1860,6 +1861,10 @@ const targetDomainKey = (currentDomain === 'all') ? 'fav_bookmarks' : ((currentD
             resetRandomHistory(); 
             updateCurrentForumsData();
         }
+    
+    
+    
+    
 
         // --- ĐOẠN CODE CHẶN DOUBLE-ZOOM ĐƯỢC GIỮ NGUYÊN VẸN THEO YÊU CẦU CỦA BẠN ---
         let lastTouchEnd = 0;
