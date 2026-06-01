@@ -950,6 +950,13 @@ body.is-swiping-tabs .post-title {
     <div class="pagination-container" id="paginationContainer"></div>
     <div class="random-nav-container" id="randomNavContainer"></div>
 
+    <footer style="margin-top: 40px; padding: 20px 0; border-top: 1px solid var(--border-color); text-align: center; font-size: 12px; color: var(--sub-text);">
+    <p>© 2026 Forum Adventure. All rights reserved.</p>
+    <p>
+        <a href="javascript:void(0)" onclick="alert('Forum Adventure là công cụ tìm kiếm và tổng hợp liên kết tự động từ các diễn đàn công khai. Chúng tôi không chịu trách nhiệm về nội dung, tính chính xác hoặc độ an toàn của các liên kết bên ngoài. Nếu bạn là chủ sở hữu bản quyền và muốn yêu cầu gỡ bỏ liên kết, vui lòng liên hệ với chúng tôi qua email: [Email của bạn].')" style="color: var(--accent-color); text-decoration: none; margin: 0 10px;">Điều khoản sử dụng & Miễn trừ trách nhiệm</a>
+    </p>
+</footer>
+
     <script>
         // CẤU HÌNH NGÔN NGỮ ĐA QUỐC GIA (Mở rộng tùy ý)
         const languages = {
@@ -1282,8 +1289,16 @@ updateThemeUI(savedTheme);
                 
                 const isChecked = !hiddenForums.includes(domain);
                 
-                // Sử dụng split('.') để lấy phần tên trước dấu chấm đầu tiên
-const cleanName = domain.split('.')[0].toUpperCase(); 
+                let cleanName = domain.split('.')[0].toUpperCase();
+
+// Kiểm tra nếu URL chứa các cụm từ đặc biệt thì gán cứng tên hiển thị mong muốn
+if (domain.includes('digitalspy')) {
+    cleanName = 'DIGITALSPY';
+} else if (domain.includes('macrumors')) {
+    cleanName = 'MACRUMORS';
+}
+
+ 
 
 label.innerHTML = `
     <input type="checkbox" value="${domain}" ${isChecked ? 'checked' : ''}>
@@ -1358,7 +1373,16 @@ createTabButton(languages[currentLang].all_title, 'all', totalAllPostsCount);
 Object.keys(forumsData).forEach(domain => { 
     if (!hiddenForums.includes(domain)) {
         // Lấy tên diễn đàn bỏ đuôi .com, .vn...
-        const cleanName = domain.split('.')[0].toUpperCase();
+        let cleanName = domain.split('.')[0].toUpperCase();
+
+// Kiểm tra nếu URL chứa các cụm từ đặc biệt thì gán cứng tên hiển thị mong muốn
+if (domain.includes('digitalspy')) {
+    cleanName = 'DIGITALSPY';
+} else if (domain.includes('macrumors')) {
+    cleanName = 'MACRUMORS';
+}
+
+
         createTabButton(cleanName, domain, forumsData[domain].length); 
     }
 });
@@ -1409,7 +1433,9 @@ Object.keys(forumsData).forEach(domain => {
             button.appendChild(labelSpan);
             const badge = document.createElement('span');
             badge.className = 'tab-badge';
-            badge.textContent = count;
+            const locale = currentLang === 'vi' ? 'vi-VN' : 'en-US';
+badge.textContent = count.toLocaleString(locale);
+
             button.appendChild(badge);
             if (domainKey === currentDomain) button.classList.add('active');
             
@@ -1618,7 +1644,9 @@ function shuffleArray(array) {
         localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
         
         const favTab = filterContainer.querySelector('[data-domain="fav_bookmarks"] .tab-badge');
-        if (favTab) favTab.textContent = bookmarks.length;
+        const locale = currentLang === 'vi' ? 'vi-VN' : 'en-US';
+if (favTab) favTab.textContent = bookmarks.length.toLocaleString(locale);
+
         
         const btnTarget = e.currentTarget;
         if (isNowBookmarked) {
@@ -1972,7 +2000,9 @@ function handleFileSelect(event) {
                 
                 // Cập nhật lại số lượng huy hiệu (badge) trên tab Yêu thích
                 const favTab = filterContainer.querySelector('[data-domain="fav_bookmarks"] .tab-badge');
-                if (favTab) favTab.textContent = bookmarks.length;
+                const locale = currentLang === 'vi' ? 'vi-VN' : 'en-US';
+if (favTab) favTab.textContent = bookmarks.length.toLocaleString(locale);
+
                 
                 // Reload tab hiện tại
                 displayPosts();
