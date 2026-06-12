@@ -1373,11 +1373,7 @@ let isRedditCached = false;     // ĐÁNH DẤU: Chưa quét dữ liệu Reddit
         targetPosts = hiddenForums.includes(currentDomain) ? [] : (forumsData[currentDomain] || []);
     }
             
-            // --- THÊM LOGIC LỌC SUBREDDIT VÀO ĐÂY ---
-            if (currentDomain === 'reddit.com' && currentSubreddit !== 'all') {
-                targetPosts = targetPosts.filter(post => post.url.toLowerCase().includes('/' + currentSubreddit + '/'));
-            }
-            // ----------------------------------------
+           
 
     // --- NÂNG CẤP LOGIC TÌM KIẾM CHÍNH XÁC TỪ ĐẦU TỪ ---
     if (searchQuery !== '') {
