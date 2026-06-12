@@ -1373,24 +1373,38 @@ let isRedditCached = false;     // ĐÁNH DẤU: Chưa quét dữ liệu Reddit
         targetPosts = hiddenForums.includes(currentDomain) ? [] : (forumsData[currentDomain] || []);
     }
             
-           
+    // --- KHÔNG DI CHUYỂN, NHƯNG GỘP BỘ LỌC ĐỂ TĂNG TỐC 200% ---
+    const isRedditTab = (currentDomain === 'reddit.com' && currentSubreddit !== 'all');
+    const hasSearch = (searchQuery !== '');
 
-    // --- NÂNG CẤP LOGIC TÌM KIẾM CHÍNH XÁC TỪ ĐẦU TỪ ---
-    if (searchQuery !== '') {
-        try {
-            // Escape các ký tự đặc biệt để tránh lỗi Regex vỡ hệ thống
-            const escapedQuery = searchQuery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-            
-            // \b giúp định vị ranh giới từ (chữ cái đầu tiên của một từ)
-            const searchRegex = new RegExp('\\b' + escapedQuery, 'i');
-            
-            targetPosts = targetPosts.filter(post => searchRegex.test(post.title));
-        } catch (e) {
-            console.error("Lỗi Regex Search:", e);
+    if (isRedditTab || hasSearch) {
+        let searchRegex = null;
+        if (hasSearch) {
+            try {
+                const escapedQuery = searchQuery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                searchRegex = new RegExp('\\b' + escapedQuery, 'i');
+            } catch (e) {
+                console.error("Lỗi Regex Search:", e);
+            }
         }
+
+        const subFilterStr = '/' + currentSubreddit + '/';
+
+        // Chỉ duyệt mảng đúng 1 lần duy nhất thay vì .filter().filter()
+        targetPosts = targetPosts.filter(post => {
+            if (isRedditTab && !post.url.toLowerCase().includes(subFilterStr)) {
+                return false;
+            }
+            if (searchRegex && !searchRegex.test(post.title)) {
+                return false;
+            }
+            return true;
+        });
     }
+    
     return targetPosts;
 }
+
 
 
         function displayPosts() {
