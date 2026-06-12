@@ -1,9 +1,19 @@
 <!DOCTYPE html>
-<html lang="vi" data-theme="light">
+<html lang="vi" data-theme="dark">
+
 <head>
+    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Forum Data Filter</title>
+    
+    <title>Forum Data Filter - Công Cụ Lọc Dữ Liệu Diễn Đàn Tiện Lợi</title>
+    <meta name="description" content="Forum Data Filter giúp bạn dễ dàng lọc, phân loại và tìm kiếm dữ liệu từ các diễn đàn một cách nhanh chóng, tối ưu giao diện và trải nghiệm người dùng.">
+    <meta name="keywords" content="forum data filter, lọc dữ liệu, công cụ diễn đàn, ncox">
+    <meta name="author" content="Ncox">
+
+    <link rel="canonical" href="https://forum-adventure.github.io/" />
+        
+         
     <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js"></script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -12,6 +22,16 @@
     <link rel="icon" type="image/png" href="favicon.png">
 
     <style>
+    /* Chặn chọn văn bản trên tất cả các nút bấm */
+button, 
+.btn, 
+[role="button"] {
+    -webkit-user-select: none;  /* Safari */
+    -moz-user-select: none;     /* Firefox */
+    -ms-user-select: none;      /* IE10+/Edge cũ */
+    user-select: none;          /* Tiêu chuẩn: Chrome, Edge, Opera */
+}
+    
         /* KHÔI PHỤC HOÀN TOÀN CẤU HÌNH MÀU SẮC GIAO DIỆN V1 */
         :root[data-theme="light"] {
             --bg-color: #f8fafc;          /* Nền xám trắng rất dịu */
@@ -48,7 +68,7 @@
             --card-bg: #1e293b;
             --accent-color: #60a5fa;
             --accent-hover: #93c5fd;
-            --random-color: #34d399;
+            --random-color: #335887;      /* Màu nền nút Random ở chế độ Tối */
             --random-hover: #6ee7b7;
             --refresh-color: #22d3ee;
             --refresh-hover: #67e8f9;
@@ -67,6 +87,7 @@
             
             --logo-color: #ffffff;
             --tagline-color: #94a3b8;
+            
         }
 
         /* SỬA LỖI LAYOUT SHIFT & SỬA LỖI 3: Kích hoạt hiệu ứng cuộn trang mượt mà toàn diện */
@@ -89,14 +110,22 @@
         }
 
         /* Top Utilities Bar */
-        .top-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 0;
-            border-bottom: 1px solid var(--border-color);
-            margin-bottom: 24px;
-        }
+        /* Top Utilities Bar */
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 24px;
+
+    /* Thêm 3 dòng này để phá vỡ giới hạn padding của body */
+    margin-left: calc(-50vw + 50%);
+    margin-right: calc(-50vw + 50%);
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
 
         .sub-links-container {
             display: flex;
@@ -184,24 +213,30 @@
 
         /* WRAPPER BỌC THANH FILTER SLIDE VÀ MENU DROPDOWN */
         .filter-wrapper {
-            position: relative;
-            margin-top: 8px;
-            margin-bottom: 24px;
-        }
+    position: relative;
+    margin-top: 8px;
+    margin-bottom: 24px;
+    display: flex; /* Kích hoạt flexbox để tách biệt nút ghim và khối cuộn */
+    align-items: center;
+}
 
-        .filter-container {
-            display: flex;
-            flex-wrap: nowrap;
-            gap: 8px;
-            overflow-x: auto;
-            scroll-behavior: smooth;
-            -webkit-overflow-scrolling: touch;
-            padding: 4px 4px 10px 4px;
-        }
+                        /* CONTAINER CUỘN NGANG CỦA CÁC NÚT TAB (Không chứa nút phễu nữa) */
+.filter-container {
+    position: relative;
+    display: flex;            
+    flex-wrap: wrap;           /* Mặc định cho Desktop: Xuống hàng */
+    gap: 8px;
+    padding: 0px;
+    overflow: hidden;          /* Khóa cuộn trên máy tính */
+    flex: 1;                   /* Chiếm trọn không gian còn lại */
+    min-width: 0;              /* Khắc phục lỗi flexbox không co bóp trên một số trình duyệt */
+}
 
         .filter-container::-webkit-scrollbar {
             display: none;
         }
+
+
 
         /* SỬA LỖI ANDROID: Tạo khoảng đệm nhỏ ở cuối hàng để báo hiệu trực quan cho người dùng biết là cuộn ngang được */
         .filter-container::after {
@@ -226,18 +261,60 @@
             gap: 5px;                   
         }
 
-        /* Nút icon cấu hình riêng */
-        .btn-tab-icon {
-            padding: 5px 8px;
-            border-radius: 14px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            /* Giữ màu nền cố định theo theme, không đổi khi hover/active */
-            background: var(--card-bg) !important; 
-            border-color: var(--border-color) !important;
-            color: var(--text-color) !important;
-        }
+        /* Nút icon phễu cấu hình riêng - Sử dụng Sticky cố định */
+/* Chuyển các thuộc tính Sticky, Shadow và Margin sang cho Container bọc ngoài */
+/* Container bọc ngoài ôm sát nút phễu */
+.filter-icon-container {
+    display: inline-flex;
+    flex-shrink: 0;
+    position: -webkit-sticky;  
+    position: sticky;
+    left: 0;                   
+    z-index: 10;               
+    margin-right: 8px;         
+    
+    /* 1. ĐỒNG BỘ MÀU NỀN VỚI BACKGROUND CHÍNH */
+    background-color: var(--bg-color); 
+
+    /* 2. CHỈ BO TRÒN CẠNH BÊN PHẢI (Top-Right và Bottom-Right), CẠNH TRÁI THÀNH HÌNH VUÔNG */
+    border-radius: 0 14px 14px 0; 
+
+    
+}
+
+/* Đóng giao diện tối (Dark Mode) shadow tương ứng cho container */
+:root[data-theme="dark"] .filter-icon-container {
+    
+}
+
+/* Nút icon phễu bên trong chỉ giữ lại tạo hình core */
+.btn-tab-icon {
+    padding: 5px 8px;
+    border-radius: 14px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--card-bg) !important; 
+    border-color: var(--border-color) !important;
+    color: var(--text-color) !important;
+}
+
+    /* Cấu hình khi ở giao diện Dark Mode để phần bóng đổ của nút ghim trông tự nhiên */
+:root[data-theme="dark"] .btn-tab-icon {
+    
+}
+    
+    /* Container bọc ngoài ôm sát nút phễu */
+.filter-icon-container {
+    display: inline-flex;
+    flex-shrink: 0;
+}
+
+    
+    /* Các nút tab thông thường */
+.btn-tab:not(.btn-tab-icon) {
+    z-index: 1; /* Thấp hơn nút icon phễu để đi xuyên xuống dưới */
+}
         
         /* SỬA LỖI TRÌNH DUYỆT CŨ/SAFARI: Ép path của SVG nhận biến màu văn bản chuẩn xác */
         .btn-tab-icon svg, .btn-tab-icon svg path {
@@ -274,9 +351,18 @@
 
         /* Khôi phục trạng thái Active của Tab theo cấu hình màu chuẩn V1 */
         .btn-tab.active {
-            background-color: var(--accent-color) !important;
             color: #ffffff !important;
-            border-color: var(--accent-color) !important;
+        }
+
+        /* Phân tách màu nền active dịu hơn theo từng giao diện (Theme) */
+        :root[data-theme="light"] .btn-tab.active {
+            background-color: #475569 !important; /* Xám đá dịu mắt cho Light Mode */
+            border-color: #475569 !important;
+        }
+        
+        :root[data-theme="dark"] .btn-tab.active {
+            background-color: #335887 !important;
+            border-color: var(--border-color) !important;
         }
 
         .btn-tab.active span {
@@ -527,30 +613,28 @@
             flex-shrink: 0;
         }
 
-        .btn-random {
-    /* Đảo ngược màu: Lấy màu chủ đạo làm nền, chữ chuyển thành màu trắng */
-    background-color: var(--accent-color);
+        /* --- CẤU HÌNH NÚT RANDOM CHUẨN HOÀN TOÀN --- */
+.btn-random {
+    background-color: var(--random-color);
     color: #ffffff;
-    border: 1px solid var(--accent-color);
+    border: 6ee7b7; 
     border-radius: 12px;
-    outline: none; /* Loại bỏ đường viền focus mặc định của trình duyệt */
-            /* CHỐNG TÔ ĐẬM VÀ BÔI ĐEN TUYỆT ĐỐI (KỂ CẢ KHI BẤM GIỮ LÂU) */
-    -webkit-touch-callout: none; /* Khóa menu ngữ cảnh/copy trên iOS Safari khi nhấn giữ */
-    -webkit-user-select: none;   /* Safari */
-    -khtml-user-select: none;    /* Konqueror HTML */
-    -moz-user-select: none;      /* Firefox */
-    -ms-user-select: none;       /* Internet Explorer/Edge */
-    user-select: none;           /* Bản chuẩn: Chrome, Opera, Edge mới */
+    outline: none;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent; /* Loại bỏ lớp phủ highlight mặc định của iOS */
 }
 
 .btn-random:hover {
-    /* Khi hover: Dùng màu biến thể hover đậm hơn một chút để tạo hiệu ứng nhấn */
     background-color: var(--accent-hover);
     border-color: var(--accent-hover);
 }
 
 .btn-random:active {
-    /* Khi nhấn giữ: Chuyển sang màu nền sáng, chữ và viền tối */
     background-color: var(--hover-bg);
     border-color: var(--accent-color);
     color: var(--accent-color);
@@ -562,6 +646,38 @@
     color: #ffffff;
     border-color: var(--accent-color);
 }
+
+/* SỬA LỖI KẸT FOCUS TRÊN SAFARI IPHONE: Khóa hover/focus giả lập trên thiết bị cảm ứng */
+@media (hover: none) {
+    
+    
+    :root[data-theme="light"] .btn-random:hover,
+    :root[data-theme="light"] .btn-random:focus {
+        background-color: #475569 !important;
+        color: #ffffff !important;
+        border-color: #475569 !important;
+    }
+    :root[data-theme="light"] .btn-random:active {
+        background-color: var(--hover-bg) !important;
+        border-color: #335887 !important;
+        color: var(--accent-color) !important;
+    }       
+    
+    :root[data-theme="dark"] .btn-random:hover,
+    :root[data-theme="dark"] .btn-random:focus {
+        background-color: #335887 !important;
+        color: #ffffff !important;
+        border-color: #335887 !important;
+    }
+    :root[data-theme="dark"] .btn-random:active {
+        background-color: var(--hover-bg) !important;
+        border-color: #335887 !important;
+        color: var(--accent-color) !important;
+    }       
+    
+}
+
+
     
 
 
@@ -722,7 +838,21 @@
             animation: fadeIn 0.3s ease-in-out;
         }
             
-        @media (max-width: 600px) {
+                /* ÁP DỤNG CHO CẢ ĐIỆN THOẠI VÀ MÁY TÍNH BẢNG (Dưới 1024px) */
+        @media (max-width: 1024px) {
+    .filter-container {
+        flex-wrap: nowrap !important; /* Ép buộc cuộn ngang trên Tablet & Mobile */
+        overflow-x: auto !important;
+        scroll-behavior: smooth;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 10px;
+            }
+            /* Tạo khoảng đệm nhỏ ở cuối hàng mobile để báo hiệu có thể cuộn tiếp */
+            .filter-container::after {
+                content: '';
+                padding-right: 20px;
+            }
+
             .btn-action-util {
                 height: 45px;
             }
@@ -746,17 +876,28 @@
                 right: 4px;
             }
             mark.search-highlight {
-    background-color: #fef08a; /* Màu vàng nhạt dịu mắt (giống bộ màu Slate/Tailwind) */
-    color: #0f172a;            /* Chữ đen xám đậm để dễ đọc */
-    padding: 0 2px;
-    border-radius: 2px;
+                background-color: #fef08a; /* Màu vàng nhạt dịu mắt (giống bộ màu Slate/Tailwind) */
+                color: #0f172a;            /* Chữ đen xám đậm để dễ đọc */
+                padding: 0 2px;
+                border-radius: 2px;
+            }
+            :root[data-theme="dark"] mark.search-highlight {
+                background-color: #ca8a04; /* Màu vàng sậm hơn ở giao diện tối để không bị chói */
+                color: #ffffff;
+            }
+        }
+/* Tắt toàn bộ hiệu ứng hover và pointer-events của danh sách khi đang cuộn tab */
+body.is-swiping-tabs .post-item {
+    pointer-events: none !important;
+    transform: none !important;
+    background-color: var(--card-bg) !important;
+    border-color: var(--border-color) !important;
+    box-shadow: var(--card-shadow) !important;
 }
-:root[data-theme="dark"] mark.search-highlight {
-    background-color: #ca8a04; /* Màu vàng sậm hơn ở giao diện tối để không bị chói */
-    color: #ffffff;
+body.is-swiping-tabs .post-title {
+    color: var(--text-color) !important;
 }
 
-        }
     </style>
 </head>
 <body>
@@ -764,24 +905,26 @@
     <div class="top-bar">
         <div class="sub-links-container">
             <a href="https://docs.google.com/forms/d/e/1FAIpQLSdkkRZXJyeYno9vXrTD6vxso4agFl36-vzHoxl30Mod3_CPrQ/viewform" target="_blank" class="sub-link" data-i18n="contribute">đóng góp link bài viết</a>
-            <a href="https://buymeacoffee.com/" target="_blank" class="sub-link">donation ♥️</a>
+            <a href="https://sociabuzz.com/ncoxcoi" target="_blank" class="sub-link">more works ♥️</a>
         </div>
         <div class="right-utils">
-            <button class="btn-lang-toggle" id="btnLangToggle" title="Change Language / Đổi ngôn ngữ">🇺🇸 EN</button>
-            <button class="btn-theme-toggle" id="btnThemeToggle" title="Thay đổi giao diện">
-                <span id="themeIcon">☀️</span>
-            </button>
-        </div>
+    <button class="btn-lang-toggle notranslate" translate="no" id="btnLangToggle" title="Change Language / Đổi ngôn ngữ">🇺🇸 EN</button>
+    
+    <button class="btn-theme-toggle" id="btnThemeToggle" title="Thay đổi giao diện">
+        <span id="themeIcon">☀️</span>
+    </button>
+</div>
     </div>
 
     <div class="brand-container">
-        <h1 class="brand-logo">
-            <a href="javascript:void(0)" onclick="resetToAllSource()" style="text-decoration: none; color: inherit;">
-                Forum Adventure
-            </a>
-        </h1>
-        <p class="brand-tagline" id="brandTagline" data-i18n="tagline">Danh Sách Bài Viết Diễn Đàn Có Nhiều Lượt Tương Tác</p>
-    </div>
+    <h1 class="brand-logo">
+        <a href="javascript:void(0)" onclick="resetToAllSource(); document.getElementById('filterContainer').scrollTo({ left: 0, behavior: 'smooth' });" class="notranslate" translate="no" style="text-decoration: none; color: inherit;">
+        Forum Adventure
+    </a>
+    </h1>
+    <p class="brand-tagline" id="brandTagline" data-i18n="tagline">Danh Sách Bài Viết Diễn Đàn Có Nhiều Lượt Tương Tác</p>
+</div>
+
 
     <div class="action-bar" id="actionBar">
         <div class="search-container" id="searchContainer">
@@ -848,7 +991,12 @@
         import_success: "Nhập danh sách yêu thích thành công!",
         import_invalid: "File dữ liệu không hợp lệ hoặc bị lỗi!",
         import_empty: "File dữ liệu trống!",
-        confirm_import: "Hành động này sẽ ghi đè lên danh sách yêu thích hiện tại. Bạn có chắc chắn muốn tiếp tục?"
+        confirm_import: "Hành động này sẽ ghi đè lên danh sách yêu thích hiện tại. Bạn có chắc chắn muốn tiếp tục?",
+                footer_copyright: "© 2026 Forum Adventure",
+        footer_author: "Made with ❤️ bởi Ncox | Kết nối cộng đồng diễn đàn",
+        footer_terms: "Điều khoản sử dụng & Miễn trừ trách nhiệm",
+        footer_alert_text: "Forum Adventure là công cụ tìm kiếm và tổng hợp liên kết tự động từ các diễn đàn công khai. Chúng tôi không chịu trách nhiệm về nội dung, tính chính xác hoặc độ an toàn của các liên kết bên ngoài. Nếu bạn là chủ sở hữu bản quyền và muốn yêu cầu gỡ bỏ liên kết, vui lòng liên hệ với chúng tôi qua email: [Email của bạn]."
+ 
             },
             en: {
                 contribute: "contribute post links",
@@ -879,7 +1027,13 @@
         import_success: "Favorites imported successfully!",
         import_invalid: "Invalid data file or corrupted!",
         import_empty: "Data file is empty!",
-        confirm_import: "This will overwrite your current favorites. Do you want to proceed?" 
+        confirm_import: "This will overwrite your current favorites. Do you want to proceed?",
+                footer_copyright: "© 2026 Forum Adventure",
+        footer_author: "Made with ❤️ by Ncox | Connecting Forum Communities",
+        footer_terms: "Terms of Service & Disclaimer",
+        footer_alert_text: "Forum Adventure is an automated search tool and aggregator of links from public forums. We are not responsible for the content, accuracy, or safety of external links. If you are a copyright owner and wish to request link removal, please contact us via email: [Your Email]."
+ 
+                
             }
         };
 
@@ -917,9 +1071,9 @@
         const searchInput = document.getElementById('searchInput');
         const actionBar = document.getElementById('actionBar');
 
-        const savedTheme = localStorage.getItem('theme') || 'light';
-        document.documentElement.setAttribute('data-theme', savedTheme);
-        updateThemeUI(savedTheme);
+        const savedTheme = localStorage.getItem('theme') || 'dark'; 
+document.documentElement.setAttribute('data-theme', savedTheme);
+updateThemeUI(savedTheme);
 
         // Khởi động ngôn ngữ ban đầu
         applyLanguage(currentLang);
@@ -1019,7 +1173,16 @@
                     masterData = { vn: {}, int: {} };
                     if (cachedVnText) parseToSource(cachedVnText.split('\n'), 'vn');
                     if (cachedIntText) parseToSource(cachedIntText.split('\n'), 'int');
+                    // Ép thanh tiến trình lên 100%
+                clearInterval(window.progressInterval);
+                if (document.getElementById('progressBar')) {
+                    document.getElementById('progressBar').style.width = '100%';
+                }
+                
+                // Đợi 200ms cho hiệu ứng CSS chạy xong rồi mới render dữ liệu (ẩn thanh loading)
+                setTimeout(() => {
                     updateCurrentForumsData();
+                }, 200);
                     return; 
                 }
 
@@ -1033,15 +1196,9 @@
 
                 listContainer.innerHTML = `
                     <div class="loading-wrapper" style="text-align: center; padding: 40px 20px;">
-                        <div class="spinner" style="
-                            width: 40px; 
-                            height: 40px; 
-                            border: 4px solid var(--border-color); 
-                            border-top: 4px solid var(--accent-color); 
-                            border-radius: 50%; 
-                            margin: 0 auto 20px; 
-                            animation: spin 1s linear infinite;
-                        "></div>
+                        <div id="progressContainer" style="width: 100%; max-width: 260px; background: var(--border-color); height: 6px; border-radius: 3px; margin: 0 auto 12px; overflow: hidden;">
+                            <div id="progressBar" style="width: 0%; height: 100%; background: var(--accent-color); transition: width 0.2s ease;"></div>
+                        </div>
                         <div class="loading-title" style="font-weight: 600; font-size: 16px; color: var(--text-color); margin-bottom: 6px;">
                             ${loadingTitle}
                         </div>
@@ -1050,6 +1207,17 @@
                         </div>
                     </div>
                 `;
+
+                // Thêm logic giả lập thanh tiến trình chạy từ 0 đến 95%
+                let progress = 0;
+                const progressBar = document.getElementById('progressBar');
+                window.progressInterval = setInterval(() => {
+                    if (progress < 95) {
+                        progress += Math.random() * 15; // Tốc độ tăng ngẫu nhiên
+                        if (progress > 95) progress = 95;
+                        if (progressBar) progressBar.style.width = `${progress}%`;
+                    }
+                }, 150);
 
                 masterData = { vn: {}, int: {} };
                 const suffix = `?t=${Date.now()}`;
@@ -1073,6 +1241,7 @@
 
                 updateCurrentForumsData();
             } catch (error) {
+                clearInterval(window.progressInterval); // Thêm dòng này để dọn dẹp tiến trình
                 console.error("Lỗi hệ thống:", error);
                 const cachedVnText = await localforage.getItem('cached_data_vn_text');
                 const cachedIntText = await localforage.getItem('cached_data_int_text');
@@ -1148,10 +1317,22 @@
                 
                 const isChecked = !hiddenForums.includes(domain);
                 
-                label.innerHTML = `
-                    <input type="checkbox" value="${domain}" ${isChecked ? 'checked' : ''}>
-                    <span>${domain.toUpperCase()}</span>
-                `;
+                let cleanName = domain.split('.')[0].toUpperCase();
+
+// Kiểm tra nếu URL chứa các cụm từ đặc biệt thì gán cứng tên hiển thị mong muốn
+if (domain.includes('digitalspy')) {
+    cleanName = 'DIGITALSPY';
+} else if (domain.includes('macrumors')) {
+    cleanName = 'MACRUMORS';
+}
+
+ 
+
+label.innerHTML = `
+    <input type="checkbox" value="${domain}" ${isChecked ? 'checked' : ''}>
+    <span>${cleanName}</span>
+`;
+
 
                 label.querySelector('input').addEventListener('change', (e) => {
                     const val = e.target.value;
@@ -1186,34 +1367,54 @@
                 }
             });
 
-            // 1. Nút Yêu thích
-            createTabButton(languages[currentLang].fav_title, 'fav_bookmarks', bookmarks.length);
-            
-            // 2. NÚT ICON FILTER Ở CHÍNH GIỮA
-            const filterBtn = document.createElement('button');
-            filterBtn.className = 'btn-tab btn-tab-icon';
-            filterBtn.id = 'btnFilterToggle';
-            filterBtn.setAttribute('title', languages[currentLang].filter_tooltip);
-            filterBtn.innerHTML = `
-                <svg viewBox="0 0 24 24">
-                    <path d="M10 18h4v-2h-4v2zM3 6v2h18V6H3zm3 7h12v-2H6v2z"/>
-                </svg>
-            `;
-            filterBtn.addEventListener('pointerdown', (e) => {
+            // 1. TẠO CONTAINER ÔM SÁT VÀ NÚT ICON FILTER ĐƯỢC ĐƯA LÊN ĐẦU TIÊN
+const iconContainer = document.createElement('div');
+iconContainer.className = 'filter-icon-container';
+
+const filterBtn = document.createElement('button');
+filterBtn.className = 'btn-tab btn-tab-icon';
+filterBtn.id = 'btnFilterToggle';
+filterBtn.setAttribute('title', languages[currentLang].filter_tooltip);
+filterBtn.innerHTML = `
+    <svg viewBox="0 0 24 24">
+        <path d="M10 18h4v-2h-4v2zM3 6v2h18V6H3zm3 7h12v-2H6v2z"/>
+    </svg>
+`;
+filterBtn.addEventListener('click', (e) => {
     e.stopPropagation(); // Ngăn chặn sự kiện lan ra ngoài document
     checkboxDropdownMenu.classList.toggle('open');
 });
-            filterContainer.appendChild(filterBtn);
 
-            // 3. Nút Tất cả bài viết
-            createTabButton(languages[currentLang].all_title, 'all', totalAllPostsCount);
+// Bỏ nút vào container, rồi bỏ container vào filterContainer
+iconContainer.appendChild(filterBtn);
+filterContainer.appendChild(iconContainer);
+
+
+// 2. Nút Yêu thích đứng ngay sau nút Phễu
+createTabButton(languages[currentLang].fav_title, 'fav_bookmarks', bookmarks.length);
+
+// 3. Nút Tất cả bài viết
+createTabButton(languages[currentLang].all_title, 'all', totalAllPostsCount);
+
             
             // 4. Danh sách các nút diễn đàn
-            Object.keys(forumsData).forEach(domain => { 
-                if (!hiddenForums.includes(domain)) {
-                    createTabButton(domain.toUpperCase(), domain, forumsData[domain].length); 
-                }
-            });
+Object.keys(forumsData).forEach(domain => { 
+    if (!hiddenForums.includes(domain)) {
+        // Lấy tên diễn đàn bỏ đuôi .com, .vn...
+        let cleanName = domain.split('.')[0].toUpperCase();
+
+// Kiểm tra nếu URL chứa các cụm từ đặc biệt thì gán cứng tên hiển thị mong muốn
+if (domain.includes('digitalspy')) {
+    cleanName = 'DIGITALSPY';
+} else if (domain.includes('macrumors')) {
+    cleanName = 'MACRUMORS';
+}
+
+
+        createTabButton(cleanName, domain, forumsData[domain].length); 
+    }
+});
+
 
             // Kiểm tra trạng thái Active Tab hiện tại bảo toàn dữ liệu
             const tabs = filterContainer.querySelectorAll('.btn-tab:not(.btn-tab-icon)');
@@ -1235,12 +1436,34 @@
             const button = document.createElement('button');
             button.className = 'btn-tab';
             button.setAttribute('data-domain', domainKey);
+            
+            // --- BỔ SUNG: Chèn Favicon cho các tab diễn đàn ---
+            if (domainKey !== 'fav_bookmarks' && domainKey !== 'all') {
+                const tabIcon = document.createElement('img');
+                tabIcon.src = `${localFaviconFolder}/${domainKey}.png`;
+                tabIcon.alt = domainKey;
+                // Thiết kế style trực tiếp để icon gọn gàng, đồng bộ giao diện
+                tabIcon.style.width = '16px';
+                tabIcon.style.height = '16px';
+                tabIcon.style.borderRadius = '50%';
+                tabIcon.style.objectFit = 'cover';
+                tabIcon.style.flexShrink = '0';
+                // Xử lý lỗi nếu thiếu ảnh icon thì đổi sang ảnh mặc định hệ thống
+                tabIcon.onerror = function() {
+                    this.onerror = null;
+                    this.src = defaultAvatar;
+                };
+                button.appendChild(tabIcon);
+            }
+            // -------------------------------------------------
             const labelSpan = document.createElement('span');
             labelSpan.textContent = label;
             button.appendChild(labelSpan);
             const badge = document.createElement('span');
             badge.className = 'tab-badge';
-            badge.textContent = count;
+            const locale = currentLang === 'vi' ? 'vi-VN' : 'en-US';
+badge.textContent = count.toLocaleString(locale);
+
             button.appendChild(badge);
             if (domainKey === currentDomain) button.classList.add('active');
             
@@ -1266,173 +1489,212 @@
             filterContainer.appendChild(button);
         }
 
-        function getActivePosts() {
-    let targetPosts = [];
-    if (currentDomain === 'fav_bookmarks') {
-        targetPosts = [...bookmarks];
-    } else if (currentDomain === 'all') {
-        Object.entries(forumsData).forEach(([domain, posts]) => {
-            if (!hiddenForums.includes(domain)) {
-                targetPosts = targetPosts.concat(posts);
-            }
-        });
-    } else {
-        targetPosts = hiddenForums.includes(currentDomain) ? [] : (forumsData[currentDomain] || []);
+    // Hàm trộn ngẫu nhiên mảng (Fisher-Yates Shuffle) không làm thay đổi mảng gốc
+function shuffleArray(array) {
+    let shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
     }
-
-    // --- NÂNG CẤP LOGIC TÌM KIẾM CHÍNH XÁC TỪ ĐẦU TỪ ---
-    if (searchQuery !== '') {
-        try {
-            // Escape các ký tự đặc biệt để tránh lỗi Regex vỡ hệ thống
-            const escapedQuery = searchQuery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-            
-            // \b giúp định vị ranh giới từ (chữ cái đầu tiên của một từ)
-            const searchRegex = new RegExp('\\b' + escapedQuery, 'i');
-            
-            targetPosts = targetPosts.filter(post => searchRegex.test(post.title));
-        } catch (e) {
-            console.error("Lỗi Regex Search:", e);
-        }
-    }
-    return targetPosts;
+    return shuffled;
 }
 
+    
+        
+
+            function getActivePosts() {
+            let targetPosts = [];
+            if (currentDomain === 'fav_bookmarks') {
+                targetPosts = [...bookmarks];
+            } else if (currentDomain === 'all') {
+                Object.entries(forumsData).forEach(([domain, posts]) => {
+                    if (!hiddenForums.includes(domain)) {
+                        targetPosts = targetPosts.concat(posts);
+                    }
+                });
+            } else {
+                targetPosts = hiddenForums.includes(currentDomain) ? [] : (forumsData[currentDomain] || []);
+            }
+
+            // --- NÂNG CẤP LOGIC TÌM KIẾM CHÍNH XÁC TỪ ĐẦU TỪ ---
+            if (searchQuery !== '') {
+                try {
+                    const escapedQuery = searchQuery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                    const searchRegex = new RegExp('\\b' + escapedQuery, 'i');
+                    targetPosts = targetPosts.filter(post => searchRegex.test(post.title));
+                } catch (e) {
+                    console.error("Lỗi Regex Search:", e);
+                }
+            }
+            return targetPosts;
+        }
 
         function displayPosts() {
-    listContainer.innerHTML = ''; 
-    randomNavContainer.innerHTML = ''; 
-    const targetPosts = getActivePosts();
+            listContainer.innerHTML = ''; 
+            randomNavContainer.innerHTML = ''; 
+            const targetPosts = getActivePosts();
 
-    // TRƯỜNG HỢP: Tab Yêu thích trống
-    if (currentDomain === 'fav_bookmarks' && targetPosts.length === 0) {
-        listContainer.innerHTML = `
-            <div class="empty-bookmarks-wrapper" style="text-align: center; padding: 40px 20px; background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border-color); animation: fadeIn 0.3s ease;">
-                <svg width="120" height="120" viewBox="0 0 24 24" fill="none" style="margin: 0 auto 16px; display: block; opacity: 0.7;">
-                    <path d="M19 1H5C3.9 1 3 1.9 3 3V21C3 22.1 3.9 23 5 23H19C20.1 23 21 22.1 21 21V3C21 1.9 20.1 1 19 1ZM19 21H5V3H19V21Z" fill="var(--sub-text)"/>
-                    <path d="M12 18.05L11.05 17.18C7.67 14.12 5.45 12.11 5.45 9.65C5.45 7.62 7.04 6.03 9.05 6.03C10.19 6.03 11.28 6.56 12 7.4C12.72 6.56 13.81 6.03 14.95 6.03C16.96 6.03 18.55 7.62 18.55 9.65C18.55 12.11 16.33 14.12 12.95 17.19L12 18.05Z" fill="var(--star-active)" style="opacity: 0.65;"/>
-                </svg>
-                <div style="font-weight: 500; font-size: 14.5px; color: var(--text-color); max-width: 450px; margin: 0 auto 20px; line-height: 1.5;">
-                    ${languages[currentLang].empty_bookmarks}
-                </div>
-                
-                <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
-                    <button class="btn-tab" onclick="importBookmarks()" style="padding: 8px 16px; font-size: 12px;">${languages[currentLang].btn_import}</button>
+            // TRƯỜNG HỢP: Tab Yêu thích trống
+            if (currentDomain === 'fav_bookmarks' && targetPosts.length === 0) {
+                listContainer.innerHTML = `
+                    <div class="empty-bookmarks-wrapper" style="text-align: center; padding: 40px 20px; background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border-color); animation: fadeIn 0.3s ease;">
+                        <svg width="120" height="120" viewBox="0 0 24 24" fill="none" style="margin: 0 auto 16px; display: block; opacity: 0.7;">
+                            <path d="M19 1H5C3.9 1 3 1.9 3 3V21C3 22.1 3.9 23 5 23H19C20.1 23 21 22.1 21 21V3C21 1.9 20.1 1 19 1ZM19 21H5V3H19V21Z" fill="var(--sub-text)"/>
+                            <path d="M12 18.05L11.05 17.18C7.67 14.12 5.45 12.11 5.45 9.65C5.45 7.62 7.04 6.03 9.05 6.03C10.19 6.03 11.28 6.56 12 7.4C12.72 6.56 13.81 6.03 14.95 6.03C16.96 6.03 18.55 7.62 18.55 9.65C18.55 12.11 16.33 14.12 12.95 17.19L12 18.05Z" fill="var(--star-active)" style="opacity: 0.65;"/>
+                        </svg>
+                        <div style="font-weight: 500; font-size: 14.5px; color: var(--text-color); max-width: 450px; margin: 0 auto 20px; line-height: 1.5;">
+                            ${languages[currentLang].empty_bookmarks}
+                        </div>
+                        
+                        <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                            <button class="btn-tab" onclick="importBookmarks()" style="padding: 8px 16px; font-size: 12px;">${languages[currentLang].btn_import}</button>
+                            <input type="file" id="importFileInput" accept=".txt" style="display: none;" onchange="handleFileSelect(event)">
+                        </div>
+                    </div>
+                `;
+                paginationContainer.innerHTML = '';
+                return;
+            }
+
+            // TRƯỜNG HỢP: Các bộ lọc khác hoặc Tìm kiếm không ra kết quả
+            if (targetPosts.length === 0) {
+                listContainer.innerHTML = `<div class="empty-message">${languages[currentLang].not_found}</div>`;
+                paginationContainer.innerHTML = '';
+                return;
+            }
+
+            // Nếu là tab Yêu thích và CÓ bài viết, chèn thêm thanh công cụ Xuất dữ liệu lên đầu danh sách bài viết
+            if (currentDomain === 'fav_bookmarks') {
+                const backupBar = document.createElement('div');
+                backupBar.style = "display: flex; gap: 10px; justify-content: flex-end; margin-bottom: 12px; padding: 0 4px;";
+                backupBar.innerHTML = `
+                    <button class="btn-tab" onclick="exportBookmarks()" style="padding: 6px 12px; font-size: 11px; opacity: 0.8;">${languages[currentLang].btn_export}</button>
+                    <button class="btn-tab" onclick="importBookmarks()" style="padding: 6px 12px; font-size: 11px; opacity: 0.8;">${languages[currentLang].btn_import}</button>
                     <input type="file" id="importFileInput" accept=".txt" style="display: none;" onchange="handleFileSelect(event)">
-                </div>
-            </div>
-        `;
-        paginationContainer.innerHTML = '';
-        return;
-    }
+                `;
+                listContainer.appendChild(backupBar);
+            }
 
-    // TRƯỜNG HỢP: Các bộ lọc khác hoặc Tìm kiếm không ra kết quả
-    if (targetPosts.length === 0) {
-        listContainer.innerHTML = `<div class="empty-message">${languages[currentLang].not_found}</div>`;
-        paginationContainer.innerHTML = '';
-        return;
-    }
-
-    // Nếu là tab Yêu thích và CÓ bài viết, chèn thêm thanh công cụ Xuất dữ liệu lên đầu danh sách bài viết
-    if (currentDomain === 'fav_bookmarks') {
-        const backupBar = document.createElement('div');
-        backupBar.style = "display: flex; gap: 10px; justify-content: flex-end; margin-bottom: 12px; padding: 0 4px;";
-        backupBar.innerHTML = `
-            <button class="btn-tab" onclick="exportBookmarks()" style="padding: 6px 12px; font-size: 11px; opacity: 0.8;">${languages[currentLang].btn_export}</button>
-            <button class="btn-tab" onclick="importBookmarks()" style="padding: 6px 12px; font-size: 11px; opacity: 0.8;">${languages[currentLang].btn_import}</button>
-            <input type="file" id="importFileInput" accept=".txt" style="display: none;" onchange="handleFileSelect(event)">
-        `;
-        listContainer.appendChild(backupBar);
-    }
-
-    const totalPages = Math.ceil(targetPosts.length / postsPerPage);
-    if (currentPage > totalPages) currentPage = totalPages || 1;
-    const startIndex = (currentPage - 1) * postsPerPage;
-    const paginatedPosts = targetPosts.slice(startIndex, startIndex + postsPerPage);
-
-    paginatedPosts.forEach(post => {
-        renderPostCard(post);
-    });
-    renderPagination(totalPages);
-}
-
-
-                function renderPostCard(post) {
+            // Tính tổng số trang dựa trên TOÀN BỘ số bài viết gốc
+            const totalPages = Math.ceil(targetPosts.length / postsPerPage);
+            if (currentPage > totalPages) currentPage = totalPages || 1;
             
-            const isBookmarked = bookmarks.some(b => b.url === post.url);
+            // XỬ LÝ PHÂN TÁCH DATA ĐỂ HIỂN THỊ
+            let paginatedPosts = [];
+            if (currentDomain === 'all' && searchQuery === '' && currentPage === 1) {
+                // Trang 1 Tab Tất cả: Xáo trộn mảng gốc và lấy đúng 50 bài ngẫu nhiên
+                paginatedPosts = shuffleArray(targetPosts).slice(0, postsPerPage);
+            } else {
+                // Các trang sau hoặc tab khác: Lấy theo vị trí phân trang tuần tự chính xác
+                const startIndex = (currentPage - 1) * postsPerPage;
+                paginatedPosts = targetPosts.slice(startIndex, startIndex + postsPerPage);
+            }
 
-            const faviconUrl = `${localFaviconFolder}/${post.domain}.png`; 
+            // KIỂM TRA ĐỂ TẠO CONTAINER RIÊNG CHO TRANG 1 TAB TẤT CẢ
+            if (currentDomain === 'all' && searchQuery === '' && currentPage === 1) {
+                const randomContainer = document.createElement('div');
+                randomContainer.className = 'random-posts-container';
+                randomContainer.id = 'randomPostsContainer';
+                randomContainer.style = "display: flex; flex-direction: column; gap: 12px; width: 100%;";
+                
+                listContainer.appendChild(randomContainer);
+                
+                paginatedPosts.forEach(post => {
+                    renderPostCard(post, randomContainer);
+                });
+            } else {
+                paginatedPosts.forEach(post => {
+                    renderPostCard(post, listContainer);
+                });
+            }
+            
+            // Gọi hàm render thanh điều hướng (Lúc này totalPages đã được tính đúng)
+            renderPagination(totalPages);
+        }
 
-            // --- XỬ LÝ HIGHLIGHT CHỮ CHUẨN XÁC THEO RANH GIỚI TỪ ---
-let displayedTitle = post.title;
-if (searchQuery && searchQuery.trim() !== '') {
-    try {
-        const escapedQuery = searchQuery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                
+               
+
         
-        // Thêm \\b vào trước để chỉ highlight phần đầu của từ khớp với tìm kiếm
-        const regex = new RegExp(`\\b(${escapedQuery})`, 'gi');
         
-        displayedTitle = post.title.replace(regex, '<mark class="search-highlight">$1</mark>');
-    } catch (e) {
-        console.error("Lỗi highlight:", e);
+
+
+
+                function renderPostCard(post, targetContainer) {
+    
+    const isBookmarked = bookmarks.some(b => b.url === post.url);
+    const faviconUrl = `${localFaviconFolder}/${post.domain}.png`; 
+
+    // --- XỬ LÝ HIGHLIGHT CHỮ CHUẨN XÁC THEO RANH GIỚI TỪ ---
+    let displayedTitle = post.title;
+    if (searchQuery && searchQuery.trim() !== '') {
+        try {
+            const escapedQuery = searchQuery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            
+            // Thêm \\b vào trước để chỉ highlight phần đầu của từ khớp với tìm kiếm
+            const regex = new RegExp(`\\b(${escapedQuery})`, 'gi');
+            
+            displayedTitle = post.title.replace(regex, '<mark class="search-highlight">$1</mark>');
+        } catch (e) {
+            console.error("Lỗi highlight:", e);
+        }
     }
-}
-// -----------------------------------------------------
+    // -----------------------------------------------------
 
             
 
             const postItem = document.createElement('div');
-            postItem.className = `post-item`;
+    postItem.className = `post-item`;
 
-            postItem.innerHTML = `
-                <img class="post-avatar" src="${faviconUrl}" alt="${post.domain}" onerror="this.onerror=null; this.src='${defaultAvatar}';">
-                <div class="post-content-block">
-                    <a href="${post.url}" target="_blank" class="post-title">${displayedTitle}</a>
-                    <span class="post-source">${languages[currentLang].source_label}${post.domain}</span>
-                </div>
-                <button class="btn-bookmark ${isBookmarked ? 'active' : ''}" title="Đánh dấu yêu thích">${isBookmarked ? '★' : '☆'}</button>
-            `;
+    postItem.innerHTML = `
+        <img class="post-avatar" src="${faviconUrl}" alt="${post.domain}" onerror="this.onerror=null; this.src='${defaultAvatar}';">
+        <div class="post-content-block">
+            <a href="${post.url}" target="_blank" class="post-title">${displayedTitle}</a>
+            <span class="post-source">${languages[currentLang].source_label}${post.domain}</span>
+        </div>
+        <button class="btn-bookmark ${isBookmarked ? 'active' : ''}" title="Đánh dấu yêu thích">${isBookmarked ? '★' : '☆'}</button>
+    `;
 
-            
+    postItem.querySelector('.btn-bookmark').addEventListener('click', (e) => {
+        e.stopPropagation();
+        let currentBookmarks = JSON.parse(localStorage.getItem('bookmarks')) || [];
+        const foundIndex = currentBookmarks.findIndex(b => b.url === post.url);
+        let isNowBookmarked = false;
 
-            postItem.querySelector('.btn-bookmark').addEventListener('click', (e) => {
-                e.stopPropagation();
-                let currentBookmarks = JSON.parse(localStorage.getItem('bookmarks')) || [];
-                const foundIndex = currentBookmarks.findIndex(b => b.url === post.url);
-                let isNowBookmarked = false;
-
-                if (foundIndex > -1) { 
-                    currentBookmarks.splice(foundIndex, 1); 
-                } else { 
-                    currentBookmarks.push({ title: post.title, url: post.url, domain: post.domain }); 
-                    isNowBookmarked = true;
-                }
-                
-                bookmarks = currentBookmarks;
-                localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
-                
-                const favTab = filterContainer.querySelector('[data-domain="fav_bookmarks"] .tab-badge');
-                if (favTab) favTab.textContent = bookmarks.length;
-                
-                const btnTarget = e.currentTarget;
-                if (isNowBookmarked) {
-                    btnTarget.classList.add('active');
-                    btnTarget.textContent = '★';
-                } else {
-                    btnTarget.classList.remove('active');
-                    btnTarget.textContent = '☆';
-                    if (currentDomain === 'fav_bookmarks') {
-    postItem.remove();
-    // Nếu mảng bookmarks đã trống, gọi lại displayPosts để vẽ lại giao diện thông báo chuẩn
-    if (bookmarks.length === 0) {
-        displayPosts();
-    }
-}
-
-                }
-            });
-
-            listContainer.appendChild(postItem);
+        if (foundIndex > -1) { 
+            currentBookmarks.splice(foundIndex, 1); 
+        } else { 
+            currentBookmarks.push({ title: post.title, url: post.url, domain: post.domain }); 
+            isNowBookmarked = true;
         }
+        
+        bookmarks = currentBookmarks;
+        localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
+        
+        const favTab = filterContainer.querySelector('[data-domain="fav_bookmarks"] .tab-badge');
+        const locale = currentLang === 'vi' ? 'vi-VN' : 'en-US';
+if (favTab) favTab.textContent = bookmarks.length.toLocaleString(locale);
+
+        
+        const btnTarget = e.currentTarget;
+        if (isNowBookmarked) {
+            btnTarget.classList.add('active');
+            btnTarget.textContent = '★';
+        } else {
+            btnTarget.classList.remove('active');
+            btnTarget.textContent = '☆';
+            if (currentDomain === 'fav_bookmarks') {
+                postItem.remove();
+                // Nếu mảng bookmarks đã trống, gọi lại displayPosts để vẽ lại giao diện thông báo chuẩn
+                if (bookmarks.length === 0) {
+                    displayPosts();
+                }
+            }
+        }
+    });
+
+    targetContainer.appendChild(postItem);
+}
 
 
         function renderPagination(totalPages) {
@@ -1496,7 +1758,7 @@ if (searchQuery && searchQuery.trim() !== '') {
             paginationContainer.innerHTML = '';
             const currentPost = randomHistory[currentRandomIndex];
             if (currentPost) {
-                renderPostCard(currentPost);
+                renderPostCard(currentPost, listContainer); // Truyền thêm listContainer vào đây
             }
             renderRandomNavigation();
         }
@@ -1526,51 +1788,87 @@ if (searchQuery && searchQuery.trim() !== '') {
             searchInput.dispatchEvent(new Event('input')); 
         });
 
-        // THAY THẾ BẰNG ĐOẠN CODE MỚI NÀY:
+        // THAY THẾ TOÀN BỘ ĐOẠN ĐĂNG KÝ SỰ KIỆN POINTERDOWN BẰNG ĐOẠN NÀY:
 document.addEventListener('pointerdown', (e) => {
     const isClickInsideSearch = document.getElementById('searchContainer').contains(e.target);
     const isClickInsideDropdown = document.getElementById('customDropdown').contains(e.target);
     const isClickInsideFilterMenu = document.getElementById('filterWrapper').contains(e.target);
     
+    // Kiểm tra xem vị trí chạm có thuộc về nút phễu lọc hay không
+    const isClickOnFilterBtn = document.getElementById('btnFilterToggle') && document.getElementById('btnFilterToggle').contains(e.target);
+
+    // BỔ SUNG CHÍNH XÁC: Kiểm tra xem có bấm trúng một nút bấm Tab diễn đàn nào khác không (bao gồm cả icon/chữ bên trong nút đó)
+    const isClickOnBtnTab = e.target.closest('.btn-tab') && !e.target.closest('.btn-tab-icon');
+
     // Đóng dropdown diễn đàn chính ngay khi chạm ra ngoài
     if (!isClickInsideDropdown) {
         customDropdown.classList.remove('open');
     }
 
-    // Đóng menu checkbox ẩn/hiển ngay khi chạm ra ngoài
-    if (!isClickInsideFilterMenu) {
+    // SỬA ĐỔI: Đóng menu bộ lọc nếu chạm ra ngoài menu (và ko phải nút phễu), HOẶC nếu chạm trúng bất kỳ nút tab nào khác
+    if ((!isClickInsideFilterMenu && !isClickOnFilterBtn) || isClickOnBtnTab) {
         checkboxDropdownMenu.classList.remove('open');
     }
 
     // Thu nhỏ thanh tìm kiếm nếu trống và chạm ra ngoài
     if (!isClickInsideSearch && searchInput.value.trim() === '') {
         actionBar.classList.remove('search-active');
+        searchInput.blur(); // Ép Safari/Chrome ẩn bàn phím ảo và hủy focus
     }
 });
 
 
+
+
+
         btnRandom.addEventListener('click', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
+    e.preventDefault();
+    e.stopPropagation();
 
-            const allCurrentPosts = getActivePosts();
-            if (allCurrentPosts.length === 0) { alert(languages[currentLang].alert_no_post); return; }
-            if (currentRandomIndex < randomHistory.length - 1) { randomHistory = randomHistory.slice(0, currentRandomIndex + 1); }
+    const allCurrentPosts = getActivePosts();
+    if (allCurrentPosts.length === 0) { alert(languages[currentLang].alert_no_post); return; }
+    if (currentRandomIndex < randomHistory.length - 1) { randomHistory = randomHistory.slice(0, currentRandomIndex + 1); }
 
-            let randomPost;
-            if (allCurrentPosts.length > 1) {
-                const currentPostUrl = randomHistory[currentRandomIndex]?.url;
-                do {
-                    randomPost = allCurrentPosts[Math.floor(Math.random() * allCurrentPosts.length)];
-                } while (randomPost.url === currentPostUrl);
-            } else {
-                randomPost = allCurrentPosts[0];
-            }
+    let randomPost;
+    if (allCurrentPosts.length > 1) {
+        const currentPostUrl = randomHistory[currentRandomIndex]?.url;
+        do {
+            randomPost = allCurrentPosts[Math.floor(Math.random() * allCurrentPosts.length)];
+        } while (randomPost.url === currentPostUrl);
+    } else {
+        randomPost = allCurrentPosts[0];
+    }
 
-            randomHistory.push(randomPost);
-            currentRandomIndex = randomHistory.length - 1;
-            showRandomPostAtCurrentIndex();
+    randomHistory.push(randomPost);
+    currentRandomIndex = randomHistory.length - 1;
+    showRandomPostAtCurrentIndex();
+
+    // --- ĐOẠN SỬA ĐỔI CHÍNH XÁC CHO LOGIC TRƯỢT TAB ---
+// Nếu đang ở 'all', ép vị trí đích cuộn đến thành vị trí của tab 'yêu thích' (fav_bookmarks)
+// Ngược lại nếu đang ở các tab khác thì giữ nguyên logic cũ.
+const targetDomainKey = (currentDomain === 'all') ? 'fav_bookmarks' : ((currentDomain === 'fav_bookmarks') ? 'fav_bookmarks' : randomPost.domain);
+
+    
+    // Tìm đúng phần tử button đang hiển thị trên thanh filter
+    const targetTabButton = filterContainer.querySelector(`.btn-tab[data-domain="${targetDomainKey}"]`);
+    
+    if (targetTabButton) {
+        const containerWidth = filterContainer.offsetWidth;
+        const buttonWidth = targetTabButton.offsetWidth;
+        const buttonLeft = targetTabButton.offsetLeft;
+        
+        // Tính toán khoảng cách để đưa nút vào giữa thanh cuộn ngang
+        const targetScrollLeft = buttonLeft - (containerWidth / 2) + (buttonWidth / 2);
+        
+        filterContainer.scrollTo({
+            left: targetScrollLeft,
+            behavior: 'smooth'
         });
+    }
+});
+
+
+
 
         const customDropdown = document.getElementById('customDropdown');
         const dropdownSelected = document.getElementById('dropdownSelected');
@@ -1619,6 +1917,10 @@ document.addEventListener('pointerdown', (e) => {
             resetRandomHistory(); 
             updateCurrentForumsData();
         }
+    
+    
+    
+    
 
         // --- ĐOẠN CODE CHẶN DOUBLE-ZOOM ĐƯỢC GIỮ NGUYÊN VẸN THEO YÊU CẦU CỦA BẠN ---
         let lastTouchEnd = 0;
@@ -1726,7 +2028,9 @@ function handleFileSelect(event) {
                 
                 // Cập nhật lại số lượng huy hiệu (badge) trên tab Yêu thích
                 const favTab = filterContainer.querySelector('[data-domain="fav_bookmarks"] .tab-badge');
-                if (favTab) favTab.textContent = bookmarks.length;
+                const locale = currentLang === 'vi' ? 'vi-VN' : 'en-US';
+if (favTab) favTab.textContent = bookmarks.length.toLocaleString(locale);
+
                 
                 // Reload tab hiện tại
                 displayPosts();
@@ -1742,7 +2046,84 @@ function handleFileSelect(event) {
     
     reader.readAsText(file);
 }
+    
+    // CHỨC NĂNG KÉO CHUỘT ĐỂ CUỘN THANH FILTER TRÊN MÁY TÍNH
+const slider = document.getElementById('filterContainer');
+let isDown = false;
+let startX;
+let scrollLeft;
+
+slider.addEventListener('mousedown', (e) => {
+    // Chỉ kích hoạt khi click chuột trái và không bấm vào các nút bên trong để tránh lỗi click nhầm
+    if (e.pointerType === 'mouse' || e.button === 0) {
+        isDown = true;
+        slider.style.cursor = 'grabbing';
+        startX = e.pageX - slider.offsetLeft;
+        scrollLeft = slider.scrollLeft;
+    }
+});
+
+slider.addEventListener('mouseleave', () => {
+    isDown = false;
+    slider.style.cursor = 'pointer';
+});
+
+slider.addEventListener('mouseup', () => {
+    isDown = false;
+    slider.style.cursor = 'pointer';
+});
+
+slider.addEventListener('mousemove', (e) => {
+    if (!isDown) return;
+    e.preventDefault();
+    const x = e.pageX - slider.offsetLeft;
+    const walk = (x - startX) * 1.5; // Nhân với 1.5 để tốc độ lướt nhanh và mượt hơn
+    slider.scrollLeft = scrollLeft - walk;
+});
+    
+    // ================= SỬA LỖI KẸT HOVER TRÊN SAFARI IPHONE =================
+let isScrollingTabs;
+
+slider.addEventListener('scroll', () => {
+    // Ngay khi thanh tab phát sinh hành động cuộn (vuốt bằng tay hoặc chuột)
+    document.body.classList.add('is-swiping-tabs');
+
+    // Xóa bỏ thời gian chờ cũ
+    window.clearTimeout(isScrollingTabs);
+
+    // Nếu sau 150ms không có hành động cuộn tiếp theo, hiểu là đã dừng vuốt và trả lại trạng thái bình thường
+    isScrollingTabs = setTimeout(() => {
+        document.body.classList.remove('is-swiping-tabs');
+    }, 150);
+}, { passive: true });
+
+// Phòng hờ trường hợp người dùng nhấc tay lên đột ngột nhưng thanh cuộn không trượt quán tính
+slider.addEventListener('touchend', () => {
+    setTimeout(() => {
+        if (slider && !slider.classList.contains('grabbing')) {
+            document.body.classList.remove('is-swiping-tabs');
+        }
+    }, 200);
+}, { passive: true });
+
+    function showTermsAlert() {
+    // Lấy chuỗi thông báo dựa theo ngôn ngữ hiện tại (currentLang)
+    const alertMessage = languages[currentLang]['footer_alert_text'];
+    alert(alertMessage);
+}
+
 
     </script>
+    
+    
+    
+    <footer style="margin-top: 40px; padding: 20px 0; border-top: 1px solid var(--border-color); text-align: center; font-size: 12px; color: var(--sub-text);">
+    <p data-i18n="footer_copyright">© 2026 Forum Adventure</p>
+    <p data-i18n="footer_author">Made with ❤️ by Ncox | Connecting Forum Communities</p>
+    <p>
+        <a href="javascript:void(0)" onclick="showTermsAlert()" style="color: var(--accent-color); text-decoration: underline; margin: 0 10px;" data-i18n="footer_terms">Terms of Service & Disclaimer</a>
+    </p>
+</footer>
+
 </body>
 </html>
