@@ -1456,12 +1456,30 @@ let isRedditCached = false;     // ĐÁNH DẤU: Chưa quét dữ liệu Reddit
 
 
                 function renderPostCard(post) {
-            
-            const isBookmarked = bookmarks.some(b => b.url === post.url);
+    const isBookmarked = bookmarks.some(b => b.url === post.url);
 
-            const faviconUrl = `${localFaviconFolder}/${post.domain}.png`; 
+    // Mặc định lấy theo domain (ví dụ: favicons/tinhte.vn.png)
+    let faviconUrl = `${localFaviconFolder}/${post.domain}.png`; 
 
-            // --- XỬ LÝ HIGHLIGHT CHỮ CHUẨN XÁC THEO RANH GIỚI TỪ ---
+    // NẾU LÀ REDDIT: Tách tên Subreddit để lấy ảnh riêng biệt
+    if (post.domain === 'reddit.com' && post.url.includes('/r/')) {
+        try {
+            const parts = post.url.split('/r/');
+            if (parts[1]) {
+                const subName = parts[1].split('/')[0].trim().toLowerCase();
+                if (subName && subName !== 'undefined' && subName !== 'null') {
+                    // Chuyển cấu trúc từ r/name thành file ảnh r-name.png
+                    faviconUrl = `${localFaviconFolder}/r-${subName}.png`;
+                }
+            }
+        } catch (e) {
+            console.warn("Không thể bóc tách avatar Subreddit:", e);
+        }
+    }
+
+                    
+    // --- XỬ LÝ HIGHLIGHT CHỮ CHUẨN XÁC THEO RANH GIỚI TỪ ---
+
 let displayedTitle = post.title;
 if (searchQuery && searchQuery.trim() !== '') {
     try {
